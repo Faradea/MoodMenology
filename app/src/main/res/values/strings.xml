@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">Mood Menology</string>
+    <string name="MoodTabName">Mood</string>
+    <string name="ActionsTabName">Actions</string>
+    <string name="LOG_TAG">MoodMenology</string>
+    <string name="SaveButtonName">Save</string>
+    <string name="DeleteButtonName">Delete</string>
+    <string name="DeleteAllButtonName">Delete all data</string>
+    <string name="FromColumnText">From:</string>
+    <string name="ToColumnText">To:</string>
+</resources>
