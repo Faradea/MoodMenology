@@ -22,7 +22,6 @@ public class ActivityEditMood extends AppCompatActivity implements View.OnClickL
 
     private static final String LOG_TAG = "MoodMenology";
     private static final String ROWID_KEY = "rowId";
-    int testGitHub;
 
     private DBHelper dbHelper;
     private MoodEvent moodEvent;
