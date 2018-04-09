@@ -9,6 +9,8 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.TextView;
@@ -30,6 +32,8 @@ import java.util.Calendar;
  */
 
 public class ActivityFillDataTabs extends AppCompatActivity implements View.OnClickListener, IMoodFragmentInteractionListener, IActionsFragmentInteractionListener {
+
+    //ToDO BUG настроение 00:00 попадает не в тот день, в который оно создается
 
     private static final String LOG_TAG = "MoodMenology";
 
@@ -88,6 +92,7 @@ public class ActivityFillDataTabs extends AppCompatActivity implements View.OnCl
         actionFragment = (FragmentFillDataActions) adapter.getItem(ACTION_FRAGMENT_ID);
 
         dbHelper = new DBHelper(this);
+
         Log.d(LOG_TAG, "FillDataTabs.onCreate: FillDataTabs activity building is finished");
     }
 
@@ -224,6 +229,33 @@ public class ActivityFillDataTabs extends AppCompatActivity implements View.OnCl
         String selectedDateStringFillData= SmallFunctions.formatDate(dateAndTime.getTimeInMillis());
         selectedDateFillData = (TextView) findViewById(R.id.ActivtyFilldata_dateText);
         selectedDateFillData.setText(selectedDateStringFillData);
+    }
+
+    // создание меню
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.mainmenu, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    //ToDo REFACT код обработки выбора пункта меню написан 2 раза в разных активити, надо объединить
+    // обработка выбора пункта меню
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        switch (item.getItemId()){
+            case R.id.menu_settings:
+                Log.d(LOG_TAG, "ActvityFillDataTabs.onOptionsItemSelected: settings menu item is picked");
+                Intent intent = new Intent("com.macgavrina.moodmenology.settings");
+                startActivity(intent);
+                break;
+            default:
+                break;
+        }
+
+
+        return super.onOptionsItemSelected(item);
+
+
     }
 
 }

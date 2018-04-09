@@ -23,6 +23,7 @@ public abstract class DBOperations {
 
     private static final String EVENT_ID_COLUMN_NAME = "eventId";
     private static final String START_DATETIME_COLUMN_NAME = "startDateTime";
+    private static final String ROWID_COLUMN_NAME = "rowId";
     private static final String ID_COLUMN_NAME = "id";
     private static final String TABLE_NAME = "Events";
     private static final String EVENT_TYPE_COLUMN_NAME = "eventType";
@@ -69,7 +70,7 @@ public abstract class DBOperations {
 
         SQLiteDatabase db = dbHelper.getWritableDatabase();
 
-        int delCount = db.delete(TABLE_NAME, new StringBuffer().append("startDateTime between ").append(selectedDayStartDateString).append(" and ").append(selectedDayEndDateString).toString(), null);
+        int delCount = db.delete(TABLE_NAME, new StringBuffer().append(START_DATETIME_COLUMN_NAME).append(" between ").append(selectedDayStartDateString).append(" and ").append(selectedDayEndDateString).toString(), null);
 
         Log.d(LOG_TAG, "FillDataTabs.deleteAllDayData: deleted rows count = " + delCount);
 
@@ -82,10 +83,8 @@ public abstract class DBOperations {
 
         SQLiteDatabase db = dbHelper.getWritableDatabase();
 
-        //ToDo REFACT везде в selections использовать константы вместо названий столбцов
-
         // делаем запрос всех данных из таблицы mytable, получаем Cursor
-        String selection = "rowId = ?";
+        String selection = ROWID_COLUMN_NAME + " = ?";
         String[] selectionArgs = new String[] {rowId.toString()};
         Cursor c = db.query(TABLE_NAME, null, selection, selectionArgs, null, null, START_DATETIME_COLUMN_NAME);
 
@@ -126,7 +125,10 @@ public abstract class DBOperations {
         Icons icons = new Icons();
 
         // Select all mood rows for the day; get Cursor
-        final String selection = "((startDateTime > ? and startDateTime < ?) or (endDateTime > ? and endDateTime < ?)) and eventType == ?";
+        final String selection = "((" + START_DATETIME_COLUMN_NAME + " > ? and " +
+                                START_DATETIME_COLUMN_NAME + " < ?) or (" +
+                                END_DATETIME_COLUMN_NAME + " > ? and " + END_DATETIME_COLUMN_NAME + " < ?)) and " +
+                                EVENT_TYPE_COLUMN_NAME + " == ?";
         final String[] selectionArgs = new String[]{selectedDayStartDateStringFillData,
                                                     selectedDayEndDateStringFillData,
                                                     selectedDayStartDateStringFillData,
@@ -194,7 +196,11 @@ public abstract class DBOperations {
         SQLiteDatabase db = dbHelper.getWritableDatabase();
 
         // Select all mood rows for the day; get Cursor
-        final String selection = "((startDateTime > ? and startDateTime < ?) or (endDateTime > ? and endDateTime < ?)) and eventType == ?";
+        final String selection = "((" + START_DATETIME_COLUMN_NAME + " > ? and " +
+                                START_DATETIME_COLUMN_NAME + " < ?) or (" +
+                                END_DATETIME_COLUMN_NAME + " > ? and " +
+                                END_DATETIME_COLUMN_NAME + " < ?)) and " +
+                                EVENT_TYPE_COLUMN_NAME + " == ?";
         final String[] selectionArgs = new String[]{selectedDayStartDateStringFillData,
                                                     selectedDayEndDateStringFillData,
                                                     selectedDayStartDateStringFillData,
@@ -241,7 +247,7 @@ public abstract class DBOperations {
 
         ContentValues cv = new ContentValues();
         cv.put(START_DATETIME_COLUMN_NAME, timeInMillis);
-        db.update(TABLE_NAME, cv, "id = " + rowId, null);
+        db.update(TABLE_NAME, cv, ID_COLUMN_NAME + " = " + rowId, null);
 
         dbHelper.close();
     }
@@ -262,7 +268,7 @@ public abstract class DBOperations {
         ContentValues cv = new ContentValues();
         cv.put(START_DATETIME_COLUMN_NAME, startTimeInMillis);
         cv.put(END_DATETIME_COLUMN_NAME, endTimeInMillis);
-        db.update(TABLE_NAME, cv, "id = " + rowId, null);
+        db.update(TABLE_NAME, cv, ID_COLUMN_NAME + " = " + rowId, null);
 
         dbHelper.close();
     }

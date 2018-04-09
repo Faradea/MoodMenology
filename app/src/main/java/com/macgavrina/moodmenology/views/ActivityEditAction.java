@@ -24,8 +24,6 @@ import com.macgavrina.moodmenology.model.Icons;
 
 public class ActivityEditAction extends AppCompatActivity implements View.OnClickListener {
 
-    //ToDo BUG после редактирования времени пропадают даты
-
     private static final String LOG_TAG = "MoodMenology";
     private static final String ROWID_KEY = "rowId";
 
@@ -77,8 +75,8 @@ public class ActivityEditAction extends AppCompatActivity implements View.OnClic
         dateAndTimeStart.setTimeInMillis(actionEvent.getStartDateInUnixFormat());
         dateAndTimeEnd.setTimeInMillis(actionEvent.getEndDateInUnixFormat());
 
-        startTimeTextView.setText("From: " + SmallFunctions.formatDate(actionEvent.getStartDateInUnixFormat()) + ", " + SmallFunctions.formatTime(actionEvent.getStartDateInUnixFormat()));
-        endTimeTextView.setText("To: " + SmallFunctions.formatDate(actionEvent.getEndDateInUnixFormat()) + ", " + SmallFunctions.formatTime(actionEvent.getEndDateInUnixFormat()));
+        setupStartTimeTextView();
+        setupEndTimeTextView();
 
         icons = new Icons();
         actionImageView.setImageResource(icons.getActionIconsId(actionEvent.getGroupId(), actionEvent.getEventId()));
@@ -87,6 +85,16 @@ public class ActivityEditAction extends AppCompatActivity implements View.OnClic
         deleteButton.setOnClickListener(this);
 
         Log.d(LOG_TAG, "EditActionActivity.onCreate: EditAction activity building is finished, rowId=" + rowId);
+    }
+
+    private void setupEndTimeTextView() {
+        endTimeTextView.setText("To: " + SmallFunctions.formatDate(actionEvent.getEndDateInUnixFormat()) + ", "
+                + SmallFunctions.formatTime(actionEvent.getEndDateInUnixFormat()));
+    }
+
+    private void setupStartTimeTextView() {
+        startTimeTextView.setText("From: " + SmallFunctions.formatDate(actionEvent.getStartDateInUnixFormat()) + ", "
+                + SmallFunctions.formatTime(actionEvent.getStartDateInUnixFormat()));
     }
 
     @Override
@@ -143,8 +151,10 @@ public class ActivityEditAction extends AppCompatActivity implements View.OnClic
             dateAndTimeStart.set(java.util.Calendar.MINUTE, minute);
 
             actionEvent.setStartTime(dateAndTimeStart.getTimeInMillis());
-            startTimeTextView.setText("From: "+SmallFunctions.formatTime(actionEvent.getStartDateInUnixFormat()));
-            endTimeTextView.setText("To: " + SmallFunctions.formatTime(actionEvent.getEndDateInUnixFormat()));
+            setupStartTimeTextView();
+            setupEndTimeTextView();
+            //startTimeTextView.setText("From: "+SmallFunctions.formatTime(actionEvent.getStartDateInUnixFormat()));
+            //endTimeTextView.setText("To: " + SmallFunctions.formatTime(actionEvent.getEndDateInUnixFormat()));
 
             saveButton.setEnabled(true);
         }
@@ -171,7 +181,8 @@ public class ActivityEditAction extends AppCompatActivity implements View.OnClic
 
             actionEvent.setEndTime(dateAndTimeEnd.getTimeInMillis());
 
-            endTimeTextView.setText("From: "+SmallFunctions.formatTime(actionEvent.getEndDateInUnixFormat()));
+            setupEndTimeTextView();
+            //endTimeTextView.setText("From: "+SmallFunctions.formatTime(actionEvent.getEndDateInUnixFormat()));
             saveButton.setEnabled(true);
         }
     };

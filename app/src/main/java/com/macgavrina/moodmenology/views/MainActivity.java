@@ -16,11 +16,10 @@ import java.util.Calendar;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
-    //ToDo BUG сделать неактивными все кнопки после того как они нажаты
+    //ToDo BUG timePickerDialog можно вызвать 2 раза
     //ToDo NEW сделать нормальную систему логирования (например, ACRA)
     //ToDo NEW сохранение данных на сервере
     //ToDo REFACT перенести все отступы и т.д. в dimens.xml
-    //ToDo NEW GitHub
     //ToDo REFACT можно ли вынести final переменные из классов в ресурсы?
     //ToDo NEW возможность указать физическое состояние (сонный, болезнь, холодно)
     //ToDo NEW комментарии к настроению и action

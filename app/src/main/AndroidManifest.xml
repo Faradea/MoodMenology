@@ -16,35 +16,40 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".views.ActivityFillDataTabs">
+        <activity android:name=".views.ActivityFillDataTabs"
+            android:launchMode="singleTask">
             <intent-filter>
                 <action android:name="com.macgavrina.moodmenology.fill.data" />
 
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
-        <activity android:name=".views.ActivitySettings">
+        <activity android:name=".views.ActivitySettings"
+            android:launchMode="singleTask">
             <intent-filter>
                 <action android:name="com.macgavrina.moodmenology.settings" />
 
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
-        <activity android:name=".views.ActivityEditMood">
+        <activity android:name=".views.ActivityEditMood"
+            android:launchMode="singleTask">
             <intent-filter>
                 <action android:name="com.macgavrina.moodmenology.edit.mood" />
 
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
-        <activity android:name=".views.ActivityEditAction">
+        <activity android:name=".views.ActivityEditAction"
+            android:launchMode="singleTask">
             <intent-filter>
                 <action android:name="com.macgavrina.moodmenology.edit.action" />
 
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
-        <activity android:name=".views.ActivityAddAction">
+        <activity android:name=".views.ActivityAddAction"
+            android:launchMode="singleTask">
             <intent-filter>
                 <action android:name="com.macgavrina.moodmenology.add.action" />
 
