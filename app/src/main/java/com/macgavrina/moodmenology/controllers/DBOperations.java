@@ -125,9 +125,9 @@ public abstract class DBOperations {
         Icons icons = new Icons();
 
         // Select all mood rows for the day; get Cursor
-        final String selection = "((" + START_DATETIME_COLUMN_NAME + " > ? and " +
+        final String selection = "((" + START_DATETIME_COLUMN_NAME + " >= ? and " +
                                 START_DATETIME_COLUMN_NAME + " < ?) or (" +
-                                END_DATETIME_COLUMN_NAME + " > ? and " + END_DATETIME_COLUMN_NAME + " < ?)) and " +
+                                END_DATETIME_COLUMN_NAME + " >= ? and " + END_DATETIME_COLUMN_NAME + " < ?)) and " +
                                 EVENT_TYPE_COLUMN_NAME + " == ?";
         final String[] selectionArgs = new String[]{selectedDayStartDateStringFillData,
                                                     selectedDayEndDateStringFillData,
@@ -196,9 +196,9 @@ public abstract class DBOperations {
         SQLiteDatabase db = dbHelper.getWritableDatabase();
 
         // Select all mood rows for the day; get Cursor
-        final String selection = "((" + START_DATETIME_COLUMN_NAME + " > ? and " +
+        final String selection = "((" + START_DATETIME_COLUMN_NAME + " >= ? and " +
                                 START_DATETIME_COLUMN_NAME + " < ?) or (" +
-                                END_DATETIME_COLUMN_NAME + " > ? and " +
+                                END_DATETIME_COLUMN_NAME + " >= ? and " +
                                 END_DATETIME_COLUMN_NAME + " < ?)) and " +
                                 EVENT_TYPE_COLUMN_NAME + " == ?";
         final String[] selectionArgs = new String[]{selectedDayStartDateStringFillData,

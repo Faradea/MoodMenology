@@ -33,7 +33,7 @@ import java.util.Calendar;
 
 public class ActivityFillDataTabs extends AppCompatActivity implements View.OnClickListener, IMoodFragmentInteractionListener, IActionsFragmentInteractionListener {
 
-    //ToDO BUG настроение 00:00 попадает не в тот день, в который оно создается
+    //ToDO BUG можно сохранить action длительностью 0
 
     private static final String LOG_TAG = "MoodMenology";
 
@@ -165,9 +165,7 @@ public class ActivityFillDataTabs extends AppCompatActivity implements View.OnCl
         Intent intentActions = new Intent("com.macgavrina.moodmenology.add.action");
         intentActions.putExtra(ACTION_GROUPID_KEY, selectedActionsGroupId);
         intentActions.putExtra(DATE_IN_MILLIS_KEY, dateAndTime.getTimeInMillis());
-
-        //ToDo REFACT разобраться что такое requestCode
-        startActivityForResult(intentActions, 1);
+        startActivity(intentActions);
     }
 
     @Override
@@ -175,7 +173,7 @@ public class ActivityFillDataTabs extends AppCompatActivity implements View.OnCl
         Log.d(LOG_TAG, "FillDataTabs.editActionRowEvent: Activity received event - editRow with rowId=" + rowId);
         Intent intentEdit = new Intent("com.macgavrina.moodmenology.edit.action");
         intentEdit.putExtra(ROWID_KEY, rowId);
-        startActivityForResult(intentEdit, 1);
+        startActivity(intentEdit);
     }
 
     // Process event from FillDataMood fragment (user selects row from ListView to edit it)
@@ -184,7 +182,7 @@ public class ActivityFillDataTabs extends AppCompatActivity implements View.OnCl
         Log.d(LOG_TAG, "FillDataTabs.editMoodRowEvent: Activity received event - editRow with rowId="+rowId);
         Intent intentEdit = new Intent("com.macgavrina.moodmenology.edit.mood");
         intentEdit.putExtra(ROWID_KEY, rowId);
-        startActivityForResult(intentEdit, 1);
+        startActivity(intentEdit);
     }
 
     // OnTimeSetListener (user selects time)

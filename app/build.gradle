@@ -1,6 +1,12 @@
 apply plugin: 'com.android.application'
 
 android {
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
     compileSdkVersion 25
     defaultConfig {
         applicationId "com.macgavrina.moodmenology"
@@ -27,4 +33,6 @@ dependencies {
     compile 'com.android.support.constraint:constraint-layout:1.0.2'
     compile 'com.android.support:design:25.3.1'
     testCompile 'junit:junit:4.12'
+
+    compile files('libs/acra-4.6.1.jar')
 }

@@ -8,4 +8,5 @@
     <string name="DeleteAllButtonName">Delete all data</string>
     <string name="FromColumnText">From:</string>
     <string name="ToColumnText">To:</string>
+    <string name="crash_toast_text">App is crashed, sending report</string>
 </resources>

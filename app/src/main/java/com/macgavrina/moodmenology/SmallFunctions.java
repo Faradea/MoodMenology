@@ -1,13 +1,8 @@
 package com.macgavrina.moodmenology;
 
-import com.macgavrina.moodmenology.model.SelectedDay;
-
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
-
-import javax.xml.datatype.Duration;
 
 /**
  * Created by Irina on 09.02.2018.
@@ -35,7 +30,7 @@ public abstract class SmallFunctions {
         SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
         String formattedDate = sdf.format(date);
 
-        if (aLong < Long.valueOf(startDate) || aLong > Long.valueOf(endDate)) {
+        if (aLong < Long.valueOf(startDate) || aLong >= Long.valueOf(endDate)) {
             formattedDate = "* " + formattedDate;
         }
 

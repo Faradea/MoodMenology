@@ -17,7 +17,7 @@ import java.util.Calendar;
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
     //ToDo BUG timePickerDialog можно вызвать 2 раза
-    //ToDo NEW сделать нормальную систему логирования (например, ACRA)
+    //ToDo NEW сделать нормальную систему debbug-логирования
     //ToDo NEW сохранение данных на сервере
     //ToDo REFACT перенести все отступы и т.д. в dimens.xml
     //ToDo REFACT можно ли вынести final переменные из классов в ресурсы?
