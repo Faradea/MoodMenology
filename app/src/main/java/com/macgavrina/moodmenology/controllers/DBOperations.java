@@ -272,4 +272,49 @@ public abstract class DBOperations {
 
         dbHelper.close();
     }
+
+    public static String getAllDataForEmail (final DBHelper dbHelper) {
+
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+
+        StringBuffer emailTextStringBuffer = new StringBuffer().
+                append("RowId").append(";")
+                .append("EventId").append(";")
+                .append("EventGroupId").append(";")
+                .append("StartDate").append(";")
+                .append("EndDate").append("\n");
+
+        Cursor c = db.query(TABLE_NAME, null, null, null, null, null, START_DATETIME_COLUMN_NAME);
+
+        // Get rows count in DB to define required amount of rows in the listView
+        Integer rowsCount = c.getCount();
+
+        // Define columns
+        final int idColIndex = c.getColumnIndex(ID_COLUMN_NAME);
+        final int moodColIndex = c.getColumnIndex(EVENT_ID_COLUMN_NAME);
+        final int startDatetimeColIndex = c.getColumnIndex(START_DATETIME_COLUMN_NAME);
+        final int groupColIndex = c.getColumnIndex(EVENT_GROUP_ID_COLUMN_NAME);
+        final int endDatetimeColIndex = c.getColumnIndex(END_DATETIME_COLUMN_NAME);
+
+        if (c.moveToFirst()) {
+            do {
+
+                emailTextStringBuffer.append(c.getInt(idColIndex)).append(";")
+                        .append(c.getInt(moodColIndex)).append(";")
+                        .append(c.getInt(groupColIndex)).append(";")
+                        .append(c.getLong(startDatetimeColIndex)).append(";")
+                        .append(c.getLong(endDatetimeColIndex)).append("\n");
+
+            } while (c.moveToNext());
+
+        } else
+            emailTextStringBuffer.append("No data");
+
+        c.close();
+
+        dbHelper.close();
+
+
+        return emailTextStringBuffer.toString();
+    }
 }

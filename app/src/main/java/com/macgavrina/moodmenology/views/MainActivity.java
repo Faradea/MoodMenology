@@ -1,9 +1,9 @@
 package com.macgavrina.moodmenology.views;
 
 import android.content.Intent;
+import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -11,6 +11,7 @@ import android.view.View;
 import android.widget.DatePicker;
 
 import com.macgavrina.moodmenology.R;
+import com.macgavrina.moodmenology.viewadapters.MainMenu;
 
 import java.util.Calendar;
 
@@ -97,16 +98,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     // обработка выбора пункта меню
     public boolean onOptionsItemSelected(MenuItem item) {
 
-        switch (item.getItemId()){
-            case R.id.menu_settings:
-                Log.d(LOG_TAG, "MainActivity.onOptionsItemSelected: settings menu item is picked");
-                Intent intent = new Intent("com.macgavrina.moodmenology.settings");
-                startActivity(intent);
-                break;
-            default:
-                break;
-        }
+        MainMenu mainMenuProcessor = new MainMenu(item.getItemId());
 
+        Intent intent = mainMenuProcessor.processOnMenyItemSelected(this);
+
+        if (intent != null) {
+            startActivity(intent);
+        }
 
         return super.onOptionsItemSelected(item);
 

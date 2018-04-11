@@ -22,6 +22,7 @@ import com.macgavrina.moodmenology.controllers.DBHelper;
 import com.macgavrina.moodmenology.controllers.DBOperations;
 import com.macgavrina.moodmenology.model.MoodEvent;
 import com.macgavrina.moodmenology.model.SelectedDay;
+import com.macgavrina.moodmenology.viewadapters.MainMenu;
 import com.macgavrina.moodmenology.viewadapters.SimpleFragmentPagerAdapter;
 
 import java.util.Calendar;
@@ -32,8 +33,6 @@ import java.util.Calendar;
  */
 
 public class ActivityFillDataTabs extends AppCompatActivity implements View.OnClickListener, IMoodFragmentInteractionListener, IActionsFragmentInteractionListener {
-
-    //ToDO BUG можно сохранить action длительностью 0
 
     private static final String LOG_TAG = "MoodMenology";
 
@@ -236,23 +235,18 @@ public class ActivityFillDataTabs extends AppCompatActivity implements View.OnCl
         return super.onCreateOptionsMenu(menu);
     }
 
-    //ToDo REFACT код обработки выбора пункта меню написан 2 раза в разных активити, надо объединить
     // обработка выбора пункта меню
     public boolean onOptionsItemSelected(MenuItem item) {
 
-        switch (item.getItemId()){
-            case R.id.menu_settings:
-                Log.d(LOG_TAG, "ActvityFillDataTabs.onOptionsItemSelected: settings menu item is picked");
-                Intent intent = new Intent("com.macgavrina.moodmenology.settings");
-                startActivity(intent);
-                break;
-            default:
-                break;
+        MainMenu mainMenuProcessor = new MainMenu(item.getItemId());
+
+        Intent intent = mainMenuProcessor.processOnMenyItemSelected(this);
+
+        if (intent != null) {
+            startActivity(intent);
         }
 
-
         return super.onOptionsItemSelected(item);
-
 
     }
 

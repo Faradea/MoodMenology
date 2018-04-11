@@ -68,6 +68,11 @@ public class FragmentFillDataActions extends Fragment {
     public View onCreateView(final LayoutInflater inflater, final ViewGroup container,
                              final Bundle savedInstanceState) {
 
+        Activity activity = getActivity();
+        if (activity instanceof FragmentActivity) {
+            myContext = (FragmentActivity) activity;
+
+        }
         // Inflate the layout for this fragment
         View v = inflater.inflate(R.layout.fragment_filldata_actions, container, false);
 
@@ -79,6 +84,14 @@ public class FragmentFillDataActions extends Fragment {
         setupGridView();
 
         Log.d(LOG_TAG, "FillDataActionFragment.onCreateView: FillDataActions fragment building is finished");
+
+        try {
+            actionsFragmentListener = (IActionsFragmentInteractionListener) activity;
+            Log.d(LOG_TAG, "FillDataActionsFragment.onAttach: actionsFragmentListener interface is ok");
+        } catch (ClassCastException e) {
+            throw new ClassCastException(activity.toString()
+                    + " shall implement actionsFragmentListener interface");
+        }
 
         return v;
 
@@ -100,25 +113,6 @@ public class FragmentFillDataActions extends Fragment {
         super.onResume();
         Log.d(LOG_TAG, "FillDataActionFragment.onResume: call update list"+startDateValue);
         updateListMethod(startDateValue, endDateValue);
-    }
-
-    // Check interface fragment <-> activity
-    //ToDo REFACT метод - deprecated
-    @Override
-    public void onAttach(final Activity activity) {
-        super.onAttach(activity);
-        try {
-            actionsFragmentListener = (IActionsFragmentInteractionListener) activity;
-            Log.d(LOG_TAG, "FillDataActionsFragment.onAttach: actionsFragmentListener interface is ok");
-        } catch (ClassCastException e) {
-            throw new ClassCastException(activity.toString()
-                    + " shall implement actionsFragmentListener interface");
-        }
-        if (activity instanceof FragmentActivity) {
-            myContext = (FragmentActivity) activity;
-
-        }
-
     }
 
     private void setupGridView() {
