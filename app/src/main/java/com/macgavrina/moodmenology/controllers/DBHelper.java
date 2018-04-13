@@ -14,14 +14,15 @@ public class DBHelper extends SQLiteOpenHelper {
 
     private static final String LOG_TAG = "MoodMenology";
 
-    private static final String DB_NAME = "myDB";
-    private static final String EVENT_ID_COLUMN_NAME = "eventId";
-    private static final String START_DATETIME_COLUMN_NAME = "startDateTime";
-    private static final String ID_COLUMN_NAME = "id";
-    private static final String TABLE_NAME = "Events";
-    private static final String EVENT_TYPE_COLUMN_NAME = "eventType";
-    private static final String END_DATETIME_COLUMN_NAME = "endDateTime";
-    private static final String EVENT_GROUP_ID_COLUMN_NAME = "eventGroupId";
+    public static final String DB_NAME = "myDB";
+    public static final String EVENT_ID_COLUMN_NAME = "eventId";
+    public static final String START_DATETIME_COLUMN_NAME = "startDateTime";
+    public static final String ID_COLUMN_NAME = "id";
+    public static final String TABLE_NAME = "Events";
+    public static final String EVENT_TYPE_COLUMN_NAME = "eventType";
+    public static final String END_DATETIME_COLUMN_NAME = "endDateTime";
+    public static final String EVENT_GROUP_ID_COLUMN_NAME = "eventGroupId";
+    public static final String ROWID_COLUMN_NAME = "rowId";
 
     private static final int DB_VERSION=1;
 

@@ -21,15 +21,6 @@ public abstract class DBOperations {
 
     private static final String LOG_TAG = "MoodMenology";
 
-    private static final String EVENT_ID_COLUMN_NAME = "eventId";
-    private static final String START_DATETIME_COLUMN_NAME = "startDateTime";
-    private static final String ROWID_COLUMN_NAME = "rowId";
-    private static final String ID_COLUMN_NAME = "id";
-    private static final String TABLE_NAME = "Events";
-    private static final String EVENT_TYPE_COLUMN_NAME = "eventType";
-    private static final String END_DATETIME_COLUMN_NAME = "endDateTime";
-    private static final String EVENT_GROUP_ID_COLUMN_NAME = "eventGroupId";
-
     private static final String ATTRIBUTE_NAME_START_DATE = "startDate";
     private static final String ATTRIBUTE_NAME_END_DATE = "endDate";
     private static final String ATTRIBUTE_NAME_EVENT_ID = "eventId";
@@ -49,13 +40,13 @@ public abstract class DBOperations {
         // Create object for data
         //ToDo REFACT почитать про ContentValues и понять лучше ли он чем Map (после обучения по ContentProvider)
         ContentValues cv = new ContentValues();
-        cv.put(EVENT_ID_COLUMN_NAME, selectedMoodIdForActivity);
-        cv.put(START_DATETIME_COLUMN_NAME, startTimeInMillis);
-        cv.put(EVENT_TYPE_COLUMN_NAME, eventType);
-        cv.put(EVENT_GROUP_ID_COLUMN_NAME, actionGroupId);
-        cv.put(END_DATETIME_COLUMN_NAME, endTimeInMillis);
+        cv.put(DBHelper.EVENT_ID_COLUMN_NAME, selectedMoodIdForActivity);
+        cv.put(DBHelper.START_DATETIME_COLUMN_NAME, startTimeInMillis);
+        cv.put(DBHelper.EVENT_TYPE_COLUMN_NAME, eventType);
+        cv.put(DBHelper.EVENT_GROUP_ID_COLUMN_NAME, actionGroupId);
+        cv.put(DBHelper.END_DATETIME_COLUMN_NAME, endTimeInMillis);
 
-        long rowID = db.insert(TABLE_NAME, null, cv);
+        long rowID = db.insert(DBHelper.TABLE_NAME, null, cv);
 
         dbHelper.close();
 
@@ -64,13 +55,14 @@ public abstract class DBOperations {
 
     }
 
+    //ToDo REFACT убрать dbHelper из входных параметров всех методов DBOperations
     public static void deleteAllDayData(final DBHelper dbHelper,
                                         final String selectedDayStartDateString,
                                         final String selectedDayEndDateString) {
 
         SQLiteDatabase db = dbHelper.getWritableDatabase();
 
-        int delCount = db.delete(TABLE_NAME, new StringBuffer().append(START_DATETIME_COLUMN_NAME).append(" between ").append(selectedDayStartDateString).append(" and ").append(selectedDayEndDateString).toString(), null);
+        int delCount = db.delete(DBHelper.TABLE_NAME, new StringBuffer().append(DBHelper.START_DATETIME_COLUMN_NAME).append(" between ").append(selectedDayStartDateString).append(" and ").append(selectedDayEndDateString).toString(), null);
 
         Log.d(LOG_TAG, "FillDataTabs.deleteAllDayData: deleted rows count = " + delCount);
 
@@ -84,17 +76,17 @@ public abstract class DBOperations {
         SQLiteDatabase db = dbHelper.getWritableDatabase();
 
         // делаем запрос всех данных из таблицы mytable, получаем Cursor
-        String selection = ROWID_COLUMN_NAME + " = ?";
+        String selection = DBHelper.ROWID_COLUMN_NAME + " = ?";
         String[] selectionArgs = new String[] {rowId.toString()};
-        Cursor c = db.query(TABLE_NAME, null, selection, selectionArgs, null, null, START_DATETIME_COLUMN_NAME);
+        Cursor c = db.query(DBHelper.TABLE_NAME, null, selection, selectionArgs, null, null, DBHelper.START_DATETIME_COLUMN_NAME);
 
         if (c.moveToFirst()) {
 
-            final int idColIndex = c.getColumnIndex(ID_COLUMN_NAME);
-            final int eventIdColIndex = c.getColumnIndex(EVENT_ID_COLUMN_NAME);
-            final int startDatetimeColIndex = c.getColumnIndex(START_DATETIME_COLUMN_NAME);
-            final int groupIdColIndex = c.getColumnIndex(EVENT_GROUP_ID_COLUMN_NAME);
-            final int endDatetimeColIndex = c.getColumnIndex(END_DATETIME_COLUMN_NAME);
+            final int idColIndex = c.getColumnIndex(DBHelper.ID_COLUMN_NAME);
+            final int eventIdColIndex = c.getColumnIndex(DBHelper.EVENT_ID_COLUMN_NAME);
+            final int startDatetimeColIndex = c.getColumnIndex(DBHelper.START_DATETIME_COLUMN_NAME);
+            final int groupIdColIndex = c.getColumnIndex(DBHelper.EVENT_GROUP_ID_COLUMN_NAME);
+            final int endDatetimeColIndex = c.getColumnIndex(DBHelper.END_DATETIME_COLUMN_NAME);
 
             do {
 
@@ -125,16 +117,16 @@ public abstract class DBOperations {
         Icons icons = new Icons();
 
         // Select all mood rows for the day; get Cursor
-        final String selection = "((" + START_DATETIME_COLUMN_NAME + " >= ? and " +
-                                START_DATETIME_COLUMN_NAME + " < ?) or (" +
-                                END_DATETIME_COLUMN_NAME + " >= ? and " + END_DATETIME_COLUMN_NAME + " < ?)) and " +
-                                EVENT_TYPE_COLUMN_NAME + " == ?";
+        final String selection = "((" + DBHelper.START_DATETIME_COLUMN_NAME + " >= ? and " +
+                DBHelper.START_DATETIME_COLUMN_NAME + " < ?) or (" +
+                DBHelper.END_DATETIME_COLUMN_NAME + " >= ? and " + DBHelper.END_DATETIME_COLUMN_NAME + " < ?)) and " +
+                DBHelper.EVENT_TYPE_COLUMN_NAME + " == ?";
         final String[] selectionArgs = new String[]{selectedDayStartDateStringFillData,
                                                     selectedDayEndDateStringFillData,
                                                     selectedDayStartDateStringFillData,
                                                     selectedDayEndDateStringFillData,
                                                     String.valueOf(eventType)};
-        Cursor c = db.query(TABLE_NAME, null, selection, selectionArgs, null, null, START_DATETIME_COLUMN_NAME);
+        Cursor c = db.query(DBHelper.TABLE_NAME, null, selection, selectionArgs, null, null, DBHelper.START_DATETIME_COLUMN_NAME);
 
         // Get rows count in DB to define required amount of rows in the listView
         Integer rowsCount = c.getCount();
@@ -146,11 +138,11 @@ public abstract class DBOperations {
         Map<String, Object> m;
 
         // Define columns
-        final int idColIndex = c.getColumnIndex(ID_COLUMN_NAME);
-        final int moodColIndex = c.getColumnIndex(EVENT_ID_COLUMN_NAME);
-        final int startDatetimeColIndex = c.getColumnIndex(START_DATETIME_COLUMN_NAME);
-        final int groupColIndex = c.getColumnIndex(EVENT_GROUP_ID_COLUMN_NAME);
-        final int endDatetimeColIndex = c.getColumnIndex(END_DATETIME_COLUMN_NAME);
+        final int idColIndex = c.getColumnIndex(DBHelper.ID_COLUMN_NAME);
+        final int moodColIndex = c.getColumnIndex(DBHelper.EVENT_ID_COLUMN_NAME);
+        final int startDatetimeColIndex = c.getColumnIndex(DBHelper.START_DATETIME_COLUMN_NAME);
+        final int groupColIndex = c.getColumnIndex(DBHelper.EVENT_GROUP_ID_COLUMN_NAME);
+        final int endDatetimeColIndex = c.getColumnIndex(DBHelper.END_DATETIME_COLUMN_NAME);
 
         if (c.moveToFirst()) {
             do {
@@ -196,24 +188,24 @@ public abstract class DBOperations {
         SQLiteDatabase db = dbHelper.getWritableDatabase();
 
         // Select all mood rows for the day; get Cursor
-        final String selection = "((" + START_DATETIME_COLUMN_NAME + " >= ? and " +
-                                START_DATETIME_COLUMN_NAME + " < ?) or (" +
-                                END_DATETIME_COLUMN_NAME + " >= ? and " +
-                                END_DATETIME_COLUMN_NAME + " < ?)) and " +
-                                EVENT_TYPE_COLUMN_NAME + " == ?";
+        final String selection = "((" + DBHelper.START_DATETIME_COLUMN_NAME + " >= ? and " +
+                DBHelper.START_DATETIME_COLUMN_NAME + " < ?) or (" +
+                DBHelper.END_DATETIME_COLUMN_NAME + " >= ? and " +
+                DBHelper.END_DATETIME_COLUMN_NAME + " < ?)) and " +
+                DBHelper.EVENT_TYPE_COLUMN_NAME + " == ?";
         final String[] selectionArgs = new String[]{selectedDayStartDateStringFillData,
                                                     selectedDayEndDateStringFillData,
                                                     selectedDayStartDateStringFillData,
                                                     selectedDayEndDateStringFillData,
                                                     String.valueOf(eventType)};
-        Cursor c = db.query(TABLE_NAME, null, selection, selectionArgs, null, null, START_DATETIME_COLUMN_NAME);
+        Cursor c = db.query(DBHelper.TABLE_NAME, null, selection, selectionArgs, null, null, DBHelper.START_DATETIME_COLUMN_NAME);
 
         // Get rows count in DB to define required amount of rows in the listView
         Integer rowsCount = c.getCount();
         Integer[] positionRowIdMapping = new Integer[rowsCount];
 
         // Define columns
-        int idColIndex = c.getColumnIndex(ID_COLUMN_NAME);
+        int idColIndex = c.getColumnIndex(DBHelper.ID_COLUMN_NAME);
 
         int elementPosition = 0;
 
@@ -237,7 +229,7 @@ public abstract class DBOperations {
 
     public static void deleteRow(final DBHelper dbHelper, final Integer rowId) {
         SQLiteDatabase db = dbHelper.getWritableDatabase();
-        db.delete(TABLE_NAME, ID_COLUMN_NAME + " = " + rowId, null);
+        db.delete(DBHelper.TABLE_NAME, DBHelper.ID_COLUMN_NAME + " = " + rowId, null);
         dbHelper.close();
     }
 
@@ -246,8 +238,8 @@ public abstract class DBOperations {
         SQLiteDatabase db = dbHelper.getWritableDatabase();
 
         ContentValues cv = new ContentValues();
-        cv.put(START_DATETIME_COLUMN_NAME, timeInMillis);
-        db.update(TABLE_NAME, cv, ID_COLUMN_NAME + " = " + rowId, null);
+        cv.put(DBHelper.START_DATETIME_COLUMN_NAME, timeInMillis);
+        db.update(DBHelper.TABLE_NAME, cv, DBHelper.ID_COLUMN_NAME + " = " + rowId, null);
 
         dbHelper.close();
     }
@@ -256,7 +248,7 @@ public abstract class DBOperations {
 
         SQLiteDatabase db = dbHelper.getWritableDatabase();
 
-        db.delete(TABLE_NAME, null, null);
+        db.delete(DBHelper.TABLE_NAME, null, null);
 
         dbHelper.close();
     }
@@ -266,9 +258,9 @@ public abstract class DBOperations {
         SQLiteDatabase db = dbHelper.getWritableDatabase();
 
         ContentValues cv = new ContentValues();
-        cv.put(START_DATETIME_COLUMN_NAME, startTimeInMillis);
-        cv.put(END_DATETIME_COLUMN_NAME, endTimeInMillis);
-        db.update(TABLE_NAME, cv, ID_COLUMN_NAME + " = " + rowId, null);
+        cv.put(DBHelper.START_DATETIME_COLUMN_NAME, startTimeInMillis);
+        cv.put(DBHelper.END_DATETIME_COLUMN_NAME, endTimeInMillis);
+        db.update(DBHelper.TABLE_NAME, cv, DBHelper.ID_COLUMN_NAME + " = " + rowId, null);
 
         dbHelper.close();
     }
@@ -278,23 +270,23 @@ public abstract class DBOperations {
         SQLiteDatabase db = dbHelper.getWritableDatabase();
 
         StringBuffer emailTextStringBuffer = new StringBuffer().
-                append("RowId").append(";")
-                .append("EventId").append(";")
-                .append("EventGroupId").append(";")
-                .append("StartDate").append(";")
-                .append("EndDate").append("\n");
+                append(DBHelper.ROWID_COLUMN_NAME).append(";")
+                .append(DBHelper.EVENT_ID_COLUMN_NAME).append(";")
+                .append(DBHelper.EVENT_GROUP_ID_COLUMN_NAME).append(";")
+                .append(DBHelper.START_DATETIME_COLUMN_NAME).append(";")
+                .append(DBHelper.END_DATETIME_COLUMN_NAME).append("\n");
 
-        Cursor c = db.query(TABLE_NAME, null, null, null, null, null, START_DATETIME_COLUMN_NAME);
+        Cursor c = db.query(DBHelper.TABLE_NAME, null, null, null, null, null, DBHelper.START_DATETIME_COLUMN_NAME);
 
         // Get rows count in DB to define required amount of rows in the listView
         Integer rowsCount = c.getCount();
 
         // Define columns
-        final int idColIndex = c.getColumnIndex(ID_COLUMN_NAME);
-        final int moodColIndex = c.getColumnIndex(EVENT_ID_COLUMN_NAME);
-        final int startDatetimeColIndex = c.getColumnIndex(START_DATETIME_COLUMN_NAME);
-        final int groupColIndex = c.getColumnIndex(EVENT_GROUP_ID_COLUMN_NAME);
-        final int endDatetimeColIndex = c.getColumnIndex(END_DATETIME_COLUMN_NAME);
+        final int idColIndex = c.getColumnIndex(DBHelper.ID_COLUMN_NAME);
+        final int moodColIndex = c.getColumnIndex(DBHelper.EVENT_ID_COLUMN_NAME);
+        final int startDatetimeColIndex = c.getColumnIndex(DBHelper.START_DATETIME_COLUMN_NAME);
+        final int groupColIndex = c.getColumnIndex(DBHelper.EVENT_GROUP_ID_COLUMN_NAME);
+        final int endDatetimeColIndex = c.getColumnIndex(DBHelper.END_DATETIME_COLUMN_NAME);
 
         if (c.moveToFirst()) {
             do {

@@ -4,13 +4,13 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.DatePicker;
 
 import com.macgavrina.moodmenology.R;
+import com.macgavrina.moodmenology.logging.Log;
 import com.macgavrina.moodmenology.viewadapters.MainMenu;
 
 import java.util.Calendar;
@@ -18,7 +18,7 @@ import java.util.Calendar;
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
     //ToDo BUG timePickerDialog можно вызвать 2 раза
-    //ToDo NEW сделать нормальную систему debbug-логирования
+    //ToDo NEW переписать логи во всех класс на использование кастомного Log.java
     //ToDo NEW сохранение данных на сервере
     //ToDo REFACT перенести все отступы и т.д. в dimens.xml
     //ToDo REFACT можно ли вынести final переменные из классов в ресурсы?
@@ -49,9 +49,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         initalizeCurrentDate();
 
-        Log.d(LOG_TAG, "MainActivity.onCreate: MainActivity building is finished, " + calendarMain.getTimeInMillis());
+        Log.d("MainActivity.onCreate: MainActivity building is finished, " + calendarMain.getTimeInMillis());
 
     }
+
+/*    private void setupLogging() {
+        //Enable or disable logs depending on application settings
+        boolean isDebuggable = (BuildConfig.DEBUG);
+        Log.setDebugLogging(isDebuggable);
+    }*/
 
     private void initalizeCurrentDate() {
         //Блок чтобы устанавливалась текущая дата без перетыкивания в календаре
@@ -76,7 +82,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             case R.id.ActivityMain_addButton:
 
                 selectedDateInMillis = calendarMain.getTimeInMillis();
-                Log.d(LOG_TAG, "selectedDateInMillis = " + String.valueOf(selectedDateInMillis));
+                //Log.d(LOG_TAG, "selectedDateInMillis = " + String.valueOf(selectedDateInMillis));
                 Intent intent = new Intent("com.macgavrina.moodmenology.fill.data");
                 intent.putExtra(DATE_IN_MILLIS_KEY, selectedDateInMillis);
                 startActivity(intent);

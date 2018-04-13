@@ -31,17 +31,12 @@ public class SelectedDay {
         endDayDateAndTime.set(java.util.Calendar.MINUTE, 0);
     }
 
-    //ToDo REFACT сделать возвращаемое значение - Long и переводить в String на стороне получателя
-    public String getDayStartStringTimestamp(){
-        Long selectedDayStartDateTimestamp = startDayDateAndTime.getTimeInMillis();
-        String selectedDayStartDateString = selectedDayStartDateTimestamp.toString();
-        return selectedDayStartDateString;
+    public Long getDayStartTimestamp(){
+        return startDayDateAndTime.getTimeInMillis();
     }
 
-    public String getDayEndStringTimestamp(){
-        Long selectedDayEndDateTimestamp = endDayDateAndTime.getTimeInMillis();
-        String selectedDayEndDateString = selectedDayEndDateTimestamp.toString();
-        return selectedDayEndDateString;
+    public Long getDayEndTimestamp(){
+        return endDayDateAndTime.getTimeInMillis();
     }
 
     public Calendar getCurrentDateAndTime() {

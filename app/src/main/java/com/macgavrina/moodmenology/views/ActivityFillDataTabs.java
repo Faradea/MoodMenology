@@ -71,8 +71,8 @@ public class ActivityFillDataTabs extends AppCompatActivity implements View.OnCl
         selectedDay = new SelectedDay(selectedDateInMillis);
         dateAndTime = selectedDay.getCurrentDateAndTime();
 
-        selectedDayStartDateString = selectedDay.getDayStartStringTimestamp();
-        selectedDayEndDateString = selectedDay.getDayEndStringTimestamp();
+        selectedDayStartDateString = selectedDay.getDayStartTimestamp().toString();
+        selectedDayEndDateString = selectedDay.getDayEndTimestamp().toString();
 
         setupHeader();
 
