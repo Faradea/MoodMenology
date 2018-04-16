@@ -8,7 +8,6 @@ import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -18,8 +17,8 @@ import android.widget.TimePicker;
 
 import com.macgavrina.moodmenology.R;
 import com.macgavrina.moodmenology.SmallFunctions;
-import com.macgavrina.moodmenology.controllers.DBHelper;
 import com.macgavrina.moodmenology.controllers.DBOperations;
+import com.macgavrina.moodmenology.logging.Log;
 import com.macgavrina.moodmenology.model.MoodEvent;
 import com.macgavrina.moodmenology.model.SelectedDay;
 import com.macgavrina.moodmenology.viewadapters.MainMenu;
@@ -34,7 +33,10 @@ import java.util.Calendar;
 
 public class ActivityFillDataTabs extends AppCompatActivity implements View.OnClickListener, IMoodFragmentInteractionListener, IActionsFragmentInteractionListener {
 
-    private static final String LOG_TAG = "MoodMenology";
+
+    private static final int EDIT_MOOD_REQUEST_CODE = 1;
+    private static final int EDIT_ACTION_REQUEST_CODE = 2;
+    private static final int ADD_ACTION_REQUEST_CODE = 3;
 
     private static final String ACTION_GROUPID_KEY="actionGroupId";
     private static final String ROWID_KEY="rowId";
@@ -43,7 +45,7 @@ public class ActivityFillDataTabs extends AppCompatActivity implements View.OnCl
     private static final int MOOD_FRAGMENT_ID = 0;
     private static final int ACTION_FRAGMENT_ID = 1;
 
-    private DBHelper dbHelper;
+    private ActivityFillDataTabs context;
     private SelectedDay selectedDay;
 
     FragmentFillDataMood moodFragment;
@@ -54,6 +56,8 @@ public class ActivityFillDataTabs extends AppCompatActivity implements View.OnCl
     private Integer selectedMinuteFillData;
 
     //ToDo REFACT убрать вот такие ни к чему не привязанные переменнные (они должны быть частью каких-то объектов или использоваться локально)
+    private Long selectedDayStartDate;
+    private Long selectedDayEndDate;
     private String selectedDayStartDateString;
     private String selectedDayEndDateString;
     private Integer selectedMoodId;
@@ -65,12 +69,18 @@ public class ActivityFillDataTabs extends AppCompatActivity implements View.OnCl
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_filldata_tabs);
 
+        context = this;
+
         Intent intent = getIntent();
         Long selectedDateInMillis = intent.getLongExtra(DATE_IN_MILLIS_KEY, System.currentTimeMillis());
 
         selectedDay = new SelectedDay(selectedDateInMillis);
         dateAndTime = selectedDay.getCurrentDateAndTime();
 
+        selectedDayStartDate = selectedDay.getDayStartTimestamp();
+        selectedDayEndDate = selectedDay.getDayEndTimestamp();
+
+        //ToDo убрать вот эти стринги и использовать только Long выше
         selectedDayStartDateString = selectedDay.getDayStartTimestamp().toString();
         selectedDayEndDateString = selectedDay.getDayEndTimestamp().toString();
 
@@ -90,9 +100,7 @@ public class ActivityFillDataTabs extends AppCompatActivity implements View.OnCl
         moodFragment = (FragmentFillDataMood) adapter.getItem(MOOD_FRAGMENT_ID);
         actionFragment = (FragmentFillDataActions) adapter.getItem(ACTION_FRAGMENT_ID);
 
-        dbHelper = new DBHelper(this);
-
-        Log.d(LOG_TAG, "FillDataTabs.onCreate: FillDataTabs activity building is finished");
+        Log.d("Activity building is finished, selected Date = " + SmallFunctions.formatDate(selectedDateInMillis));
     }
 
     @Override
@@ -106,6 +114,8 @@ public class ActivityFillDataTabs extends AppCompatActivity implements View.OnCl
         dateAndTime.set(java.util.Calendar.HOUR_OF_DAY, currentDateAndTime.get(Calendar.HOUR_OF_DAY));
         dateAndTime.set(java.util.Calendar.MINUTE, currentDateAndTime.get(Calendar.MINUTE));
 
+        Log.d("Initial date for TimePicker dialog is actualized");
+
     }
 
     @Override
@@ -115,7 +125,7 @@ public class ActivityFillDataTabs extends AppCompatActivity implements View.OnCl
             // Delete all data button (trash icon beside the date) with alert dialog
             case R.id.ActivtyFilldata_deleteAllButton:
 
-                Log.d(LOG_TAG, "FillDataTabs.onClick: delete all data for the day button is pressed");
+                Log.d("User has pressed DeleteAllDataForTheDay button");
 
                 //ToDO REFACT Использовать для диалога xml-разметку
                 AlertDialog.Builder builder = new AlertDialog.Builder(ActivityFillDataTabs.this);
@@ -125,23 +135,23 @@ public class ActivityFillDataTabs extends AppCompatActivity implements View.OnCl
                         .setPositiveButton("Ok",
                                 new DialogInterface.OnClickListener() {
                                     public void onClick(DialogInterface dialog, int id) {
-                                        Log.d(LOG_TAG, "FillDataTabs.onClick: user confirms data deleting");
-                                        DBOperations.deleteAllDayData(dbHelper, selectedDayStartDateString, selectedDayEndDateString);
-                                        Log.d(LOG_TAG,"Activity: startDate="+selectedDayStartDateString);
+                                        Log.d("User has confirmed data deleting");
+                                        DBOperations.deleteAllDayData(context, selectedDayStartDate, selectedDayEndDate);
 
-                                        moodFragment.updateListMethod(selectedDayStartDateString, selectedDayEndDateString);
-                                        actionFragment.updateListMethod(selectedDayStartDateString,selectedDayEndDateString);
+                                        moodFragment.updateList();
+                                        actionFragment.updateList();
                                     }
                                 })
                         .setNegativeButton("Cancel",
                                 new DialogInterface.OnClickListener() {
                                     public void onClick(DialogInterface dialog, int id) {
                                         dialog.cancel();
-                                        Log.d(LOG_TAG, "FillDataTabs.onClick: user cancels data deleting");
+                                        Log.d("User has canceled data deleting");
                                     }
                                 });
                 AlertDialog alert = builder.create();
                 alert.show();
+                Log.d("AlertDialog is displayed");
                 break;
             default:
                 break;
@@ -151,37 +161,39 @@ public class ActivityFillDataTabs extends AppCompatActivity implements View.OnCl
     // Process event from FillDataMood fragment (user selects mood from GridView)
     @Override
     public void setTimeEvent(final Integer eventId) {
+        Log.d("Activity recieved setTimeEvent from FillDataMood fragment, selectedMoodId = " + selectedMoodId);
         View v = null;
         selectedMoodId = eventId;
         setTime(v);
+
     }
 
     // Process event from FillDataActions fragment (user selects action from GridView to edit it)
     @Override
     public void selectActionsGroupEvent(final Integer selectedActionsGroupId) {
-        Log.d(LOG_TAG, "FillDataTabs.selectActionsGroupEvent: Activity received event with selectActionsGroupEvent=" + selectedActionsGroupId);
+        Log.d("Activity received selectActionsFroup event from FillDataAction fragment, groupId =" + selectedActionsGroupId);
 
         Intent intentActions = new Intent("com.macgavrina.moodmenology.add.action");
         intentActions.putExtra(ACTION_GROUPID_KEY, selectedActionsGroupId);
         intentActions.putExtra(DATE_IN_MILLIS_KEY, dateAndTime.getTimeInMillis());
-        startActivity(intentActions);
+        startActivityForResult(intentActions, ADD_ACTION_REQUEST_CODE);
     }
 
     @Override
     public void editActionRowEvent(Integer rowId) {
-        Log.d(LOG_TAG, "FillDataTabs.editActionRowEvent: Activity received event - editRow with rowId=" + rowId);
+        Log.d("Activity received editActionRow event from FillDataAction fragment, rowId=" + rowId);
         Intent intentEdit = new Intent("com.macgavrina.moodmenology.edit.action");
         intentEdit.putExtra(ROWID_KEY, rowId);
-        startActivity(intentEdit);
+        startActivityForResult(intentEdit, EDIT_ACTION_REQUEST_CODE);
     }
 
     // Process event from FillDataMood fragment (user selects row from ListView to edit it)
     @Override
     public void editMoodRowEvent(final Integer rowId) {
-        Log.d(LOG_TAG, "FillDataTabs.editMoodRowEvent: Activity received event - editRow with rowId="+rowId);
+        Log.d("Activity received editMoodRow event from FillDataMood fragment, rowId="+rowId);
         Intent intentEdit = new Intent("com.macgavrina.moodmenology.edit.mood");
         intentEdit.putExtra(ROWID_KEY, rowId);
-        startActivity(intentEdit);
+        startActivityForResult(intentEdit, EDIT_MOOD_REQUEST_CODE);
     }
 
     // OnTimeSetListener (user selects time)
@@ -192,16 +204,12 @@ public class ActivityFillDataTabs extends AppCompatActivity implements View.OnCl
             selectedHourOfDayFillData = hourOfDay;
             selectedMinuteFillData = minute;
 
-            Log.d(LOG_TAG, "FillDataTabs.onTimeSetListener: User sets time: "+selectedHourOfDayFillData + ":" + selectedMinuteFillData);
-
-
-            Log.d(LOG_TAG, "FillDataTabs.setTimeEvent: Activity received event with selectedMoodId=" + selectedMoodId);
+            Log.d("User has set time: " + SmallFunctions.formatTime(dateAndTime.getTimeInMillis()));
 
             MoodEvent moodEvent = new MoodEvent(dateAndTime.getTimeInMillis(), selectedMoodId);
-            moodEvent.saveToDB(dbHelper);
+            moodEvent.saveToDB(context);
 
-            Log.d(LOG_TAG, "FillDataTabs.onTimeSetListener: Update list after adding new row");
-            moodFragment.updateListMethod(selectedDayStartDateString, selectedDayEndDateString);
+            moodFragment.updateList();
 
         }
     };
@@ -212,16 +220,13 @@ public class ActivityFillDataTabs extends AppCompatActivity implements View.OnCl
                 dateAndTime.get(java.util.Calendar.HOUR_OF_DAY),
                 dateAndTime.get(java.util.Calendar.MINUTE), true)
                 .show();
-        Log.d(LOG_TAG, "FillDataTabs.setTime: TimePickerDialog is displayed");
+        Log.d("TimePickerDialog is displayed, initial time = " + SmallFunctions.formatTime(dateAndTime.getTimeInMillis()));
     }
 
     private void setupHeader() {
 
         deleteAllButtonFillData = (ImageButton) findViewById(R.id.ActivtyFilldata_deleteAllButton);
         deleteAllButtonFillData.setOnClickListener(this);
-
-        Integer hour = dateAndTime.get(Calendar.HOUR_OF_DAY);
-        Log.d(LOG_TAG, "hour="+String.valueOf(hour));
 
         String selectedDateStringFillData= SmallFunctions.formatDate(dateAndTime.getTimeInMillis());
         selectedDateFillData = (TextView) findViewById(R.id.ActivtyFilldata_dateText);
@@ -233,6 +238,29 @@ public class ActivityFillDataTabs extends AppCompatActivity implements View.OnCl
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.mainmenu, menu);
         return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    protected void onActivityResult (int requestCode, int resultCode, Intent data) {
+        switch (requestCode) {
+            case (EDIT_MOOD_REQUEST_CODE):
+                if (resultCode == RESULT_OK) {
+                    moodFragment.updateList();
+                }
+                break;
+            case (EDIT_ACTION_REQUEST_CODE):
+                if (resultCode == RESULT_OK) {
+                    actionFragment.updateList();
+                }
+                break;
+            case (ADD_ACTION_REQUEST_CODE):
+                if (resultCode == RESULT_OK) {
+                    actionFragment.updateList();
+                }
+                break;
+            default:
+                break;
+        }
     }
 
     // обработка выбора пункта меню

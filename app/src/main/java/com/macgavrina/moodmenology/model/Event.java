@@ -1,10 +1,8 @@
 package com.macgavrina.moodmenology.model;
 
-import com.macgavrina.moodmenology.controllers.DBHelper;
-import com.macgavrina.moodmenology.controllers.DBOperations;
+import android.content.Context;
 
-import java.util.Calendar;
-import java.util.Date;
+import com.macgavrina.moodmenology.controllers.DBOperations;
 
 /**
  * Created by Irina on 09.02.2018.
@@ -29,12 +27,12 @@ public abstract class Event {
         this.startDateInUnixFormat = startDateInUnixFormat;
     }
 
-    public void deleteEvent(final DBHelper dbHelper) {
-        DBOperations.deleteRow(dbHelper, this.rowId);
+    public void deleteEvent(final Context context) {
+        DBOperations.deleteRow(context, this.rowId);
     }
 
-    public void updateStartTime(final DBHelper dbHelper) {
-        DBOperations.updateStartTime(dbHelper, this.rowId, this.startDateInUnixFormat);
+    public void updateStartTime(final Context context) {
+        DBOperations.updateStartTime(context, this.rowId, this.startDateInUnixFormat);
     }
 
     public enum EventTypes {

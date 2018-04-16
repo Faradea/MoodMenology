@@ -1,6 +1,5 @@
 package com.macgavrina.moodmenology.viewadapters;
 
-import android.annotation.SuppressLint;
 import android.support.v4.app.FragmentActivity;
 import android.widget.ImageView;
 import android.widget.SimpleAdapter;
@@ -10,13 +9,13 @@ import com.macgavrina.moodmenology.model.Icons;
 import java.util.List;
 import java.util.Map;
 
-import static java.sql.Types.NULL;
-
 /**
  * Created by Irina on 29.12.2017.
  */
 
 public class MySimpleAdapterGrid extends SimpleAdapter {
+
+    //ToDo перейти с SimpleAdapter на SimpleCursorAdapter (+ Cursor Loader)
 
     private static final int MOOD_TYPE_ID = 0;
     private static final int ACTION_GROUP_TYPE_ID=1;

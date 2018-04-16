@@ -6,7 +6,6 @@ import android.app.TimePickerDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
@@ -16,7 +15,7 @@ import android.widget.TimePicker;
 
 import com.macgavrina.moodmenology.R;
 import com.macgavrina.moodmenology.SmallFunctions;
-import com.macgavrina.moodmenology.controllers.DBHelper;
+import com.macgavrina.moodmenology.logging.Log;
 import com.macgavrina.moodmenology.model.ActionEvent;
 import com.macgavrina.moodmenology.model.Colors;
 import com.macgavrina.moodmenology.model.Icons;
@@ -33,7 +32,6 @@ import java.util.Map;
 
 public class ActivityAddAction extends AppCompatActivity implements View.OnClickListener, IAddActionFragmentListener {
 
-    private static final String LOG_TAG = "MoodMenology";
     private static final String ATTRIBUTE_NAME_GRID_IMAGE = "image";
     private static final String ATTRIBUTE_NAME_LL_GRID = "ll_grid";
 
@@ -49,7 +47,6 @@ public class ActivityAddAction extends AppCompatActivity implements View.OnClick
     private static final Long dayDurationInMillis = Long.valueOf(86400000);
 
     private Icons icons;
-    private DBHelper dbHelper;
     private ActionEvent actionEvent;
 
     private Integer actionsGroupId;
@@ -82,10 +79,11 @@ public class ActivityAddAction extends AppCompatActivity implements View.OnClick
 
         setupGridView();
 
-        Log.d(LOG_TAG, "AddActionActivity.onCreate: activity building is finished, selectedActionsGroupId = " + actionsGroupId);
+        Log.d("Activity building is finished, selectedActionsGroupId = " + actionsGroupId);
     }
 
     private void addActionEventFragment(final ActionEvent actionEvent) {
+
         // получаем экземпляр FragmentTransaction
         FragmentManager fragmentManager = getFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager
@@ -136,7 +134,7 @@ public class ActivityAddAction extends AppCompatActivity implements View.OnClick
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 selectedActionId = position;
-                Log.d(LOG_TAG, "AddActionActivity.onItemClick: grid item is selected, actionId = " + selectedActionId);
+                Log.d("Grid item is selected, actionId = " + selectedActionId);
                 setStartTime();
             }
         });
@@ -167,7 +165,7 @@ public class ActivityAddAction extends AppCompatActivity implements View.OnClick
                 dateAndTimeStart.get(java.util.Calendar.HOUR_OF_DAY),
                 dateAndTimeStart.get(java.util.Calendar.MINUTE), true)
                 .show();
-        Log.d(LOG_TAG, "AddActionActivity.setTime: TimePickerDialog is displayed");
+        Log.d("TimePickerDialog to set startTime is displayed, initial time is " + SmallFunctions.formatTime(dateAndTimeStart.getTimeInMillis()));
     }
 
     private void setEndTime() {
@@ -176,7 +174,7 @@ public class ActivityAddAction extends AppCompatActivity implements View.OnClick
                 dateAndTimeEnd.get(java.util.Calendar.HOUR_OF_DAY),
                 dateAndTimeEnd.get(java.util.Calendar.MINUTE), true)
                 .show();
-        Log.d(LOG_TAG, "AddActionActivity.setTime: TimePickerDialog is displayed");
+        Log.d("TimePickerDialog to set endTime is displayed, initial time is " + SmallFunctions.formatTime(dateAndTimeEnd.getTimeInMillis()));
     }
 
     TimePickerDialog.OnTimeSetListener tStart = new TimePickerDialog.OnTimeSetListener() {
@@ -189,6 +187,9 @@ public class ActivityAddAction extends AppCompatActivity implements View.OnClick
             addActionEventFragment(actionEvent);
 
             saveButton.setEnabled(true);
+
+            Log.d("Start time is set by user, startDate = " + SmallFunctions.formatDate(dateAndTimeStart.getTimeInMillis()) +
+            ", startTime = " + SmallFunctions.formatTime(dateAndTimeStart.getTimeInMillis()));
         }
     };
 
@@ -206,6 +207,9 @@ public class ActivityAddAction extends AppCompatActivity implements View.OnClick
 
             addActionEventFragment(actionEvent);
 
+            Log.d("End time is set by user, endDate = " + SmallFunctions.formatDate(dateAndTimeStart.getTimeInMillis()) +
+                    ", endTime = " + SmallFunctions.formatTime(dateAndTimeStart.getTimeInMillis()));
+
         }
     };
 
@@ -216,11 +220,12 @@ public class ActivityAddAction extends AppCompatActivity implements View.OnClick
         switch (v.getId()){
             case (R.id.AddActionActivity_saveButton):
 
-                dbHelper = new DBHelper(this);
-                actionEvent.saveToDB(dbHelper);
+                actionEvent.saveToDB(this);
 
                 setResult(RESULT_OK, new Intent());
                 finish();
+
+                Log.d("User presses Save button");
 
                 break;
             default:
@@ -230,13 +235,13 @@ public class ActivityAddAction extends AppCompatActivity implements View.OnClick
 
     @Override
     public void editStartDate() {
-        Log.d(LOG_TAG, "AddActionActivity: editStartDate event");
+        Log.d("Activity has recieved editStartDate event from Fragment");
         setStartTime();
     }
 
     @Override
     public void editEndDate() {
-        Log.d(LOG_TAG, "AddActionActivity: editEndDate event");
+        Log.d("Activity has recieved editEndDate event from Fragment");
         setEndTime();
     }
 

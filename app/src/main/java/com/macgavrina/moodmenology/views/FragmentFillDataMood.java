@@ -7,7 +7,6 @@ import android.os.Bundle;
 import android.support.annotation.RequiresApi;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,12 +15,12 @@ import android.widget.GridView;
 import android.widget.SimpleAdapter;
 
 import com.macgavrina.moodmenology.R;
+import com.macgavrina.moodmenology.SmallFunctions;
 import com.macgavrina.moodmenology.controllers.DBOperations;
+import com.macgavrina.moodmenology.logging.Log;
 import com.macgavrina.moodmenology.model.Colors;
 import com.macgavrina.moodmenology.model.Event;
 import com.macgavrina.moodmenology.model.Icons;
-import com.macgavrina.moodmenology.controllers.DBHelper;
-import com.macgavrina.moodmenology.model.MoodEvent;
 import com.macgavrina.moodmenology.viewadapters.MySimpleAdapterGrid;
 
 import java.util.ArrayList;
@@ -38,7 +37,8 @@ public class FragmentFillDataMood extends Fragment {
 
     private GridView gridViewMoodFragment;
 
-    private static final String LOG_TAG = "MoodMenology";
+    private SimpleAdapter sAdapterList;
+    public ArrayList<Map<String, Object>> data;
 
     private static final String ATTRIBUTE_NAME_START_DATE = "startDate";
     private static final String ATTRIBUTE_NAME_LL = "ll";
@@ -51,13 +51,14 @@ public class FragmentFillDataMood extends Fragment {
     private static final int iconsType= Icons.IconTypes.moodIconsType.getId();
 
     private Integer selectedMoodId;
-    private static String selectedDayStartDateStringFillData;
-    private static String selectedDayEndDateStringFillData;
+    private static Long selectedDayStartDate;
+    private static Long selectedDayEndDate;
     private String startDateValue;
     private String endDateValue;
 
-    //ToDO REFACT в activity DBHelper non-static, во фрагменте - static. Понять как правильно
-    private static DBHelper dbHelper;
+    String[] from;
+    int[] to;
+
     private static Integer[] positionRowIdMapping;
 
     private static GridView lvSimple;
@@ -75,6 +76,12 @@ public class FragmentFillDataMood extends Fragment {
     public View onCreateView(final LayoutInflater inflater, final ViewGroup container,
                              final Bundle savedInstanceState) {
 
+        Activity activity = getActivity();
+        if (activity instanceof FragmentActivity) {
+            myContext = (FragmentActivity) activity;
+
+        }
+
         // Inflate the layout for this fragment
         View v = inflater.inflate(R.layout.fragment_filldata_mood, container, false);
 
@@ -84,9 +91,22 @@ public class FragmentFillDataMood extends Fragment {
 
         getBundleDataFromActivity();
 
+        sAdapterList = initializeList();
+
         setupGridView();
 
-        Log.d(LOG_TAG, "FillDataMoodFragment.onCreateView: FillDataMood fragment building is finished, startDate="+startDateValue+", endDate="+endDateValue);
+        try {
+            moodFragmentListener = (IMoodFragmentInteractionListener) activity;
+            Log.d("moodFragmentListener interface is ok");
+        } catch (ClassCastException e) {
+            throw new ClassCastException(activity.toString()
+                    + " shall implement moodFragmentListener interface");
+        }
+
+        Log.d( "Fragment building is finished, startDate = "
+                + SmallFunctions.formatDate(Long.valueOf(startDateValue)) + ", startTime = " + SmallFunctions.formatTime(Long.valueOf(startDateValue))
+                + ", endDate = " + SmallFunctions.formatDate(Long.valueOf(endDateValue)) +
+                ", endTime = " + SmallFunctions.formatTime(Long.valueOf(endDateValue)));
 
         return v;
 
@@ -96,25 +116,7 @@ public class FragmentFillDataMood extends Fragment {
     //Update list after editing via EditMood activity
     public void onResume() {
         super.onResume();
-        Log.d(LOG_TAG, "FillDataMoodFragment.onResume: call update list"+startDateValue);
-        updateListMethod(startDateValue, endDateValue);
-    }
-
-    // Check interface fragment <-> activity
-    @Override
-    public void onAttach(final Activity activity) {
-        super.onAttach(activity);
-        try {
-            moodFragmentListener = (IMoodFragmentInteractionListener) activity;
-            Log.d(LOG_TAG, "FillDataMoodFragment.onAttach: moodFragmentListener interface is ok");
-        } catch (ClassCastException e) {
-            throw new ClassCastException(activity.toString()
-                    + " shall implement moodFragmentListener interface");
-        }
-        if (activity instanceof FragmentActivity) {
-            myContext = (FragmentActivity) activity;
-
-        }
+        //updateList(Long.valueOf(startDateValue), Long.valueOf(endDateValue));
     }
 
     private void setupGridView() {
@@ -147,9 +149,10 @@ public class FragmentFillDataMood extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 selectedMoodId=position;
-                Log.d(LOG_TAG, "FillDataMoodFragment.onItemClick: grid item is selected, moodId = " + selectedMoodId);
+                Log.d("User has selected gridItem with moodId = " + selectedMoodId);
                 // Send event to Activity
                 moodFragmentListener.setTimeEvent(selectedMoodId);
+                updateList();
 
             }
         });
@@ -159,28 +162,34 @@ public class FragmentFillDataMood extends Fragment {
         // Get data from activity
         Bundle bundle = this.getArguments();
         if (bundle != null) {
+            //ToDo REFACT передавать Long вместо String
             startDateValue = bundle.getString(STARTDATE_KEY, "");
             endDateValue = bundle.getString(ENDDATE_KEY, "");
+            selectedDayStartDate = Long.valueOf(startDateValue);
+            selectedDayEndDate = Long.valueOf(endDateValue);
         }
     }
 
 
 
     //Update listView
-    public void updateListMethod(final String selectedDayStartDateStringMood, final String selectedDayEndDateStringMood) {
-        selectedDayStartDateStringFillData = selectedDayStartDateStringMood;
-        selectedDayEndDateStringFillData = selectedDayEndDateStringMood;
+    private SimpleAdapter initializeList() {
 
-        dbHelper = new DBHelper(myContext);
-        ArrayList<Map<String, Object>> data = DBOperations.getEventListForTheDay(dbHelper, selectedDayStartDateStringFillData, selectedDayEndDateStringFillData, Event.EventTypes.moodEventTypeId.getId());
+        Log.d("Initialize list for startDate = " + SmallFunctions.formatDate(selectedDayStartDate)+
+        ", startTime = " + SmallFunctions.formatTime(selectedDayStartDate) +
+        ", endDate = " + SmallFunctions.formatDate(selectedDayEndDate) +
+        ", endTime = " + SmallFunctions.formatTime(selectedDayEndDate));
 
-        positionRowIdMapping = DBOperations.getPositionRowIdMapping(dbHelper, selectedDayStartDateStringFillData, selectedDayEndDateStringFillData, Event.EventTypes.moodEventTypeId.getId());
+        data = DBOperations.getEventListForTheDay(myContext, selectedDayStartDate, selectedDayEndDate, Event.EventTypes.moodEventTypeId.getId());
+
+        positionRowIdMapping = DBOperations.getPositionRowIdMapping(myContext, selectedDayStartDate, selectedDayEndDate, Event.EventTypes.moodEventTypeId.getId());
 
         // Create adapter
-        String[] from = {ATTRIBUTE_NAME_START_DATE, ATTRIBUTE_NAME_LL};
-        int[] to = {R.id.ItemMoodEvent_timeText, R.id.ItemMoodEvent_layout};
+        from = new String[] {ATTRIBUTE_NAME_START_DATE, ATTRIBUTE_NAME_LL};
+        to = new int[]{R.id.ItemMoodEvent_timeText, R.id.ItemMoodEvent_layout};
         SimpleAdapter sAdapterList = new SimpleAdapter(myContext, data, R.layout.item_mood_event,
                 from, to);
+
         sAdapterList.setViewBinder(new LayoutColorViewBinder());
 
         // Set adapter to list
@@ -191,11 +200,34 @@ public class FragmentFillDataMood extends Fragment {
         lvSimple.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                                             @Override
                                             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                                                Log.d(LOG_TAG, "FillDataMoodFragment.updateList.setOnItemClickListener: selected list item: position = " + position + ", id = " + id + ", rowId = " + positionRowIdMapping[position]);
+                                                Log.d("User has selected listItem: position = " + position + ", id = " + id + ", rowId = " + positionRowIdMapping[position]);
                                                 moodFragmentListener.editMoodRowEvent(positionRowIdMapping[position]);
                                             }
                                         }
         );
+
+        return sAdapterList;
+    }
+
+    //ToDO REFACT переписать через sAdapterList.notifyDataSetChanged (и для action тоже)
+    public void updateList() {
+
+        initializeList();
+
+/*        if (sAdapterList == null) {
+            sAdapterList = initializeList();;
+        }
+
+        Log.d("Update list for startDate = " + SmallFunctions.formatDate(selectedDayStartDate)+
+                ", startTime = " + SmallFunctions.formatTime(selectedDayStartDate) +
+                ", endDate = " + SmallFunctions.formatDate(selectedDayEndDate) +
+                ", endTime = " + SmallFunctions.formatTime(selectedDayEndDate));
+
+        data = DBOperations.getEventListForTheDay(dbHelper, selectedDayStartDate, selectedDayEndDate, Event.EventTypes.moodEventTypeId.getId());
+
+        positionRowIdMapping = DBOperations.getPositionRowIdMapping(dbHelper, selectedDayStartDate, selectedDayEndDate, Event.EventTypes.moodEventTypeId.getId());
+
+        sAdapterList.notifyDataSetChanged();*/
 
     }
 

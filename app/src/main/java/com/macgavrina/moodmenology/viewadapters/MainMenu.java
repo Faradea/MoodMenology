@@ -3,15 +3,13 @@ package com.macgavrina.moodmenology.viewadapters;
 import android.content.Intent;
 import android.support.v4.app.FragmentActivity;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 
 import com.macgavrina.moodmenology.R;
 import com.macgavrina.moodmenology.controllers.DBHelper;
 import com.macgavrina.moodmenology.controllers.DBOperations;
+import com.macgavrina.moodmenology.logging.Log;
 
 public class MainMenu extends AppCompatActivity {
-
-    private static final String LOG_TAG = "MoodMenology";
 
     private int menuItemId;
     private Intent intent;
@@ -25,10 +23,11 @@ public class MainMenu extends AppCompatActivity {
 
         switch (menuItemId){
             case R.id.menu_settings:
-                Log.d(LOG_TAG, "MainActivity.onOptionsItemSelected: settings menu item is picked");
+                Log.d("User selects Settings menuItem, start processing");
                 intent = new Intent("com.macgavrina.moodmenology.settings");
                 break;
             case R.id.menu_send_data:
+                Log.d("User selects SendData menuItem, start processing");
                 intent = new Intent(android.content.Intent.ACTION_SEND);
                 intent.setType("plain/text");
 
@@ -41,7 +40,7 @@ public class MainMenu extends AppCompatActivity {
                 DBHelper dbHelper = new DBHelper(activity);
 
                 intent.putExtra(android.content.Intent.EXTRA_TEXT,
-                        DBOperations.getAllDataForEmail(dbHelper));
+                        DBOperations.getAllDataForEmail(this));
 
                 break;
             default:

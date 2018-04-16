@@ -1,11 +1,9 @@
 package com.macgavrina.moodmenology.model;
 
-import com.macgavrina.moodmenology.controllers.DBHelper;
+import android.content.Context;
+
 import com.macgavrina.moodmenology.controllers.DBOperations;
 
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.Map;
 
 /**
@@ -24,9 +22,9 @@ public class MoodEvent extends Event {
         this.eventId = selectedMoodId;
     }
 
-    public static MoodEvent getMoodData(final DBHelper dbHelper, final Integer rowId) {
+    public static MoodEvent getMoodData(final Context context, final Integer rowId) {
 
-        Map<String,Object> eventData = DBOperations.getEvent(dbHelper, rowId);
+        Map<String,Object> eventData = DBOperations.getEvent(context, rowId);
 
         MoodEvent moodEvent = new MoodEvent(
                 (Long) eventData.get(ATTRIBUTE_NAME_START_DATE),
@@ -39,8 +37,8 @@ public class MoodEvent extends Event {
         return moodEvent;
     }
 
-    public void saveToDB(final DBHelper dbHelper) {
-        DBOperations.addRow(dbHelper, this.eventId, startDateInUnixFormat, this.eventType, 0, (long) 0);
+    public void saveToDB(final Context context) {
+        DBOperations.addRow(context, this.eventId, startDateInUnixFormat, this.eventType, 0, (long) 0);
     }
 
 }

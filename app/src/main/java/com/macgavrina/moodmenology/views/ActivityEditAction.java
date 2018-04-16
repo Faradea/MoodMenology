@@ -4,7 +4,6 @@ import android.app.TimePickerDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
@@ -14,7 +13,7 @@ import android.widget.TimePicker;
 
 import com.macgavrina.moodmenology.R;
 import com.macgavrina.moodmenology.SmallFunctions;
-import com.macgavrina.moodmenology.controllers.DBHelper;
+import com.macgavrina.moodmenology.logging.Log;
 import com.macgavrina.moodmenology.model.ActionEvent;
 import com.macgavrina.moodmenology.model.Icons;
 
@@ -24,12 +23,10 @@ import com.macgavrina.moodmenology.model.Icons;
 
 public class ActivityEditAction extends AppCompatActivity implements View.OnClickListener {
 
-    private static final String LOG_TAG = "MoodMenology";
     private static final String ROWID_KEY = "rowId";
 
     private static final Long dayDurationInMillis = Long.valueOf(86400000);
 
-    private DBHelper dbHelper;
     private ActionEvent actionEvent;
     private Icons icons;
 
@@ -69,8 +66,7 @@ public class ActivityEditAction extends AppCompatActivity implements View.OnClic
         saveButton.setOnClickListener(this);
         saveButton.setEnabled(false);
 
-        dbHelper = new DBHelper(this);
-        actionEvent = ActionEvent.getActionData(dbHelper, rowId);
+        actionEvent = ActionEvent.getActionData(this, rowId);
 
         dateAndTimeStart.setTimeInMillis(actionEvent.getStartDateInUnixFormat());
         dateAndTimeEnd.setTimeInMillis(actionEvent.getEndDateInUnixFormat());
@@ -84,7 +80,7 @@ public class ActivityEditAction extends AppCompatActivity implements View.OnClic
         deleteButton = (Button) findViewById(R.id.ActivityEditAction_deleteButton);
         deleteButton.setOnClickListener(this);
 
-        Log.d(LOG_TAG, "EditActionActivity.onCreate: EditAction activity building is finished, rowId=" + rowId);
+        Log.d("Activity building is finished, rowId=" + rowId);
     }
 
     private void setupEndTimeTextView() {
@@ -102,7 +98,9 @@ public class ActivityEditAction extends AppCompatActivity implements View.OnClic
         switch (v.getId()){
             case R.id.ActivityEditAction_deleteButton:
 
-                actionEvent.deleteEvent(dbHelper);
+                Log.d("User has pressed Delete Button, start processing");
+
+                actionEvent.deleteEvent(this);
 
                 setResult(RESULT_OK, new Intent());
                 finish();
@@ -111,7 +109,9 @@ public class ActivityEditAction extends AppCompatActivity implements View.OnClic
 
             case R.id.ActivityEditAction_saveButton:
 
-                actionEvent.updateStartAndEndTime(dbHelper);
+                Log.d("User has pressed Save Button, start processing");
+
+                actionEvent.updateStartAndEndTime(this);
 
                 setResult(RESULT_OK, new Intent());
                 finish();
@@ -120,11 +120,15 @@ public class ActivityEditAction extends AppCompatActivity implements View.OnClic
 
             case R.id.ActivityEditAction_editStartTimeImageButton:
 
+                Log.d("User has pressed EditStartTime Button, start processing");
+
                 setStartTime(v);
 
                 break;
 
             case R.id.ActivityEditAction_editEndTimeImageButton:
+
+                Log.d("User has pressed EditEndTime Button, start processing");
 
                 setEndTime(v);
 
@@ -142,6 +146,8 @@ public class ActivityEditAction extends AppCompatActivity implements View.OnClic
                 dateAndTimeStart.get(java.util.Calendar.HOUR_OF_DAY),
                 dateAndTimeStart.get(java.util.Calendar.MINUTE), true)
                 .show();
+
+        Log.d("TimePicker dialog for startTime is displayed, initial time is " + SmallFunctions.formatTime(dateAndTimeStart.getTimeInMillis()));
     }
 
     // установка обработчика выбора времени
@@ -157,6 +163,9 @@ public class ActivityEditAction extends AppCompatActivity implements View.OnClic
             //endTimeTextView.setText("To: " + SmallFunctions.formatTime(actionEvent.getEndDateInUnixFormat()));
 
             saveButton.setEnabled(true);
+
+            Log.d("Start time is set by user, startDate = " + SmallFunctions.formatDate(dateAndTimeStart.getTimeInMillis()) +
+                    ", startTime = " + SmallFunctions.formatTime(dateAndTimeStart.getTimeInMillis()));
         }
     };
 
@@ -167,6 +176,9 @@ public class ActivityEditAction extends AppCompatActivity implements View.OnClic
                 dateAndTimeEnd.get(java.util.Calendar.HOUR_OF_DAY),
                 dateAndTimeEnd.get(java.util.Calendar.MINUTE), true)
                 .show();
+
+        Log.d("TimePicker dialog for endTime is displayed, initial time is " + SmallFunctions.formatTime(dateAndTimeEnd.getTimeInMillis()));
+
     }
 
     // установка обработчика выбора времени
@@ -184,6 +196,9 @@ public class ActivityEditAction extends AppCompatActivity implements View.OnClic
             setupEndTimeTextView();
             //endTimeTextView.setText("From: "+SmallFunctions.formatTime(actionEvent.getEndDateInUnixFormat()));
             saveButton.setEnabled(true);
+
+            Log.d("End time is set by user, endDate = " + SmallFunctions.formatDate(dateAndTimeStart.getTimeInMillis()) +
+                    ", endTime = " + SmallFunctions.formatTime(dateAndTimeStart.getTimeInMillis()));
         }
     };
 }

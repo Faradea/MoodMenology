@@ -1,11 +1,9 @@
 package com.macgavrina.moodmenology.model;
 
-import com.macgavrina.moodmenology.controllers.DBHelper;
+import android.content.Context;
+
 import com.macgavrina.moodmenology.controllers.DBOperations;
 
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -44,9 +42,9 @@ public class ActionEvent extends Event{
     }
 
     //ToDo REFACT подумать правильная ли это конструкция - со static методом
-    public static ActionEvent getActionData(DBHelper dbHelper, Integer rowId) {
+    public static ActionEvent getActionData(Context context, Integer rowId) {
 
-        Map<String,Object> eventData = DBOperations.getEvent(dbHelper, rowId);
+        Map<String,Object> eventData = DBOperations.getEvent(context, rowId);
 
         ActionEvent actionEvent = new ActionEvent(
                 (Long) eventData.get(ATTRIBUTE_NAME_START_DATE),
@@ -72,12 +70,12 @@ public class ActionEvent extends Event{
         return duration;
     }
 
-    public void saveToDB(final DBHelper dbHelper) {
-        DBOperations.addRow(dbHelper, this.eventId, this.startDateInUnixFormat, this.eventType, this.actionGroupId, this.endDateInUnixFormat);
+    public void saveToDB(final Context context) {
+        DBOperations.addRow(context, this.eventId, this.startDateInUnixFormat, this.eventType, this.actionGroupId, this.endDateInUnixFormat);
     }
 
-    public void updateStartAndEndTime(DBHelper dbHelper) {
-        DBOperations.updateStartAndEndTime(dbHelper, this.rowId, this.startDateInUnixFormat, this.endDateInUnixFormat);
+    public void updateStartAndEndTime(Context context) {
+        DBOperations.updateStartAndEndTime(context, this.rowId, this.startDateInUnixFormat, this.endDateInUnixFormat);
     }
 
     @Override

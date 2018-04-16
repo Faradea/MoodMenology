@@ -23,14 +23,14 @@ public abstract class SmallFunctions {
         return formattedDate;
     }
 
-    public static String formatTimeWithCompare (final long aLong, final String startDate, final String endDate) {
+    public static String formatTimeWithCompare (final long aLong, final Long startDate, final Long endDate) {
 
         long unixTime = aLong;
         Date date = new Date(unixTime);
         SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
         String formattedDate = sdf.format(date);
 
-        if (aLong < Long.valueOf(startDate) || aLong >= Long.valueOf(endDate)) {
+        if (aLong < startDate || aLong >= endDate) {
             formattedDate = "* " + formattedDate;
         }
 

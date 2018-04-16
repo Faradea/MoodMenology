@@ -3,7 +3,8 @@ package com.macgavrina.moodmenology.controllers;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.support.v4.app.FragmentActivity;
-import android.util.Log;
+
+import com.macgavrina.moodmenology.logging.Log;
 
 
 /**
@@ -12,7 +13,6 @@ import android.util.Log;
 
 public class DBHelper extends SQLiteOpenHelper {
 
-    private static final String LOG_TAG = "MoodMenology";
 
     public static final String DB_NAME = "myDB";
     public static final String EVENT_ID_COLUMN_NAME = "eventId";
@@ -44,7 +44,7 @@ public class DBHelper extends SQLiteOpenHelper {
                 .append(");").toString()
                 );
 
-        Log.d(LOG_TAG, "FillDataTabs.onCreate DB: DB is created");
+        Log.d("DataBase is created");
     }
 
     @Override

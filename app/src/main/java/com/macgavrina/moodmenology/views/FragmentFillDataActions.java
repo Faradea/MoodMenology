@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,8 +12,9 @@ import android.widget.GridView;
 import android.widget.SimpleAdapter;
 
 import com.macgavrina.moodmenology.R;
-import com.macgavrina.moodmenology.controllers.DBHelper;
+import com.macgavrina.moodmenology.SmallFunctions;
 import com.macgavrina.moodmenology.controllers.DBOperations;
+import com.macgavrina.moodmenology.logging.Log;
 import com.macgavrina.moodmenology.model.Colors;
 import com.macgavrina.moodmenology.model.Event;
 import com.macgavrina.moodmenology.model.Icons;
@@ -30,8 +30,6 @@ import java.util.Map;
  */
 
 public class FragmentFillDataActions extends Fragment {
-
-    private static final String LOG_TAG = "MoodMenology";
 
     private static final String ATTRIBUTE_NAME_GRID_IMAGE = "image";
     private static final String ATTRIBUTE_NAME_LL_GRID = "ll_grid";
@@ -50,6 +48,9 @@ public class FragmentFillDataActions extends Fragment {
     private Integer selectedActionsGroupId;
 
     private GridView gridViewActionFragment;
+
+    private static Long selectedDayStartDate;
+    private static Long selectedDayEndDate;
 
     //ToDo REFACT сделать non-static
     private static FragmentActivity myContext;
@@ -81,17 +82,22 @@ public class FragmentFillDataActions extends Fragment {
 
         getBundleDataFromActivity();
 
-        setupGridView();
+        initializeList();
 
-        Log.d(LOG_TAG, "FillDataActionFragment.onCreateView: FillDataActions fragment building is finished");
+        setupGridView();
 
         try {
             actionsFragmentListener = (IActionsFragmentInteractionListener) activity;
-            Log.d(LOG_TAG, "FillDataActionsFragment.onAttach: actionsFragmentListener interface is ok");
+            Log.d("actionsFragmentListener interface is ok");
         } catch (ClassCastException e) {
             throw new ClassCastException(activity.toString()
                     + " shall implement actionsFragmentListener interface");
         }
+
+        Log.d( "Fragment building is finished, startDate = "
+        + SmallFunctions.formatDate(selectedDayStartDate) + ", startTime = " + SmallFunctions.formatTime(selectedDayStartDate)
+        + ", endDate = " + SmallFunctions.formatDate(selectedDayEndDate) +
+        ", endTime = " + SmallFunctions.formatTime(selectedDayEndDate));
 
         return v;
 
@@ -103,16 +109,16 @@ public class FragmentFillDataActions extends Fragment {
         if (bundle != null) {
             startDateValue = bundle.getString(STARTDATE_KEY, "");
             endDateValue = bundle.getString(ENDDATE_KEY, "");
+            selectedDayStartDate = Long.valueOf(startDateValue);
+            selectedDayEndDate = Long.valueOf(endDateValue);
         } else {
-            Log.d(LOG_TAG, "Bundle is null");
+            Log.d("Bundle is null");
         }
     }
 
     //Update list after editing via EditMood activity
     public void onResume() {
         super.onResume();
-        Log.d(LOG_TAG, "FillDataActionFragment.onResume: call update list"+startDateValue);
-        updateListMethod(startDateValue, endDateValue);
     }
 
     private void setupGridView() {
@@ -149,7 +155,7 @@ public class FragmentFillDataActions extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 selectedActionsGroupId = position;
-                Log.d(LOG_TAG, "FillDataActionFragment.onItemClick: grid item is selected, actionsGroupId = " + selectedActionsGroupId);
+                Log.d("User has selected grid item with actionsGroupId = " + selectedActionsGroupId);
                 // Send event to Activity
                 actionsFragmentListener.selectActionsGroupEvent(selectedActionsGroupId);
             }
@@ -157,15 +163,13 @@ public class FragmentFillDataActions extends Fragment {
     }
 
     //Update listView
-    public void updateListMethod(final String selectedDayStartDateString, final String selectedDayEndDateString) {
-        String selectedDayStartDateStringFillData = selectedDayStartDateString;
-        String selectedDayEndDateStringFillData = selectedDayEndDateString;
+    private SimpleAdapter initializeList() {
 
+        ArrayList<Map<String, Object>> data = DBOperations.getEventListForTheDay(myContext, selectedDayStartDate,
+                selectedDayEndDate, Event.EventTypes.actionEventTypeId.getId());
 
-        DBHelper dbHelper = new DBHelper(myContext);
-        ArrayList<Map<String, Object>> data = DBOperations.getEventListForTheDay(dbHelper, selectedDayStartDateStringFillData, selectedDayEndDateStringFillData, Event.EventTypes.actionEventTypeId.getId());
-
-        positionRowIdMapping = DBOperations.getPositionRowIdMapping(dbHelper, selectedDayStartDateStringFillData, selectedDayEndDateStringFillData, Event.EventTypes.actionEventTypeId.getId());
+        positionRowIdMapping = DBOperations.getPositionRowIdMapping(myContext, selectedDayStartDate,
+                selectedDayEndDate, Event.EventTypes.actionEventTypeId.getId());
 
         // Create adapter
         String[] from = {ATTRIBUTE_NAME_START_DATE, ATTRIBUTE_NAME_END_DATE, ATTRIBUTE_NAME_DURATION, ATTRIBUTE_NAME_LL};
@@ -178,13 +182,20 @@ public class FragmentFillDataActions extends Fragment {
         adjustGridListView();
 
         lvSimple.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-            Log.d(LOG_TAG, "FillDataMoodFragment.updateList.setOnItemClickListener: selected list item: position = " + position + ", id = " + id + ", rowId = " + positionRowIdMapping[position]);
-            actionsFragmentListener.editActionRowEvent(positionRowIdMapping[position]);
-            }
-        }
+                                            @Override
+                                            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                                                Log.d("User has selected list item: position = " + position + ", id = " + id + ", rowId = " + positionRowIdMapping[position]);
+                                                actionsFragmentListener.editActionRowEvent(positionRowIdMapping[position]);
+                                            }
+                                        }
         );
+
+        return sAdapterList;
+    }
+
+    public void updateList() {
+
+        initializeList();
 
     }
 

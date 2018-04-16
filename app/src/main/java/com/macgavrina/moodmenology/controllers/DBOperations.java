@@ -1,13 +1,15 @@
 package com.macgavrina.moodmenology.controllers;
 
 import android.content.ContentValues;
+import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.util.Log;
+import android.support.v4.app.FragmentActivity;
 
 import com.macgavrina.moodmenology.SmallFunctions;
-import com.macgavrina.moodmenology.model.Icons;
+import com.macgavrina.moodmenology.logging.Log;
 import com.macgavrina.moodmenology.model.Event;
+import com.macgavrina.moodmenology.model.Icons;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -19,8 +21,6 @@ import java.util.Map;
 
 public abstract class DBOperations {
 
-    private static final String LOG_TAG = "MoodMenology";
-
     private static final String ATTRIBUTE_NAME_START_DATE = "startDate";
     private static final String ATTRIBUTE_NAME_END_DATE = "endDate";
     private static final String ATTRIBUTE_NAME_EVENT_ID = "eventId";
@@ -28,13 +28,14 @@ public abstract class DBOperations {
     private static final String ATTRIBUTE_NAME_LL = "ll";
     private static final String ATTRIBUTE_NAME_DURATION = "duration";
 
-    public static void addRow(final DBHelper dbHelper,
+    public static void addRow(final Context context,
                               final Integer selectedMoodIdForActivity,
                               final long startTimeInMillis,
                               final Integer eventType,
                               final Integer actionGroupId,
                               final long endTimeInMillis) {
 
+        DBHelper dbHelper = new DBHelper((FragmentActivity) context);
         SQLiteDatabase db = dbHelper.getWritableDatabase();
 
         // Create object for data
@@ -51,29 +52,43 @@ public abstract class DBOperations {
         dbHelper.close();
 
         //ToDo REFACT понять имеет ли смысл использовать StringBuffer при создании строки сразу (когда она больше не меняется)
-        Log.d(LOG_TAG, new StringBuffer().append("FillDataTabs.onTimeSetListener: Added row with MoodId=").append(selectedMoodIdForActivity).append(", Time: ").append(startTimeInMillis).append(", rowId=").append(rowID).toString());
-
+        Log.d(new StringBuffer().append("Added row with EventId = ").append(selectedMoodIdForActivity)
+                .append(", EventGroupId = ").append(actionGroupId)
+                .append(", StartDate = ").append(SmallFunctions.formatDate(startTimeInMillis))
+                .append(", StartTime = ").append(SmallFunctions.formatTime(startTimeInMillis))
+                .append(", EndDate = ").append(SmallFunctions.formatDate(endTimeInMillis))
+                .append(", EndTime = ").append(SmallFunctions.formatTime(endTimeInMillis))
+                .append(", rowId = ").append(rowID).toString());
     }
 
     //ToDo REFACT убрать dbHelper из входных параметров всех методов DBOperations
-    public static void deleteAllDayData(final DBHelper dbHelper,
-                                        final String selectedDayStartDateString,
-                                        final String selectedDayEndDateString) {
+    public static void deleteAllDayData(final Context context,
+                                        final Long selectedDayStartDate,
+                                        final Long selectedDayEndDate) {
 
+        DBHelper dbHelper = new DBHelper((FragmentActivity) context);
         SQLiteDatabase db = dbHelper.getWritableDatabase();
 
-        int delCount = db.delete(DBHelper.TABLE_NAME, new StringBuffer().append(DBHelper.START_DATETIME_COLUMN_NAME).append(" between ").append(selectedDayStartDateString).append(" and ").append(selectedDayEndDateString).toString(), null);
+        int delCount = db.delete(DBHelper.TABLE_NAME, new StringBuffer().append(DBHelper.START_DATETIME_COLUMN_NAME).append(" between ").
+                append(selectedDayStartDate).append(" and ").append(selectedDayEndDate).toString(), null);
 
-        Log.d(LOG_TAG, "FillDataTabs.deleteAllDayData: deleted rows count = " + delCount);
+        Log.d(new StringBuffer().append("All data is deleted for the period: ")
+                .append(", StartDay = ").append(SmallFunctions.formatDate(selectedDayStartDate))
+                .append(", StartTime = ").append(SmallFunctions.formatTime(selectedDayStartDate))
+                .append(", EndDay = ").append(SmallFunctions.formatDate(selectedDayEndDate))
+                .append(", EndTime = ").append(SmallFunctions.formatTime(selectedDayEndDate))
+                .append(", deleted rows count =").append(delCount).toString());
 
         dbHelper.close();
     }
 
-    public static Map<String,Object> getEvent (final DBHelper dbHelper, final Integer rowId) {
+    public static Map<String,Object> getEvent (final Context context, final Integer rowId) {
 
         Map<String, Object> m = new HashMap<String, Object>();
 
-        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        DBHelper dbHelper = new DBHelper((FragmentActivity) context);
+
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
 
         // делаем запрос всех данных из таблицы mytable, получаем Cursor
         String selection = DBHelper.ROWID_COLUMN_NAME + " = ?";
@@ -98,7 +113,7 @@ public abstract class DBOperations {
             } while (c.moveToNext());
 
         } else
-            Log.d(LOG_TAG, "EditData.onCreate: rowId with"+rowId+" doesn't exist");
+            Log.d("RowId with"+rowId+" doesn't exist");
 
         c.close();
 
@@ -107,11 +122,12 @@ public abstract class DBOperations {
         return m;
     }
 
-    public static ArrayList<Map<String,Object>> getEventListForTheDay (final DBHelper dbHelper,
-                                                                       final String selectedDayStartDateStringFillData,
-                                                                       final String selectedDayEndDateStringFillData,
+    public static ArrayList<Map<String,Object>> getEventListForTheDay (final Context context,
+                                                                       final Long selectedDayStartDate,
+                                                                       final Long selectedDayEndDate,
                                                                        final Integer eventType) {
 
+        DBHelper dbHelper = new DBHelper((FragmentActivity) context);
         SQLiteDatabase db = dbHelper.getWritableDatabase();
 
         Icons icons = new Icons();
@@ -121,10 +137,10 @@ public abstract class DBOperations {
                 DBHelper.START_DATETIME_COLUMN_NAME + " < ?) or (" +
                 DBHelper.END_DATETIME_COLUMN_NAME + " >= ? and " + DBHelper.END_DATETIME_COLUMN_NAME + " < ?)) and " +
                 DBHelper.EVENT_TYPE_COLUMN_NAME + " == ?";
-        final String[] selectionArgs = new String[]{selectedDayStartDateStringFillData,
-                                                    selectedDayEndDateStringFillData,
-                                                    selectedDayStartDateStringFillData,
-                                                    selectedDayEndDateStringFillData,
+        final String[] selectionArgs = new String[]{selectedDayStartDate.toString(),
+                                                    selectedDayEndDate.toString(),
+                                                    selectedDayStartDate.toString(),
+                                                    selectedDayEndDate.toString(),
                                                     String.valueOf(eventType)};
         Cursor c = db.query(DBHelper.TABLE_NAME, null, selection, selectionArgs, null, null, DBHelper.START_DATETIME_COLUMN_NAME);
 
@@ -146,8 +162,8 @@ public abstract class DBOperations {
 
         if (c.moveToFirst()) {
             do {
-                String formattedStartDate = SmallFunctions.formatTimeWithCompare(c.getLong(startDatetimeColIndex), selectedDayStartDateStringFillData, selectedDayEndDateStringFillData);
-                String formattedEndDate = SmallFunctions.formatTimeWithCompare(c.getLong(endDatetimeColIndex), selectedDayStartDateStringFillData, selectedDayEndDateStringFillData);
+                String formattedStartDate = SmallFunctions.formatTimeWithCompare(c.getLong(startDatetimeColIndex), selectedDayStartDate, selectedDayEndDate);
+                String formattedEndDate = SmallFunctions.formatTimeWithCompare(c.getLong(endDatetimeColIndex), selectedDayStartDate, selectedDayEndDate);
                 String formattedDuration = SmallFunctions.formatDuration(c.getLong(endDatetimeColIndex)-c.getLong(startDatetimeColIndex));
 
                 m = new HashMap<String, Object>();
@@ -172,7 +188,12 @@ public abstract class DBOperations {
             } while (c.moveToNext());
 
         } else
-            Log.d(LOG_TAG, "0 rows");
+            Log.d(new StringBuffer().append("0 rows is found for")
+                    .append("EventType = ").append(eventType)
+                    .append(", DateStart = ").append(SmallFunctions.formatDate(selectedDayStartDate))
+                    .append(", TimeStart = ").append(SmallFunctions.formatTime(selectedDayStartDate))
+                    .append(", EndStart = ").append(SmallFunctions.formatDate(selectedDayEndDate))
+                    .append(", EndTime = ").append(SmallFunctions.formatTime(selectedDayEndDate)).toString());
 
         c.close();
 
@@ -180,23 +201,23 @@ public abstract class DBOperations {
         return data;
     }
 
-    public static Integer[] getPositionRowIdMapping(final DBHelper dbHelper,
-                                                    final String selectedDayStartDateStringFillData,
-                                                    final String selectedDayEndDateStringFillData,
+    public static Integer[] getPositionRowIdMapping(final Context context,
+                                                    final Long selectedDayStartDate,
+                                                    final Long selectedDayEndDate,
                                                     final int eventType) {
 
-        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        DBHelper dbHelper = new DBHelper((FragmentActivity) context);
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
 
-        // Select all mood rows for the day; get Cursor
         final String selection = "((" + DBHelper.START_DATETIME_COLUMN_NAME + " >= ? and " +
                 DBHelper.START_DATETIME_COLUMN_NAME + " < ?) or (" +
                 DBHelper.END_DATETIME_COLUMN_NAME + " >= ? and " +
                 DBHelper.END_DATETIME_COLUMN_NAME + " < ?)) and " +
                 DBHelper.EVENT_TYPE_COLUMN_NAME + " == ?";
-        final String[] selectionArgs = new String[]{selectedDayStartDateStringFillData,
-                                                    selectedDayEndDateStringFillData,
-                                                    selectedDayStartDateStringFillData,
-                                                    selectedDayEndDateStringFillData,
+        final String[] selectionArgs = new String[]{selectedDayStartDate.toString(),
+                                                    selectedDayEndDate.toString(),
+                                                    selectedDayStartDate.toString(),
+                                                    selectedDayEndDate.toString(),
                                                     String.valueOf(eventType)};
         Cursor c = db.query(DBHelper.TABLE_NAME, null, selection, selectionArgs, null, null, DBHelper.START_DATETIME_COLUMN_NAME);
 
@@ -219,7 +240,13 @@ public abstract class DBOperations {
             } while (c.moveToNext());
 
         } else
-            Log.d(LOG_TAG, "0 rows");
+
+            Log.d(new StringBuffer().append("Position<->RowId mapping is empty for: ")
+                    .append("EventType = ").append(eventType)
+                    .append(", DateStart = ").append(SmallFunctions.formatDate(selectedDayStartDate))
+                    .append(", TimeStart = ").append(SmallFunctions.formatTime(selectedDayStartDate))
+                    .append(", EndStart = ").append(SmallFunctions.formatDate(selectedDayEndDate))
+                    .append(", EndTime = ").append(SmallFunctions.formatTime(selectedDayEndDate)).toString());
 
         c.close();
 
@@ -227,14 +254,17 @@ public abstract class DBOperations {
         return positionRowIdMapping;
     }
 
-    public static void deleteRow(final DBHelper dbHelper, final Integer rowId) {
+    public static void deleteRow(final Context context, final Integer rowId) {
+        DBHelper dbHelper = new DBHelper((FragmentActivity) context);
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         db.delete(DBHelper.TABLE_NAME, DBHelper.ID_COLUMN_NAME + " = " + rowId, null);
         dbHelper.close();
+        Log.d("Row with rowId = " + rowId + "is deleted");
     }
 
-    public static void updateStartTime(final DBHelper dbHelper, final Integer rowId, final long timeInMillis) {
+    public static void updateStartTime(final Context context, final Integer rowId, final long timeInMillis) {
 
+        DBHelper dbHelper = new DBHelper((FragmentActivity) context);
         SQLiteDatabase db = dbHelper.getWritableDatabase();
 
         ContentValues cv = new ContentValues();
@@ -242,19 +272,26 @@ public abstract class DBOperations {
         db.update(DBHelper.TABLE_NAME, cv, DBHelper.ID_COLUMN_NAME + " = " + rowId, null);
 
         dbHelper.close();
+        Log.d("StartTime is updated for row with rowId = " + rowId +
+                ". New startDate = " + SmallFunctions.formatDate(timeInMillis) +
+                ", startTime = " + SmallFunctions.formatTime(timeInMillis));
     }
 
-    public static void rmrf(DBHelper dbHelper) {
+    public static void rmrf(final Context context) {
 
+        DBHelper dbHelper = new DBHelper((FragmentActivity) context);
         SQLiteDatabase db = dbHelper.getWritableDatabase();
 
         db.delete(DBHelper.TABLE_NAME, null, null);
 
         dbHelper.close();
+
+        Log.d("All data is deleted (rmrf)");
     }
 
-    public static void updateStartAndEndTime(DBHelper dbHelper, Integer rowId, Long startTimeInMillis, Long endTimeInMillis) {
+    public static void updateStartAndEndTime(final Context context, final Integer rowId, final Long startTimeInMillis, final Long endTimeInMillis) {
 
+        DBHelper dbHelper = new DBHelper((FragmentActivity) context);
         SQLiteDatabase db = dbHelper.getWritableDatabase();
 
         ContentValues cv = new ContentValues();
@@ -263,11 +300,18 @@ public abstract class DBOperations {
         db.update(DBHelper.TABLE_NAME, cv, DBHelper.ID_COLUMN_NAME + " = " + rowId, null);
 
         dbHelper.close();
+
+        Log.d("StartTime and EndTime are updated for row with rowId = " + rowId +
+                ". New startDate = " + SmallFunctions.formatDate(startTimeInMillis) +
+                ", startTime = " + SmallFunctions.formatTime(startTimeInMillis) +
+                ". New endDate = " + SmallFunctions.formatDate(endTimeInMillis) +
+                ", endTime = " + SmallFunctions.formatTime(endTimeInMillis));
     }
 
-    public static String getAllDataForEmail (final DBHelper dbHelper) {
+    public static String getAllDataForEmail (final Context context) {
 
-        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        DBHelper dbHelper = new DBHelper((FragmentActivity) context);
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
 
         StringBuffer emailTextStringBuffer = new StringBuffer().
                 append(DBHelper.ROWID_COLUMN_NAME).append(";")
@@ -300,13 +344,15 @@ public abstract class DBOperations {
             } while (c.moveToNext());
 
         } else
-            emailTextStringBuffer.append("No data");
+            emailTextStringBuffer.append("There is no any data in application");
 
         c.close();
 
         dbHelper.close();
 
+        Log.d("All data is sent");
 
         return emailTextStringBuffer.toString();
+
     }
 }

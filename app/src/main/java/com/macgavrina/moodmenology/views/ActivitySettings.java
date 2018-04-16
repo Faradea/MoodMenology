@@ -1,20 +1,16 @@
 package com.macgavrina.moodmenology.views;
 
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
 import com.macgavrina.moodmenology.R;
-import com.macgavrina.moodmenology.controllers.DBHelper;
 import com.macgavrina.moodmenology.controllers.DBOperations;
+import com.macgavrina.moodmenology.logging.Log;
 
 public class ActivitySettings extends AppCompatActivity implements View.OnClickListener{
-
-    private static final String LOG_TAG = "MoodMenology";
-
-    private DBHelper dbHelper;
 
     private Button deleteAllDataButtonSettings;
 
@@ -27,6 +23,8 @@ public class ActivitySettings extends AppCompatActivity implements View.OnClickL
         deleteAllDataButtonSettings = (Button) findViewById(R.id.ActivitySettings_deleteAllDataButton);
         deleteAllDataButtonSettings.setOnClickListener(this);
 
+        Log.d("Activity building is finished");
+
     }
 
     @Override
@@ -34,8 +32,8 @@ public class ActivitySettings extends AppCompatActivity implements View.OnClickL
         switch (v.getId()){
             case (R.id.ActivitySettings_deleteAllDataButton):
 
-                dbHelper = new DBHelper(this);
-                DBOperations.rmrf(dbHelper);
+                Log.d("User has pressed DeleteAllData button, start processing");
+                DBOperations.rmrf(this);
 
                 Toast.makeText(this, "All data have been deleted", Toast.LENGTH_LONG).show();
                 break;

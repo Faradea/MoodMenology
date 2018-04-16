@@ -3,7 +3,6 @@ package com.macgavrina.moodmenology.views;
 import android.app.Activity;
 import android.app.Fragment;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,6 +11,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.macgavrina.moodmenology.R;
+import com.macgavrina.moodmenology.logging.Log;
 import com.macgavrina.moodmenology.model.Icons;
 
 /**
@@ -19,8 +19,6 @@ import com.macgavrina.moodmenology.model.Icons;
  */
 
 public class FragmentActionEvent extends Fragment implements View.OnClickListener{
-
-    private static final String LOG_TAG = "MoodMenology";
 
     private static final String ACTION_GROUP_ID_KEY="actionGroupId";
     private static final String ACTION_ID_KEY="actionId";
@@ -72,8 +70,20 @@ public class FragmentActionEvent extends Fragment implements View.OnClickListene
         editEndTimeButton = (ImageButton) v.findViewById(R.id.FragmentAddActionEvent_editEndTimeImageButton);
         editEndTimeButton.setOnClickListener(this);
 
-        return v;
+        Activity activity = getActivity();
 
+        try {
+            addActionFragmentListener = (IAddActionFragmentListener) activity;
+            Log.d("addActionFragmentListener interface is checked, ok");
+        } catch (ClassCastException e) {
+            throw new ClassCastException(activity.toString()
+                    + " shall implement moodFragmentListener interface");
+        }
+
+        Log.d("Fragment building is finished, startTime = " + formattedStartTime +
+            ", endTime = " + formattedEndTime);
+
+        return v;
     }
 
     private void getDataFromActivity() {
@@ -92,28 +102,15 @@ public class FragmentActionEvent extends Fragment implements View.OnClickListene
     public void onClick(View v) {
         switch (v.getId()){
             case (R.id.FragmentAddActionEvent_editStartTimeImageButton):
-                Log.d(LOG_TAG, "ActionEventFragment: editStartTimeButton is pressed");
+                Log.d("User has pressed editStartTime button");
                 addActionFragmentListener.editStartDate();
                 break;
             case (R.id.FragmentAddActionEvent_editEndTimeImageButton):
-                Log.d(LOG_TAG, "ActionEventFragment: editEndTimeButton is pressed");
+                Log.d("User has pressed editEndTime button");
                 addActionFragmentListener.editEndDate();
                 break;
             default:
                 break;
-        }
-    }
-
-    // Check interface fragment <-> activity
-    @Override
-    public void onAttach(final Activity activity) {
-        super.onAttach(activity);
-        try {
-            addActionFragmentListener = (IAddActionFragmentListener) activity;
-            Log.d(LOG_TAG, "ActionEventFragment.onAttach: addActionFragmentListener interface is ok");
-        } catch (ClassCastException e) {
-            throw new ClassCastException(activity.toString()
-                    + " shall implement moodFragmentListener interface");
         }
     }
 }

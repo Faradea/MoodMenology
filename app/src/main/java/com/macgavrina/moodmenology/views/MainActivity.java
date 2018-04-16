@@ -10,6 +10,7 @@ import android.view.View;
 import android.widget.DatePicker;
 
 import com.macgavrina.moodmenology.R;
+import com.macgavrina.moodmenology.SmallFunctions;
 import com.macgavrina.moodmenology.logging.Log;
 import com.macgavrina.moodmenology.viewadapters.MainMenu;
 
@@ -17,8 +18,8 @@ import java.util.Calendar;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
+    //ToDO NEW обернуть небезопасный код в try-catch (например, подключение к БД)
     //ToDo BUG timePickerDialog можно вызвать 2 раза
-    //ToDo NEW переписать логи во всех класс на использование кастомного Log.java
     //ToDo NEW сохранение данных на сервере
     //ToDo REFACT перенести все отступы и т.д. в dimens.xml
     //ToDo REFACT можно ли вынести final переменные из классов в ресурсы?
@@ -28,7 +29,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     //ToDO NEW добавить макеты для горизонтального расположения экрана
 
 
-    private static final String LOG_TAG = "MoodMenology";
     private static final String DATE_IN_MILLIS_KEY="selectedDateInMillis";
 
     private Long selectedDateInMillis;
@@ -49,7 +49,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         initalizeCurrentDate();
 
-        Log.d("MainActivity.onCreate: MainActivity building is finished, " + calendarMain.getTimeInMillis());
+        Log.d("Activity building is finished, initial day = " + SmallFunctions.formatDate(calendarMain.getTimeInMillis()));
 
     }
 
@@ -82,7 +82,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             case R.id.ActivityMain_addButton:
 
                 selectedDateInMillis = calendarMain.getTimeInMillis();
-                //Log.d(LOG_TAG, "selectedDateInMillis = " + String.valueOf(selectedDateInMillis));
+                Log.d("User has selected day: " + SmallFunctions.formatDate(calendarMain.getTimeInMillis()));
                 Intent intent = new Intent("com.macgavrina.moodmenology.fill.data");
                 intent.putExtra(DATE_IN_MILLIS_KEY, selectedDateInMillis);
                 startActivity(intent);
