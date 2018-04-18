@@ -15,7 +15,7 @@ import java.util.Map;
 
 public class MySimpleAdapterGrid extends SimpleAdapter {
 
-    //ToDo перейти с SimpleAdapter на SimpleCursorAdapter (+ Cursor Loader)
+    //ToDo REFACT перейти с SimpleAdapter на SimpleCursorAdapter (+ Cursor Loader)
 
     private static final int MOOD_TYPE_ID = 0;
     private static final int ACTION_GROUP_TYPE_ID=1;

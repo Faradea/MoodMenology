@@ -1,12 +1,10 @@
 package com.macgavrina.moodmenology.viewadapters;
 
-import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 
-import com.macgavrina.moodmenology.R;
 import com.macgavrina.moodmenology.views.FragmentFillDataActions;
 import com.macgavrina.moodmenology.views.FragmentFillDataMood;
 
@@ -26,13 +24,13 @@ public class SimpleFragmentPagerAdapter extends FragmentPagerAdapter {
     final private int MOOD_FRAGMENT_ID=0;
     final private int ACTION_FRAGMENT_ID=1;
 
-    private String startDateValue;
-    private String endDateValue;
+    private Long startDateValue;
+    private Long endDateValue;
 
-    public SimpleFragmentPagerAdapter(final FragmentManager fm, final String selectedDayStartDateString, final String selectedDayEndDateString) {
+    public SimpleFragmentPagerAdapter(final FragmentManager fm, final Long selectedDayStartDate, final Long selectedDayEndDate) {
         super(fm);
-        startDateValue = selectedDayStartDateString;
-        endDateValue = selectedDayEndDateString;
+        startDateValue = selectedDayStartDate;
+        endDateValue = selectedDayEndDate;
     }
 
     // This determines the fragment for each tab
@@ -44,20 +42,20 @@ public class SimpleFragmentPagerAdapter extends FragmentPagerAdapter {
         switch (position){
             case MOOD_FRAGMENT_ID:
                 FragmentFillDataMood fillDataMoodFragment = new FragmentFillDataMood();
-                bundle.putString(START_DATE_KEY, startDateValue);
-                bundle.putString(END_DATE_KEY, endDateValue);
+                bundle.putLong(START_DATE_KEY, startDateValue);
+                bundle.putLong(END_DATE_KEY, endDateValue);
                 fillDataMoodFragment.setArguments(bundle);
                 return fillDataMoodFragment;
             case ACTION_FRAGMENT_ID:
                 FragmentFillDataActions fillDataActionsFragment = new FragmentFillDataActions();
-                bundle.putString(START_DATE_KEY, startDateValue);
-                bundle.putString(END_DATE_KEY, endDateValue);
+                bundle.putLong(START_DATE_KEY, startDateValue);
+                bundle.putLong(END_DATE_KEY, endDateValue);
                 fillDataActionsFragment.setArguments(bundle);
                 return fillDataActionsFragment;
             default:
                 fillDataActionsFragment = new FragmentFillDataActions();
-                bundle.putString(START_DATE_KEY, startDateValue);
-                bundle.putString(END_DATE_KEY, endDateValue);
+                bundle.putLong(START_DATE_KEY, startDateValue);
+                bundle.putLong(END_DATE_KEY, endDateValue);
                 fillDataActionsFragment.setArguments(bundle);
                 return fillDataActionsFragment;
         }

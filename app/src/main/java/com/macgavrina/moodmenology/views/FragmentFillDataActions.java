@@ -19,7 +19,6 @@ import com.macgavrina.moodmenology.model.Colors;
 import com.macgavrina.moodmenology.model.Event;
 import com.macgavrina.moodmenology.model.Icons;
 import com.macgavrina.moodmenology.viewadapters.MySimpleAdapterGrid;
-import com.macgavrina.moodmenology.viewadapters.MySimpleAdapterList;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -43,14 +42,11 @@ public class FragmentFillDataActions extends Fragment {
 
     private static final int iconsTypeGrid = Icons.IconTypes.actionGroupIconsType.getId();
 
-    private String startDateValue;
-    private String endDateValue;
+    private long startDateValue;
+    private long endDateValue;
     private Integer selectedActionsGroupId;
 
     private GridView gridViewActionFragment;
-
-    private static Long selectedDayStartDate;
-    private static Long selectedDayEndDate;
 
     //ToDo REFACT сделать non-static
     private static FragmentActivity myContext;
@@ -95,9 +91,9 @@ public class FragmentFillDataActions extends Fragment {
         }
 
         Log.d( "Fragment building is finished, startDate = "
-        + SmallFunctions.formatDate(selectedDayStartDate) + ", startTime = " + SmallFunctions.formatTime(selectedDayStartDate)
-        + ", endDate = " + SmallFunctions.formatDate(selectedDayEndDate) +
-        ", endTime = " + SmallFunctions.formatTime(selectedDayEndDate));
+        + SmallFunctions.formatDate(startDateValue) + ", startTime = " + SmallFunctions.formatTime(startDateValue)
+        + ", endDate = " + SmallFunctions.formatDate(endDateValue) +
+        ", endTime = " + SmallFunctions.formatTime(endDateValue));
 
         return v;
 
@@ -107,10 +103,8 @@ public class FragmentFillDataActions extends Fragment {
         // Get data from activity
         Bundle bundle = this.getArguments();
         if (bundle != null) {
-            startDateValue = bundle.getString(STARTDATE_KEY, "");
-            endDateValue = bundle.getString(ENDDATE_KEY, "");
-            selectedDayStartDate = Long.valueOf(startDateValue);
-            selectedDayEndDate = Long.valueOf(endDateValue);
+            startDateValue = bundle.getLong(STARTDATE_KEY, 0);
+            endDateValue = bundle.getLong(ENDDATE_KEY, 0);
         } else {
             Log.d("Bundle is null");
         }
@@ -165,17 +159,17 @@ public class FragmentFillDataActions extends Fragment {
     //Update listView
     private SimpleAdapter initializeList() {
 
-        ArrayList<Map<String, Object>> data = DBOperations.getEventListForTheDay(myContext, selectedDayStartDate,
-                selectedDayEndDate, Event.EventTypes.actionEventTypeId.getId());
+        ArrayList<Map<String, Object>> data = DBOperations.getEventListForTheDay(myContext, startDateValue,
+                endDateValue, Event.EventTypes.actionEventTypeId.getId());
 
-        positionRowIdMapping = DBOperations.getPositionRowIdMapping(myContext, selectedDayStartDate,
-                selectedDayEndDate, Event.EventTypes.actionEventTypeId.getId());
+        positionRowIdMapping = DBOperations.getPositionRowIdMapping(myContext, startDateValue,
+                endDateValue, Event.EventTypes.actionEventTypeId.getId());
 
         // Create adapter
         String[] from = {ATTRIBUTE_NAME_START_DATE, ATTRIBUTE_NAME_END_DATE, ATTRIBUTE_NAME_DURATION, ATTRIBUTE_NAME_LL};
         int[] to = {R.id.ItemActionEvent_startTimeText, R.id.ItemActionEvent_endTimeText, R.id.ItemActionEvent_durationText, R.id.ItemActionEvent_iconImage};
 
-        MySimpleAdapterList sAdapterList = new MySimpleAdapterList(myContext, data, R.layout.item_action_event,
+        SimpleAdapter sAdapterList = new SimpleAdapter(myContext, data, R.layout.item_action_event,
                 from, to);
 
         lvSimple.setAdapter(sAdapterList);
@@ -195,6 +189,7 @@ public class FragmentFillDataActions extends Fragment {
 
     public void updateList() {
 
+        getBundleDataFromActivity();
         initializeList();
 
     }

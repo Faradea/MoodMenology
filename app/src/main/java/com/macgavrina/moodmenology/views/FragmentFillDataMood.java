@@ -51,10 +51,8 @@ public class FragmentFillDataMood extends Fragment {
     private static final int iconsType= Icons.IconTypes.moodIconsType.getId();
 
     private Integer selectedMoodId;
-    private static Long selectedDayStartDate;
-    private static Long selectedDayEndDate;
-    private String startDateValue;
-    private String endDateValue;
+    private long startDateValue;
+    private long endDateValue;
 
     String[] from;
     int[] to;
@@ -104,9 +102,9 @@ public class FragmentFillDataMood extends Fragment {
         }
 
         Log.d( "Fragment building is finished, startDate = "
-                + SmallFunctions.formatDate(Long.valueOf(startDateValue)) + ", startTime = " + SmallFunctions.formatTime(Long.valueOf(startDateValue))
-                + ", endDate = " + SmallFunctions.formatDate(Long.valueOf(endDateValue)) +
-                ", endTime = " + SmallFunctions.formatTime(Long.valueOf(endDateValue)));
+                + SmallFunctions.formatDate(startDateValue) + ", startTime = " + SmallFunctions.formatTime(startDateValue)
+                + ", endDate = " + SmallFunctions.formatDate(endDateValue) +
+                ", endTime = " + SmallFunctions.formatTime(endDateValue));
 
         return v;
 
@@ -162,11 +160,8 @@ public class FragmentFillDataMood extends Fragment {
         // Get data from activity
         Bundle bundle = this.getArguments();
         if (bundle != null) {
-            //ToDo REFACT передавать Long вместо String
-            startDateValue = bundle.getString(STARTDATE_KEY, "");
-            endDateValue = bundle.getString(ENDDATE_KEY, "");
-            selectedDayStartDate = Long.valueOf(startDateValue);
-            selectedDayEndDate = Long.valueOf(endDateValue);
+            startDateValue = bundle.getLong(STARTDATE_KEY, 0);
+            endDateValue = bundle.getLong(ENDDATE_KEY, 0);
         }
     }
 
@@ -175,14 +170,14 @@ public class FragmentFillDataMood extends Fragment {
     //Update listView
     private SimpleAdapter initializeList() {
 
-        Log.d("Initialize list for startDate = " + SmallFunctions.formatDate(selectedDayStartDate)+
-        ", startTime = " + SmallFunctions.formatTime(selectedDayStartDate) +
-        ", endDate = " + SmallFunctions.formatDate(selectedDayEndDate) +
-        ", endTime = " + SmallFunctions.formatTime(selectedDayEndDate));
+        Log.d("Initialize list for startDate = " + SmallFunctions.formatDate(startDateValue)+
+        ", startTime = " + SmallFunctions.formatTime(startDateValue) +
+        ", endDate = " + SmallFunctions.formatDate(endDateValue) +
+        ", endTime = " + SmallFunctions.formatTime(endDateValue));
 
-        data = DBOperations.getEventListForTheDay(myContext, selectedDayStartDate, selectedDayEndDate, Event.EventTypes.moodEventTypeId.getId());
+        data = DBOperations.getEventListForTheDay(myContext, startDateValue, endDateValue, Event.EventTypes.moodEventTypeId.getId());
 
-        positionRowIdMapping = DBOperations.getPositionRowIdMapping(myContext, selectedDayStartDate, selectedDayEndDate, Event.EventTypes.moodEventTypeId.getId());
+        positionRowIdMapping = DBOperations.getPositionRowIdMapping(myContext, startDateValue, endDateValue, Event.EventTypes.moodEventTypeId.getId());
 
         // Create adapter
         from = new String[] {ATTRIBUTE_NAME_START_DATE, ATTRIBUTE_NAME_LL};
@@ -212,21 +207,19 @@ public class FragmentFillDataMood extends Fragment {
     //ToDO REFACT переписать через sAdapterList.notifyDataSetChanged (и для action тоже)
     public void updateList() {
 
+        getBundleDataFromActivity();
         initializeList();
 
-/*        if (sAdapterList == null) {
-            sAdapterList = initializeList();;
-        }
-
-        Log.d("Update list for startDate = " + SmallFunctions.formatDate(selectedDayStartDate)+
+/*        Log.d("Update list for startDate = " + SmallFunctions.formatDate(selectedDayStartDate)+
                 ", startTime = " + SmallFunctions.formatTime(selectedDayStartDate) +
                 ", endDate = " + SmallFunctions.formatDate(selectedDayEndDate) +
                 ", endTime = " + SmallFunctions.formatTime(selectedDayEndDate));
 
-        data = DBOperations.getEventListForTheDay(dbHelper, selectedDayStartDate, selectedDayEndDate, Event.EventTypes.moodEventTypeId.getId());
+        data = DBOperations.getEventListForTheDay(myContext, selectedDayStartDate, selectedDayEndDate, Event.EventTypes.moodEventTypeId.getId());
 
-        positionRowIdMapping = DBOperations.getPositionRowIdMapping(dbHelper, selectedDayStartDate, selectedDayEndDate, Event.EventTypes.moodEventTypeId.getId());
+        positionRowIdMapping = DBOperations.getPositionRowIdMapping(myContext, selectedDayStartDate, selectedDayEndDate, Event.EventTypes.moodEventTypeId.getId());
 
+        sAdapterList = (SimpleAdapter) lvSimple.getAdapter();
         sAdapterList.notifyDataSetChanged();*/
 
     }

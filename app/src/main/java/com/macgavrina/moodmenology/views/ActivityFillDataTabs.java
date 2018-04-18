@@ -58,8 +58,6 @@ public class ActivityFillDataTabs extends AppCompatActivity implements View.OnCl
     //ToDo REFACT убрать вот такие ни к чему не привязанные переменнные (они должны быть частью каких-то объектов или использоваться локально)
     private Long selectedDayStartDate;
     private Long selectedDayEndDate;
-    private String selectedDayStartDateString;
-    private String selectedDayEndDateString;
     private Integer selectedMoodId;
 
     private java.util.Calendar dateAndTime;
@@ -80,15 +78,11 @@ public class ActivityFillDataTabs extends AppCompatActivity implements View.OnCl
         selectedDayStartDate = selectedDay.getDayStartTimestamp();
         selectedDayEndDate = selectedDay.getDayEndTimestamp();
 
-        //ToDo убрать вот эти стринги и использовать только Long выше
-        selectedDayStartDateString = selectedDay.getDayStartTimestamp().toString();
-        selectedDayEndDateString = selectedDay.getDayEndTimestamp().toString();
-
         setupHeader();
 
         // Find the view pager that will allow the user to swipe between fragments
         ViewPager viewPager = (ViewPager) findViewById(R.id.ActivtyFilldata_viewPager);
-        SimpleFragmentPagerAdapter adapter = new SimpleFragmentPagerAdapter(getSupportFragmentManager(), selectedDayStartDateString, selectedDayEndDateString);
+        SimpleFragmentPagerAdapter adapter = new SimpleFragmentPagerAdapter(getSupportFragmentManager(), selectedDayStartDate, selectedDayEndDate);
 
         // Set the adapter onto the view pager
         viewPager.setAdapter(adapter);
