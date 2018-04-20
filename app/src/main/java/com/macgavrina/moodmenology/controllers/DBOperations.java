@@ -29,10 +29,10 @@ public abstract class DBOperations {
     private static final String ATTRIBUTE_NAME_DURATION = "duration";
 
     public static void addRow(final Context context,
-                              final Integer selectedMoodIdForActivity,
+                              final int selectedMoodIdForActivity,
                               final long startTimeInMillis,
-                              final Integer eventType,
-                              final Integer actionGroupId,
+                              final int eventType,
+                              final int actionGroupId,
                               final long endTimeInMillis) {
 
         DBHelper dbHelper = new DBHelper((FragmentActivity) context);
@@ -80,7 +80,7 @@ public abstract class DBOperations {
         dbHelper.close();
     }
 
-    public static Map<String,Object> getEvent (final Context context, final Integer rowId) {
+    public static Map<String,Object> getEvent (final Context context, final int rowId) {
 
         Map<String, Object> m = new HashMap<String, Object>();
 
@@ -90,7 +90,7 @@ public abstract class DBOperations {
 
         // делаем запрос всех данных из таблицы mytable, получаем Cursor
         String selection = DBHelper.ROWID_COLUMN_NAME + " = ?";
-        String[] selectionArgs = new String[] {rowId.toString()};
+        String[] selectionArgs = new String[] {String.valueOf(rowId)};
         Cursor c = db.query(DBHelper.TABLE_NAME, null, selection, selectionArgs, null, null, DBHelper.START_DATETIME_COLUMN_NAME);
 
         if (c.moveToFirst()) {
@@ -123,7 +123,7 @@ public abstract class DBOperations {
     public static ArrayList<Map<String,Object>> getEventListForTheDay (final Context context,
                                                                        final long selectedDayStartDate,
                                                                        final long selectedDayEndDate,
-                                                                       final Integer eventType) {
+                                                                       final int eventType) {
 
         DBHelper dbHelper = new DBHelper((FragmentActivity) context);
         SQLiteDatabase db = dbHelper.getWritableDatabase();
@@ -144,7 +144,7 @@ public abstract class DBOperations {
         Cursor c = db.query(DBHelper.TABLE_NAME, null, selection, selectionArgs, null, null, DBHelper.START_DATETIME_COLUMN_NAME);
 
         // Get rows count in DB to define required amount of rows in the listView
-        Integer rowsCount = c.getCount();
+        int rowsCount = c.getCount();
 
         // Convert data to map required for adapter
         ArrayList<Map<String, Object>> data = new ArrayList<Map<String, Object>>(
@@ -199,7 +199,7 @@ public abstract class DBOperations {
         return data;
     }
 
-    public static Integer[] getPositionRowIdMapping(final Context context,
+    public static int[] getPositionRowIdMapping(final Context context,
                                                     final long selectedDayStartDate,
                                                     final long selectedDayEndDate,
                                                     final int eventType) {
@@ -221,8 +221,8 @@ public abstract class DBOperations {
         Cursor c = db.query(DBHelper.TABLE_NAME, null, selection, selectionArgs, null, null, DBHelper.START_DATETIME_COLUMN_NAME);
 
         // Get rows count in DB to define required amount of rows in the listView
-        Integer rowsCount = c.getCount();
-        Integer[] positionRowIdMapping = new Integer[rowsCount];
+        int rowsCount = c.getCount();
+        int[] positionRowIdMapping = new int[rowsCount];
 
         // Define columns
         int idColIndex = c.getColumnIndex(DBHelper.ID_COLUMN_NAME);
@@ -253,7 +253,7 @@ public abstract class DBOperations {
         return positionRowIdMapping;
     }
 
-    public static void deleteRow(final Context context, final Integer rowId) {
+    public static void deleteRow(final Context context, final int rowId) {
         DBHelper dbHelper = new DBHelper((FragmentActivity) context);
         SQLiteDatabase db = dbHelper.getWritableDatabase();
         db.delete(DBHelper.TABLE_NAME, DBHelper.ID_COLUMN_NAME + " = " + rowId, null);
@@ -261,7 +261,7 @@ public abstract class DBOperations {
         Log.d("Row with rowId = " + rowId + "is deleted");
     }
 
-    public static void updateStartTime(final Context context, final Integer rowId, final long timeInMillis) {
+    public static void updateStartTime(final Context context, final int rowId, final long timeInMillis) {
 
         DBHelper dbHelper = new DBHelper((FragmentActivity) context);
         SQLiteDatabase db = dbHelper.getWritableDatabase();
@@ -288,7 +288,7 @@ public abstract class DBOperations {
         Log.d("All data is deleted (rmrf)");
     }
 
-    public static void updateStartAndEndTime(final Context context, final Integer rowId, final long startTimeInMillis, final long endTimeInMillis) {
+    public static void updateStartAndEndTime(final Context context, final int rowId, final long startTimeInMillis, final long endTimeInMillis) {
 
         DBHelper dbHelper = new DBHelper((FragmentActivity) context);
         SQLiteDatabase db = dbHelper.getWritableDatabase();
@@ -320,9 +320,6 @@ public abstract class DBOperations {
                 .append(DBHelper.END_DATETIME_COLUMN_NAME).append("\n");
 
         Cursor c = db.query(DBHelper.TABLE_NAME, null, null, null, null, null, DBHelper.START_DATETIME_COLUMN_NAME);
-
-        // Get rows count in DB to define required amount of rows in the listView
-        Integer rowsCount = c.getCount();
 
         // Define columns
         final int idColIndex = c.getColumnIndex(DBHelper.ID_COLUMN_NAME);

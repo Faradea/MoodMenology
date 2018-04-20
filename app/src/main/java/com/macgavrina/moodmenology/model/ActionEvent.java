@@ -12,8 +12,6 @@ import java.util.Map;
 
 public class ActionEvent extends Event{
 
-    //ToDo REFACT разобраться когда лучше Integer/Long, а когда - int/long
-
     private static final String ATTRIBUTE_NAME_START_DATE = "startDate";
     private static final String ATTRIBUTE_NAME_END_DATE = "endDate";
     private static final String ATTRIBUTE_NAME_EVENT_ID = "eventId";
@@ -42,15 +40,15 @@ public class ActionEvent extends Event{
     }
 
     //ToDo REFACT подумать правильная ли это конструкция - со static методом
-    public static ActionEvent getActionData(Context context, Integer rowId) {
+    public static ActionEvent getActionData(Context context, int rowId) {
 
         Map<String,Object> eventData = DBOperations.getEvent(context, rowId);
 
         ActionEvent actionEvent = new ActionEvent(
-                (Long) eventData.get(ATTRIBUTE_NAME_START_DATE),
-                (Long) eventData.get(ATTRIBUTE_NAME_END_DATE),
-                (Integer) eventData.get(ATTRIBUTE_NAME_EVENT_ID),
-                (Integer) eventData.get(ATTRIBUTE_NAME_GROUP_ID)
+                (long) eventData.get(ATTRIBUTE_NAME_START_DATE),
+                (long) eventData.get(ATTRIBUTE_NAME_END_DATE),
+                (int) eventData.get(ATTRIBUTE_NAME_EVENT_ID),
+                (int) eventData.get(ATTRIBUTE_NAME_GROUP_ID)
         );
 
         actionEvent.rowId = rowId;
@@ -65,8 +63,8 @@ public class ActionEvent extends Event{
         return endDateInUnixFormat;
     }
 
-    public Long getDuration(){
-        Long duration = this.endDateInUnixFormat - this.startDateInUnixFormat;
+    public long getDuration(){
+        long duration = this.endDateInUnixFormat - this.startDateInUnixFormat;
         return duration;
     }
 
@@ -79,14 +77,14 @@ public class ActionEvent extends Event{
     }
 
     @Override
-    public void setStartTime(final Long startDateInUnixFormat) {
+    public void setStartTime(final long startDateInUnixFormat) {
         this.startDateInUnixFormat = startDateInUnixFormat;
         if (this.startDateInUnixFormat >= this.endDateInUnixFormat) {
             this.endDateInUnixFormat = this.startDateInUnixFormat + defaultDurationInMillis;
         }
     }
 
-    public void setEndTime(final Long endDate) {
+    public void setEndTime(final long endDate) {
         this.endDateInUnixFormat = endDate;
     }
 }

@@ -56,7 +56,7 @@ public class Icons {
                 return actionIconsIds[actionsGroupId][actionId];
         }
 
-        public int getActionIconsLenght(Integer actionsGroupId) {
+        public int getActionIconsLenght(int actionsGroupId) {
             return actionIconsIds[actionsGroupId].length;
         }
 
@@ -71,7 +71,7 @@ public class Icons {
             typeId=i;
         }
 
-        public Integer getId() {
+        public int getId() {
             return typeId;
         }
     }

@@ -21,7 +21,7 @@ public class MySimpleAdapterGrid extends SimpleAdapter {
     private static final int ACTION_GROUP_TYPE_ID=1;
     private static final int ACTION_TYPE_ID=2;
 
-    private Integer actionGroupId;
+    private int actionGroupId;
     private int iconsType;
     private Icons icons;
 
@@ -31,12 +31,25 @@ public class MySimpleAdapterGrid extends SimpleAdapter {
                                final String[] from,
                                final int[] to,
                                final int iconsType,
-                               final Integer actionsGroupId) {
+                               final int actionsGroupId) {
 
         super(context, data, resource, from, to);
 
         icons = new Icons();
         this.actionGroupId = actionsGroupId;
+        this.iconsType = iconsType;
+    }
+
+    public MySimpleAdapterGrid(final FragmentActivity context,
+                               final List<? extends Map<String, ?>> data,
+                               final int resource,
+                               final String[] from,
+                               final int[] to,
+                               final int iconsType) {
+
+        super(context, data, resource, from, to);
+
+        icons = new Icons();
         this.iconsType = iconsType;
     }
 

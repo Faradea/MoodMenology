@@ -15,20 +15,20 @@ public class MoodEvent extends Event {
     final static String ATTRIBUTE_NAME_START_DATE = "startDate";
     final static String ATTRIBUTE_NAME_EVENT_ID = "eventId";
 
-    public MoodEvent(final long timeInMillis, final Integer selectedMoodId) {
+    public MoodEvent(final long timeInMillis, final int selectedMoodId) {
         super();
         this.eventType = EventTypes.moodEventTypeId.getId();
         this.startDateInUnixFormat = timeInMillis;
         this.eventId = selectedMoodId;
     }
 
-    public static MoodEvent getMoodData(final Context context, final Integer rowId) {
+    public static MoodEvent getMoodData(final Context context, final int rowId) {
 
         Map<String,Object> eventData = DBOperations.getEvent(context, rowId);
 
         MoodEvent moodEvent = new MoodEvent(
-                (Long) eventData.get(ATTRIBUTE_NAME_START_DATE),
-                (Integer) eventData.get(ATTRIBUTE_NAME_EVENT_ID)
+                (long) eventData.get(ATTRIBUTE_NAME_START_DATE),
+                (int) eventData.get(ATTRIBUTE_NAME_EVENT_ID)
 
         );
 

@@ -10,7 +10,7 @@ import java.util.concurrent.TimeUnit;
 
 public abstract class SmallFunctions {
 
-    private static final Long hour_in_millis = Long.valueOf(3600000);
+    private static final long hour_in_millis = Long.valueOf(3600000);
 
     public static String formatTime(final long aLong) {
 
@@ -23,7 +23,7 @@ public abstract class SmallFunctions {
         return formattedDate;
     }
 
-    public static String formatTimeWithCompare (final long aLong, final Long startDate, final Long endDate) {
+    public static String formatTimeWithCompare (final long aLong, final long startDate, final long endDate) {
 
         long unixTime = aLong;
         Date date = new Date(unixTime);
@@ -51,7 +51,7 @@ public abstract class SmallFunctions {
 
     public static String formatDuration (final long aLong){
 
-        Long diffHours = TimeUnit.HOURS.convert(aLong, TimeUnit.MILLISECONDS);
+        long diffHours = TimeUnit.HOURS.convert(aLong, TimeUnit.MILLISECONDS);
 
         Date date = new Date(aLong);
         SimpleDateFormat sdfMinute = new SimpleDateFormat("mm");

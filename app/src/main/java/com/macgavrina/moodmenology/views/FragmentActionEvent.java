@@ -26,8 +26,8 @@ public class FragmentActionEvent extends Fragment implements View.OnClickListene
     private static final String FORMATTED_ENDTIME_KEY="formattedEndTime";
     private static final String FORMATTED_DURATION_KEY="formattedDuration";
 
-    private Integer actionGroupId;
-    private Integer actionId;
+    private int actionGroupId;
+    private int actionId;
     private String formattedStartTime;
     private String formattedEndTime;
     private String formattedDuration;

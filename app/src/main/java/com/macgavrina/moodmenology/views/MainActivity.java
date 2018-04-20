@@ -18,20 +18,22 @@ import java.util.Calendar;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
-    //ToDO NEW обернуть небезопасный код в try-catch (например, подключение к БД)
     //ToDo BUG timePickerDialog можно вызвать 2 раза
-    //ToDo NEW сохранение данных на сервере
+
     //ToDo REFACT перенести все отступы и т.д. в dimens.xml
     //ToDo REFACT можно ли вынести final переменные из классов в ресурсы?
+
+    //ToDO NEW обернуть небезопасный код в try-catch (например, подключение к БД)
     //ToDo NEW возможность указать физическое состояние (сонный, болезнь, холодно)
     //ToDo NEW комментарии к настроению и action
     //ToDo NEW сценарии для однотипных действий типа еды и сна
     //ToDO NEW добавить макеты для горизонтального расположения экрана
+    //ToDo NEW подумать нужна ли здесь лямбда-архитектура
 
 
     private static final String DATE_IN_MILLIS_KEY="selectedDateInMillis";
 
-    private Long selectedDateInMillis;
+    private long selectedDateInMillis;
 
     private FloatingActionButton selectDateButtonMain;
     private DatePicker datePickerMain;

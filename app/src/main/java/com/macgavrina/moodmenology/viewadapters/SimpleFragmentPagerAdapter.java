@@ -20,14 +20,14 @@ public class SimpleFragmentPagerAdapter extends FragmentPagerAdapter {
     final private String MOOD_FRAGMENT_PAGE_TITLE = "Mood";
     final private String ACTION_FRAGMENT_PAGE_TITLE = "Actions";
 
-    final private Integer NUMBER_OF_FRAGMENTS = 2;
+    final private int NUMBER_OF_FRAGMENTS = 2;
     final private int MOOD_FRAGMENT_ID=0;
     final private int ACTION_FRAGMENT_ID=1;
 
-    private Long startDateValue;
-    private Long endDateValue;
+    private long startDateValue;
+    private long endDateValue;
 
-    public SimpleFragmentPagerAdapter(final FragmentManager fm, final Long selectedDayStartDate, final Long selectedDayEndDate) {
+    public SimpleFragmentPagerAdapter(final FragmentManager fm, final long selectedDayStartDate, final long selectedDayEndDate) {
         super(fm);
         startDateValue = selectedDayStartDate;
         endDateValue = selectedDayEndDate;

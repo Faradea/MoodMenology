@@ -10,20 +10,20 @@ import com.macgavrina.moodmenology.controllers.DBOperations;
 
 public abstract class Event {
 
-    protected Integer rowId;
-    protected Integer eventType;
-    protected Integer eventId;
-    protected Long startDateInUnixFormat;
+    protected int rowId;
+    protected int eventType;
+    protected int eventId;
+    protected long startDateInUnixFormat;
 
-    public Integer getEventId() {
+    public int getEventId() {
         return this.eventId;
     }
 
-    public Long getStartDateInUnixFormat() {
+    public long getStartDateInUnixFormat() {
         return this.startDateInUnixFormat;
     }
 
-    public void setStartTime(final Long startDateInUnixFormat) {
+    public void setStartTime(final long startDateInUnixFormat) {
         this.startDateInUnixFormat = startDateInUnixFormat;
     }
 
@@ -44,7 +44,7 @@ public abstract class Event {
             typeId = i;
         }
 
-        public Integer getId() {
+        public int getId() {
             return typeId;
         }
     }

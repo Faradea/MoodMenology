@@ -14,6 +14,7 @@ import android.view.View;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.TimePicker;
+import android.widget.Toast;
 
 import com.macgavrina.moodmenology.R;
 import com.macgavrina.moodmenology.SmallFunctions;
@@ -52,13 +53,13 @@ public class ActivityFillDataTabs extends AppCompatActivity implements View.OnCl
     FragmentFillDataActions actionFragment;
     private TextView selectedDateFillData;
     private ImageButton deleteAllButtonFillData;
-    private Integer selectedHourOfDayFillData;
-    private Integer selectedMinuteFillData;
 
     //ToDo REFACT убрать вот такие ни к чему не привязанные переменнные (они должны быть частью каких-то объектов или использоваться локально)
-    private Long selectedDayStartDate;
-    private Long selectedDayEndDate;
-    private Integer selectedMoodId;
+    private long selectedDayStartDate;
+    private long selectedDayEndDate;
+    private int selectedMoodId;
+    private int selectedHourOfDayFillData;
+    private int selectedMinuteFillData;
 
     private java.util.Calendar dateAndTime;
 
@@ -70,7 +71,7 @@ public class ActivityFillDataTabs extends AppCompatActivity implements View.OnCl
         context = this;
 
         Intent intent = getIntent();
-        Long selectedDateInMillis = intent.getLongExtra(DATE_IN_MILLIS_KEY, System.currentTimeMillis());
+        long selectedDateInMillis = intent.getLongExtra(DATE_IN_MILLIS_KEY, System.currentTimeMillis());
 
         selectedDay = new SelectedDay(selectedDateInMillis);
         dateAndTime = selectedDay.getCurrentDateAndTime();
@@ -121,7 +122,7 @@ public class ActivityFillDataTabs extends AppCompatActivity implements View.OnCl
 
                 Log.d("User has pressed DeleteAllDataForTheDay button");
 
-                //ToDO REFACT Использовать для диалога xml-разметку
+                //ToDO REFACT Вынести тексты в string.xml
                 AlertDialog.Builder builder = new AlertDialog.Builder(ActivityFillDataTabs.this);
                 builder.setTitle("Delete all data")
                         .setMessage("Delete all data for this day?")
@@ -132,6 +133,7 @@ public class ActivityFillDataTabs extends AppCompatActivity implements View.OnCl
                                         Log.d("User has confirmed data deleting");
                                         DBOperations.deleteAllDayData(context, selectedDayStartDate, selectedDayEndDate);
 
+                                        Toast.makeText(getBaseContext(), "All data for the day is deleted", Toast.LENGTH_SHORT).show();
                                         moodFragment.updateList();
                                         actionFragment.updateList();
                                     }
@@ -154,7 +156,7 @@ public class ActivityFillDataTabs extends AppCompatActivity implements View.OnCl
 
     // Process event from FillDataMood fragment (user selects mood from GridView)
     @Override
-    public void setTimeEvent(final Integer eventId) {
+    public void setTimeEvent(final int eventId) {
         Log.d("Activity recieved setTimeEvent from FillDataMood fragment, selectedMoodId = " + selectedMoodId);
         View v = null;
         selectedMoodId = eventId;
@@ -164,7 +166,7 @@ public class ActivityFillDataTabs extends AppCompatActivity implements View.OnCl
 
     // Process event from FillDataActions fragment (user selects action from GridView to edit it)
     @Override
-    public void selectActionsGroupEvent(final Integer selectedActionsGroupId) {
+    public void selectActionsGroupEvent(final int selectedActionsGroupId) {
         Log.d("Activity received selectActionsFroup event from FillDataAction fragment, groupId =" + selectedActionsGroupId);
 
         Intent intentActions = new Intent("com.macgavrina.moodmenology.add.action");
@@ -174,7 +176,7 @@ public class ActivityFillDataTabs extends AppCompatActivity implements View.OnCl
     }
 
     @Override
-    public void editActionRowEvent(Integer rowId) {
+    public void editActionRowEvent(int rowId) {
         Log.d("Activity received editActionRow event from FillDataAction fragment, rowId=" + rowId);
         Intent intentEdit = new Intent("com.macgavrina.moodmenology.edit.action");
         intentEdit.putExtra(ROWID_KEY, rowId);
@@ -183,7 +185,7 @@ public class ActivityFillDataTabs extends AppCompatActivity implements View.OnCl
 
     // Process event from FillDataMood fragment (user selects row from ListView to edit it)
     @Override
-    public void editMoodRowEvent(final Integer rowId) {
+    public void editMoodRowEvent(final int rowId) {
         Log.d("Activity received editMoodRow event from FillDataMood fragment, rowId="+rowId);
         Intent intentEdit = new Intent("com.macgavrina.moodmenology.edit.mood");
         intentEdit.putExtra(ROWID_KEY, rowId);

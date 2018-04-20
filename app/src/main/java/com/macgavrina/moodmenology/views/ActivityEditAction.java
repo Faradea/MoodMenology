@@ -25,12 +25,12 @@ public class ActivityEditAction extends AppCompatActivity implements View.OnClic
 
     private static final String ROWID_KEY = "rowId";
 
-    private static final Long dayDurationInMillis = Long.valueOf(86400000);
+    private static final long dayDurationInMillis = Long.valueOf(86400000);
 
     private ActionEvent actionEvent;
     private Icons icons;
 
-    private Integer rowId;
+    private int rowId;
 
     private ImageView actionImageView;
     private TextView startTimeTextView;

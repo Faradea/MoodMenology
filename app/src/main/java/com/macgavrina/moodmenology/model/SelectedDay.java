@@ -8,12 +8,12 @@ import java.util.Calendar;
 
 public class SelectedDay {
 
-    private static final Long dayDurationInMillis = Long.valueOf(86400000);
+    private static final long dayDurationInMillis = Long.valueOf(86400000);
     private Calendar currentDateAndTime;
     private Calendar endDayDateAndTime;
     private Calendar startDayDateAndTime;
 
-    public SelectedDay(final Long selectedDateInMillis) {
+    public SelectedDay(final long selectedDateInMillis) {
 
         super();
 
@@ -31,11 +31,11 @@ public class SelectedDay {
         endDayDateAndTime.set(java.util.Calendar.MINUTE, 0);
     }
 
-    public Long getDayStartTimestamp(){
+    public long getDayStartTimestamp(){
         return startDayDateAndTime.getTimeInMillis();
     }
 
-    public Long getDayEndTimestamp(){
+    public long getDayEndTimestamp(){
         return endDayDateAndTime.getTimeInMillis();
     }
 

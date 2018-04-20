@@ -50,14 +50,14 @@ public class FragmentFillDataMood extends Fragment {
 
     private static final int iconsType= Icons.IconTypes.moodIconsType.getId();
 
-    private Integer selectedMoodId;
+    private int selectedMoodId;
     private long startDateValue;
     private long endDateValue;
 
     String[] from;
     int[] to;
 
-    private static Integer[] positionRowIdMapping;
+    private static int[] positionRowIdMapping;
 
     private static GridView lvSimple;
     private static FragmentActivity myContext;
@@ -114,7 +114,6 @@ public class FragmentFillDataMood extends Fragment {
     //Update list after editing via EditMood activity
     public void onResume() {
         super.onResume();
-        //updateList(Long.valueOf(startDateValue), Long.valueOf(endDateValue));
     }
 
     private void setupGridView() {
@@ -136,7 +135,7 @@ public class FragmentFillDataMood extends Fragment {
 
         // sAdapterGrid - adapter for GridView
         MySimpleAdapterGrid sAdapterGrid = new MySimpleAdapterGrid(myContext, data,
-                R.layout.item_universal_grid, from, to, iconsType, null);
+                R.layout.item_universal_grid, from, to, iconsType);
 
         gridViewMoodFragment.setAdapter(sAdapterGrid);
         sAdapterGrid.setViewBinder(new LayoutGridColorViewBinder());
@@ -204,7 +203,9 @@ public class FragmentFillDataMood extends Fragment {
         return sAdapterList;
     }
 
-    //ToDO REFACT переписать через sAdapterList.notifyDataSetChanged (и для action тоже)
+    //ToDO REFACT переписать через sAdapterList.notifyDataSetChanged (и для action тоже) -
+    // НО: с переходом на cursor adapter нужно будет обновить только курсор, без notifyDataSetChanged
+    
     public void updateList() {
 
         getBundleDataFromActivity();
@@ -254,7 +255,7 @@ public class FragmentFillDataMood extends Fragment {
             Colors colors = new Colors(view);
             switch (view.getId()) {
                 case R.id.ItemMoodEvent_layout:
-                    i = ((Integer) data).intValue();
+                    i = (int) data;
                     view.setBackgroundColor(colors.getMoodColorForListId(i));
                     return true;
             }
@@ -272,7 +273,7 @@ public class FragmentFillDataMood extends Fragment {
             Colors colors = new Colors(view);
             switch (view.getId()) {
                 case R.id.ItemUniversalGrid_layout:
-                    i = (Integer) data;
+                    i = (int) data;
                     view.setBackgroundColor(colors.getMoodColorForGridId(i));
                     return true;
             }

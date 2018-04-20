@@ -44,14 +44,14 @@ public class FragmentFillDataActions extends Fragment {
 
     private long startDateValue;
     private long endDateValue;
-    private Integer selectedActionsGroupId;
+    private int selectedActionsGroupId;
 
     private GridView gridViewActionFragment;
 
     //ToDo REFACT сделать non-static
     private static FragmentActivity myContext;
     private static GridView lvSimple;
-    private static Integer[] positionRowIdMapping;
+    private static int[] positionRowIdMapping;
     private static IActionsFragmentInteractionListener actionsFragmentListener;
 
     private Icons icons;
@@ -136,7 +136,7 @@ public class FragmentFillDataActions extends Fragment {
 
         // sAdapterGrid - adapter for GridView
         MySimpleAdapterGrid sAdapterGrid = new MySimpleAdapterGrid(myContext, data,
-                R.layout.item_universal_grid, from, to, iconsTypeGrid, null);
+                R.layout.item_universal_grid, from, to, iconsTypeGrid);
 
         gridViewActionFragment.setAdapter(sAdapterGrid);
 

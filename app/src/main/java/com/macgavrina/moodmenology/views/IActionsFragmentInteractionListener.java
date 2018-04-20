@@ -6,8 +6,8 @@ package com.macgavrina.moodmenology.views;
 
 interface IActionsFragmentInteractionListener {
 
-        void selectActionsGroupEvent(Integer selectedActionsGroupId);
+        void selectActionsGroupEvent(int selectedActionsGroupId);
 
-        void editActionRowEvent(Integer rowId);
+        void editActionRowEvent(int rowId);
 
 }

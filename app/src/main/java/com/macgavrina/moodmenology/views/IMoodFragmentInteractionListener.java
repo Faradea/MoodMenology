@@ -6,8 +6,8 @@ package com.macgavrina.moodmenology.views;
 
 interface IMoodFragmentInteractionListener {
 
-        void setTimeEvent(Integer selectedMoodId);
+        void setTimeEvent(int selectedMoodId);
 
-        void editMoodRowEvent(Integer rowId);
+        void editMoodRowEvent(int rowId);
 
     }

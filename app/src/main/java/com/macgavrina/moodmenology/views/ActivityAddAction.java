@@ -44,14 +44,14 @@ public class ActivityAddAction extends AppCompatActivity implements View.OnClick
 
     private static final int iconsType= Icons.IconTypes.actionIconsType.getId();
 
-    private static final Long dayDurationInMillis = Long.valueOf(86400000);
+    private static final long dayDurationInMillis = Long.valueOf(86400000);
 
     private Icons icons;
     private ActionEvent actionEvent;
 
-    private Integer actionsGroupId;
-    private Integer selectedActionId;
-    private Long selectedDateInMillis;
+    private int actionsGroupId;
+    private int selectedActionId;
+    private long selectedDateInMillis;
 
     private Button saveButton;
     private GridView gridViewActionActivity;
@@ -201,6 +201,10 @@ public class ActivityAddAction extends AppCompatActivity implements View.OnClick
 
             if (dateAndTimeEnd.getTimeInMillis()<dateAndTimeStart.getTimeInMillis()) {
                 dateAndTimeEnd.setTimeInMillis(dateAndTimeEnd.getTimeInMillis()+dayDurationInMillis);
+            }
+
+            if (dateAndTimeEnd.getTimeInMillis() - dateAndTimeStart.getTimeInMillis() > dayDurationInMillis) {
+                dateAndTimeEnd.setTimeInMillis(dateAndTimeEnd.getTimeInMillis() - dayDurationInMillis);
             }
 
             actionEvent.setEndTime(dateAndTimeEnd.getTimeInMillis());
