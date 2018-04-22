@@ -11,9 +11,9 @@ import com.macgavrina.moodmenology.controllers.DBOperations;
 public abstract class Event {
 
     protected int rowId;
-    protected int eventType;
-    protected int eventId;
-    protected long startDateInUnixFormat;
+    int eventType;
+    int eventId;
+    long startDateInUnixFormat;
 
     public int getEventId() {
         return this.eventId;

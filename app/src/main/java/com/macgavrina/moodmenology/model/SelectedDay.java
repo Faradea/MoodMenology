@@ -8,7 +8,7 @@ import java.util.Calendar;
 
 public class SelectedDay {
 
-    private static final long dayDurationInMillis = Long.valueOf(86400000);
+    private static final long dayDurationInMillis = 86400000L;
     private Calendar currentDateAndTime;
     private Calendar endDayDateAndTime;
     private Calendar startDayDateAndTime;

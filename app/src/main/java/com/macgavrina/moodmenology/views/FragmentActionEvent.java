@@ -28,18 +28,10 @@ public class FragmentActionEvent extends Fragment implements View.OnClickListene
 
     private int actionGroupId;
     private int actionId;
+
     private String formattedStartTime;
     private String formattedEndTime;
     private String formattedDuration;
-
-    private Icons icons;
-
-    private ImageView actionImageView;
-    private TextView startDateTextView;
-    private TextView endDateTextView;
-    private ImageButton editStartTimeButton;
-    private ImageButton editEndTimeButton;
-    private TextView durationTextView;
 
     private static IAddActionFragmentListener addActionFragmentListener;
 
@@ -51,23 +43,23 @@ public class FragmentActionEvent extends Fragment implements View.OnClickListene
 
         getDataFromActivity();
 
-        icons = new Icons();
-        actionImageView = (ImageView) v.findViewById(R.id.FragmentAddActionEvent_actionImage);
+        Icons icons = new Icons();
+        ImageView actionImageView = (ImageView) v.findViewById(R.id.FragmentAddActionEvent_actionImage);
         actionImageView.setImageResource(icons.getActionIconsId(actionGroupId, actionId));
 
-        startDateTextView = (TextView) v.findViewById(R.id.FragmentAddActionEvent_startTimeText);
+        TextView startDateTextView = (TextView) v.findViewById(R.id.FragmentAddActionEvent_startTimeText);
         startDateTextView.setText(formattedStartTime);
 
-        endDateTextView = (TextView) v.findViewById(R.id.FragmentAddActionEvent_endTimeText);
+        TextView endDateTextView = (TextView) v.findViewById(R.id.FragmentAddActionEvent_endTimeText);
         endDateTextView.setText(formattedEndTime);
 
-        durationTextView = (TextView) v.findViewById(R.id.FragmentAddActionEvent_durationText);
+        TextView durationTextView = (TextView) v.findViewById(R.id.FragmentAddActionEvent_durationText);
         durationTextView.setText(formattedDuration);
 
-        editStartTimeButton = (ImageButton) v.findViewById(R.id.FragmentAddActionEvent_editStartTimeImageButton);
+        ImageButton editStartTimeButton = (ImageButton) v.findViewById(R.id.FragmentAddActionEvent_editStartTimeImageButton);
         editStartTimeButton.setOnClickListener(this);
 
-        editEndTimeButton = (ImageButton) v.findViewById(R.id.FragmentAddActionEvent_editEndTimeImageButton);
+        ImageButton editEndTimeButton = (ImageButton) v.findViewById(R.id.FragmentAddActionEvent_editEndTimeImageButton);
         editEndTimeButton.setOnClickListener(this);
 
         Activity activity = getActivity();

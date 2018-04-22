@@ -34,14 +34,14 @@ public class DBHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
 
-        db.execSQL(new StringBuffer("create table ").append(TABLE_NAME).append(" (")
-                .append(ID_COLUMN_NAME).append(" integer primary key autoincrement,")
-                .append(EVENT_ID_COLUMN_NAME).append(" Integer,")
-                .append(EVENT_GROUP_ID_COLUMN_NAME).append(" Integer,")
-                .append(EVENT_TYPE_COLUMN_NAME).append(" Integer,")
-                .append(START_DATETIME_COLUMN_NAME).append(" Long,")
-                .append(END_DATETIME_COLUMN_NAME).append(" Long")
-                .append(");").toString()
+        db.execSQL("create table " + TABLE_NAME + " (" +
+                        ID_COLUMN_NAME + " integer primary key autoincrement," +
+                        EVENT_ID_COLUMN_NAME + " Integer," +
+                        EVENT_GROUP_ID_COLUMN_NAME + " Integer," +
+                        EVENT_TYPE_COLUMN_NAME + " Integer," +
+                        START_DATETIME_COLUMN_NAME + " Long," +
+                        END_DATETIME_COLUMN_NAME + " Long" +
+                        ");"
                 );
 
         Log.d("DataBase is created");

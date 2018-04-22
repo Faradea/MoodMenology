@@ -51,13 +51,13 @@ public abstract class DBOperations {
 
         dbHelper.close();
 
-        Log.d(new StringBuffer().append("Added row with EventId = ").append(selectedMoodIdForActivity)
-                .append(", EventGroupId = ").append(actionGroupId)
-                .append(", StartDate = ").append(SmallFunctions.formatDate(startTimeInMillis))
-                .append(", StartTime = ").append(SmallFunctions.formatTime(startTimeInMillis))
-                .append(", EndDate = ").append(SmallFunctions.formatDate(endTimeInMillis))
-                .append(", EndTime = ").append(SmallFunctions.formatTime(endTimeInMillis))
-                .append(", rowId = ").append(rowID).toString());
+        Log.d("Added row with EventId = " + selectedMoodIdForActivity +
+                ", EventGroupId = " + actionGroupId +
+                ", StartDate = " + SmallFunctions.formatDate(startTimeInMillis) +
+                ", StartTime = " + SmallFunctions.formatTime(startTimeInMillis) +
+                ", EndDate = " + SmallFunctions.formatDate(endTimeInMillis) +
+                ", EndTime = " + SmallFunctions.formatTime(endTimeInMillis) +
+                ", rowId = " + rowID);
     }
 
     public static void deleteAllDayData(final Context context,
@@ -143,12 +143,9 @@ public abstract class DBOperations {
                                                     String.valueOf(eventType)};
         Cursor c = db.query(DBHelper.TABLE_NAME, null, selection, selectionArgs, null, null, DBHelper.START_DATETIME_COLUMN_NAME);
 
-        // Get rows count in DB to define required amount of rows in the listView
-        int rowsCount = c.getCount();
-
         // Convert data to map required for adapter
         ArrayList<Map<String, Object>> data = new ArrayList<Map<String, Object>>(
-                rowsCount);
+                c.getCount());
 
         Map<String, Object> m;
 
@@ -173,8 +170,7 @@ public abstract class DBOperations {
 
                 if (eventType == Event.EventTypes.actionEventTypeId.getId()){
 
-                    int iconId = icons.getActionIconsId(c.getInt(groupColIndex), c.getInt(moodColIndex));
-                    m.put(ATTRIBUTE_NAME_LL, iconId);
+                    m.put(ATTRIBUTE_NAME_LL, icons.getActionIconsId(c.getInt(groupColIndex), c.getInt(moodColIndex)));
 
                 }
 
@@ -221,8 +217,7 @@ public abstract class DBOperations {
         Cursor c = db.query(DBHelper.TABLE_NAME, null, selection, selectionArgs, null, null, DBHelper.START_DATETIME_COLUMN_NAME);
 
         // Get rows count in DB to define required amount of rows in the listView
-        int rowsCount = c.getCount();
-        int[] positionRowIdMapping = new int[rowsCount];
+        int[] positionRowIdMapping = new int[c.getCount()];
 
         // Define columns
         int idColIndex = c.getColumnIndex(DBHelper.ID_COLUMN_NAME);

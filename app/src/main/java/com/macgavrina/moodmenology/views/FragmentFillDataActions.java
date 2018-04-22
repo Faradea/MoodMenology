@@ -1,6 +1,7 @@
 package com.macgavrina.moodmenology.views;
 
 import android.app.Activity;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
@@ -44,7 +45,8 @@ public class FragmentFillDataActions extends Fragment {
 
     private long startDateValue;
     private long endDateValue;
-    private int selectedActionsGroupId;
+    private static int displayMode;
+    private static int numColumns;
 
     private GridView gridViewActionFragment;
 
@@ -66,12 +68,14 @@ public class FragmentFillDataActions extends Fragment {
                              final Bundle savedInstanceState) {
 
         Activity activity = getActivity();
-        if (activity instanceof FragmentActivity) {
+        if (activity != null) {
             myContext = (FragmentActivity) activity;
 
         }
         // Inflate the layout for this fragment
         View v = inflater.inflate(R.layout.fragment_filldata_actions, container, false);
+
+        displayMode = v.getResources().getConfiguration().orientation;
 
         gridViewActionFragment = (GridView) v.findViewById(R.id.FragmentFilldataActions_gridView);
         lvSimple = (GridView) v.findViewById(R.id.FragmentFilldataActions_listView);
@@ -86,8 +90,10 @@ public class FragmentFillDataActions extends Fragment {
             actionsFragmentListener = (IActionsFragmentInteractionListener) activity;
             Log.d("actionsFragmentListener interface is ok");
         } catch (ClassCastException e) {
-            throw new ClassCastException(activity.toString()
-                    + " shall implement actionsFragmentListener interface");
+            if (activity != null) {
+                throw new ClassCastException(activity.toString()
+                        + " shall implement actionsFragmentListener interface");
+            }
         }
 
         Log.d( "Fragment building is finished, startDate = "
@@ -148,16 +154,15 @@ public class FragmentFillDataActions extends Fragment {
         gridViewActionFragment.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                selectedActionsGroupId = position;
-                Log.d("User has selected grid item with actionsGroupId = " + selectedActionsGroupId);
+                Log.d("User has selected grid item with actionsGroupId = " + position);
                 // Send event to Activity
-                actionsFragmentListener.selectActionsGroupEvent(selectedActionsGroupId);
+                actionsFragmentListener.selectActionsGroupEvent(position);
             }
         });
     }
 
     //Update listView
-    private SimpleAdapter initializeList() {
+    private void initializeList() {
 
         ArrayList<Map<String, Object>> data = DBOperations.getEventListForTheDay(myContext, startDateValue,
                 endDateValue, Event.EventTypes.actionEventTypeId.getId());
@@ -184,7 +189,6 @@ public class FragmentFillDataActions extends Fragment {
                                         }
         );
 
-        return sAdapterList;
     }
 
     public void updateList() {
@@ -196,7 +200,14 @@ public class FragmentFillDataActions extends Fragment {
 
     // Adjust view for ListView
     private static void adjustGridListView() {
-        lvSimple.setNumColumns(1);
+
+        if (displayMode == Configuration.ORIENTATION_PORTRAIT) {
+            numColumns = 1;
+        } else {
+            numColumns = 2;
+        }
+
+        lvSimple.setNumColumns(numColumns);
         lvSimple.setVerticalSpacing(5);
         lvSimple.setHorizontalSpacing(5);
         lvSimple.setStretchMode(GridView.STRETCH_COLUMN_WIDTH);
@@ -205,7 +216,11 @@ public class FragmentFillDataActions extends Fragment {
 
     //Adjust view for GridView
     private void adjustGridView() {
-        int numColumns = (int) Math.ceil(Math.sqrt(icons.getActionGroupIconsLenght()));
+        if (displayMode == Configuration.ORIENTATION_PORTRAIT) {
+            numColumns = (int) Math.ceil(Math.sqrt(icons.getActionGroupIconsLenght()));
+        } else {
+            numColumns = 6;
+        }
         gridViewActionFragment.setNumColumns(numColumns);
         gridViewActionFragment.setVerticalSpacing(5);
         gridViewActionFragment.setHorizontalSpacing(5);

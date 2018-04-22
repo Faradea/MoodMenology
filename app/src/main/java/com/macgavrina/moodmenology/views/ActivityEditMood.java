@@ -24,11 +24,8 @@ public class ActivityEditMood extends AppCompatActivity implements View.OnClickL
     private MoodEvent moodEvent;
     private Icons icons;
 
-    private ImageView moodImageView;
-    private Integer rowId;
-    private TextView selectedDateTextViewEditData, selectedTimeTextViewEditData;
-    private Button saveButtonEditData, deleteButtonEditData;
-    private ImageButton editTimeEditData;
+    private TextView selectedTimeTextViewEditData;
+    private Button saveButtonEditData;
 
     private java.util.Calendar dateAndTime = java.util.Calendar.getInstance();
 
@@ -39,24 +36,24 @@ public class ActivityEditMood extends AppCompatActivity implements View.OnClickL
         setContentView(R.layout.activity_edit_mood);
 
         Intent intent = getIntent();
-        rowId = intent.getIntExtra(ROWID_KEY, 0);
+        int rowId = intent.getIntExtra(ROWID_KEY, 0);
 
-        selectedDateTextViewEditData = (TextView) findViewById(R.id.ActivityEditMood_dateText);
+        TextView selectedDateTextViewEditData = (TextView) findViewById(R.id.ActivityEditMood_dateText);
         selectedTimeTextViewEditData = (TextView) findViewById(R.id.ActivityEditMood_startTimeText);
 
-        editTimeEditData = (ImageButton) findViewById(R.id.ActivityEditMood_editTimeImageButton);
+        ImageButton editTimeEditData = (ImageButton) findViewById(R.id.ActivityEditMood_editTimeImageButton);
         editTimeEditData.setOnClickListener(this);
 
         saveButtonEditData = (Button) findViewById(R.id.ActivityEditMood_saveButton);
         saveButtonEditData.setOnClickListener(this);
         saveButtonEditData.setEnabled(false);
 
-        deleteButtonEditData = (Button) findViewById(R.id.ActivityEditMood_deleteButton);
+        Button deleteButtonEditData = (Button) findViewById(R.id.ActivityEditMood_deleteButton);
         deleteButtonEditData.setOnClickListener(this);
 
-        moodImageView = (ImageView) findViewById(R.id.ActivityEditMood_actionImage);
+        ImageView moodImageView = (ImageView) findViewById(R.id.ActivityEditMood_actionImage);
 
-        moodEvent = MoodEvent.getMoodData(this, rowId);
+        moodEvent = new MoodEvent(this, rowId);
         selectedDateTextViewEditData.setText(SmallFunctions.formatDate(moodEvent.getStartDateInUnixFormat()));
         selectedTimeTextViewEditData.setText(SmallFunctions.formatTime(moodEvent.getStartDateInUnixFormat()));
 

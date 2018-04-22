@@ -20,6 +20,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     //ToDo BUG timePickerDialog можно вызвать 2 раза
 
+    //ToDo REFACT пройтись по всем предупреждениям студии
     //ToDo REFACT перенести все отступы и т.д. в dimens.xml
     //ToDo REFACT можно ли вынести final переменные из классов в ресурсы?
 
@@ -27,15 +28,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     //ToDo NEW возможность указать физическое состояние (сонный, болезнь, холодно)
     //ToDo NEW комментарии к настроению и action
     //ToDo NEW сценарии для однотипных действий типа еды и сна
-    //ToDO NEW добавить макеты для горизонтального расположения экрана
     //ToDo NEW подумать нужна ли здесь лямбда-архитектура
 
 
     private static final String DATE_IN_MILLIS_KEY="selectedDateInMillis";
 
-    private long selectedDateInMillis;
-
-    private FloatingActionButton selectDateButtonMain;
     private DatePicker datePickerMain;
     private Calendar calendarMain;
 
@@ -46,7 +43,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         datePickerMain = (DatePicker) findViewById(R.id.ActivityMain_datePicker);
 
-        selectDateButtonMain = (FloatingActionButton) findViewById(R.id.ActivityMain_addButton);
+        FloatingActionButton selectDateButtonMain = (FloatingActionButton) findViewById(R.id.ActivityMain_addButton);
         selectDateButtonMain.setOnClickListener(this);
 
         initalizeCurrentDate();
@@ -83,7 +80,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         switch (v.getId()) {
             case R.id.ActivityMain_addButton:
 
-                selectedDateInMillis = calendarMain.getTimeInMillis();
+                long selectedDateInMillis = calendarMain.getTimeInMillis();
                 Log.d("User has selected day: " + SmallFunctions.formatDate(calendarMain.getTimeInMillis()));
                 Intent intent = new Intent("com.macgavrina.moodmenology.fill.data");
                 intent.putExtra(DATE_IN_MILLIS_KEY, selectedDateInMillis);

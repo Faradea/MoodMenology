@@ -10,23 +10,19 @@ import java.util.concurrent.TimeUnit;
 
 public abstract class SmallFunctions {
 
-    private static final long hour_in_millis = Long.valueOf(3600000);
+    private static final long hour_in_millis = 3600000L;
 
     public static String formatTime(final long aLong) {
 
-        long unixTime = aLong;
-
-        Date date = new Date(unixTime);
+        Date date = new Date(aLong);
         SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
-        String formattedDate = sdf.format(date);
 
-        return formattedDate;
+        return sdf.format(date);
     }
 
     public static String formatTimeWithCompare (final long aLong, final long startDate, final long endDate) {
 
-        long unixTime = aLong;
-        Date date = new Date(unixTime);
+        Date date = new Date(aLong);
         SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
         String formattedDate = sdf.format(date);
 
@@ -40,13 +36,10 @@ public abstract class SmallFunctions {
 
     public static String formatDate(final long aLong) {
 
-        long unixTime = aLong;
-
-        Date date = new Date(unixTime);
+        Date date = new Date(aLong);
         SimpleDateFormat sdf = new SimpleDateFormat("EE, dd MMM");
-        String formattedDate = sdf.format(date);
 
-        return formattedDate;
+        return sdf.format(date);
     }
 
     public static String formatDuration (final long aLong){
@@ -58,9 +51,9 @@ public abstract class SmallFunctions {
         String formattedDate;
 
         if (aLong >= hour_in_millis){
-        formattedDate = new StringBuffer().append(diffHours).append("h ").append(sdfMinute.format(date)).append("min").toString();}
+        formattedDate = String.valueOf(diffHours) + "h " + sdfMinute.format(date) + "min";}
         else {
-            formattedDate = new StringBuffer().append(sdfMinute.format(date)).append("min").toString();
+            formattedDate = sdfMinute.format(date) + "min";
         }
 
         return formattedDate;

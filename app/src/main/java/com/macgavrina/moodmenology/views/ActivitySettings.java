@@ -12,15 +12,12 @@ import com.macgavrina.moodmenology.logging.Log;
 
 public class ActivitySettings extends AppCompatActivity implements View.OnClickListener{
 
-    private Button deleteAllDataButtonSettings;
-
-
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings);
 
-        deleteAllDataButtonSettings = (Button) findViewById(R.id.ActivitySettings_deleteAllDataButton);
+        Button deleteAllDataButtonSettings = (Button) findViewById(R.id.ActivitySettings_deleteAllDataButton);
         deleteAllDataButtonSettings.setOnClickListener(this);
 
         Log.d("Activity building is finished");

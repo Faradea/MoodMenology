@@ -16,7 +16,7 @@ public class ActionEvent extends Event{
     private static final String ATTRIBUTE_NAME_END_DATE = "endDate";
     private static final String ATTRIBUTE_NAME_EVENT_ID = "eventId";
     private static final String ATTRIBUTE_NAME_GROUP_ID = "groupId";
-    private static final long defaultDurationInMillis = Long.valueOf(5400000);
+    private static final long defaultDurationInMillis = 5400000L;
 
     private int actionGroupId;
     private long endDateInUnixFormat;
@@ -39,20 +39,15 @@ public class ActionEvent extends Event{
         this.eventId = selectedActionId;
     }
 
-    //ToDo REFACT подумать правильная ли это конструкция - со static методом
-    public static ActionEvent getActionData(Context context, int rowId) {
+    public ActionEvent (final Context context, final int rowId) {
 
         Map<String,Object> eventData = DBOperations.getEvent(context, rowId);
 
-        ActionEvent actionEvent = new ActionEvent(
-                (long) eventData.get(ATTRIBUTE_NAME_START_DATE),
-                (long) eventData.get(ATTRIBUTE_NAME_END_DATE),
-                (int) eventData.get(ATTRIBUTE_NAME_EVENT_ID),
-                (int) eventData.get(ATTRIBUTE_NAME_GROUP_ID)
-        );
-
-        actionEvent.rowId = rowId;
-        return actionEvent;
+        this.startDateInUnixFormat = (long) eventData.get(ATTRIBUTE_NAME_START_DATE);
+        this.endDateInUnixFormat = (long) eventData.get(ATTRIBUTE_NAME_END_DATE);
+        this.eventId = (int) eventData.get(ATTRIBUTE_NAME_EVENT_ID);
+        this.actionGroupId = (int) eventData.get(ATTRIBUTE_NAME_GROUP_ID);
+        this.rowId = rowId;
     }
 
     public int getGroupId(){
@@ -64,8 +59,7 @@ public class ActionEvent extends Event{
     }
 
     public long getDuration(){
-        long duration = this.endDateInUnixFormat - this.startDateInUnixFormat;
-        return duration;
+        return this.endDateInUnixFormat - this.startDateInUnixFormat;
     }
 
     public void saveToDB(final Context context) {

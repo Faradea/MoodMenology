@@ -12,8 +12,8 @@ import java.util.Map;
 
 public class MoodEvent extends Event {
 
-    final static String ATTRIBUTE_NAME_START_DATE = "startDate";
-    final static String ATTRIBUTE_NAME_EVENT_ID = "eventId";
+    private final static String ATTRIBUTE_NAME_START_DATE = "startDate";
+    private final static String ATTRIBUTE_NAME_EVENT_ID = "eventId";
 
     public MoodEvent(final long timeInMillis, final int selectedMoodId) {
         super();
@@ -22,19 +22,13 @@ public class MoodEvent extends Event {
         this.eventId = selectedMoodId;
     }
 
-    public static MoodEvent getMoodData(final Context context, final int rowId) {
+    public MoodEvent (final Context context, final int rowId) {
 
         Map<String,Object> eventData = DBOperations.getEvent(context, rowId);
 
-        MoodEvent moodEvent = new MoodEvent(
-                (long) eventData.get(ATTRIBUTE_NAME_START_DATE),
-                (int) eventData.get(ATTRIBUTE_NAME_EVENT_ID)
-
-        );
-
-        moodEvent.rowId = rowId;
-
-        return moodEvent;
+        this.startDateInUnixFormat = (long) eventData.get(ATTRIBUTE_NAME_START_DATE);
+        this.eventId = (int) eventData.get(ATTRIBUTE_NAME_EVENT_ID);
+        this.rowId = rowId;
     }
 
     public void saveToDB(final Context context) {

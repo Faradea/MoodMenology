@@ -34,6 +34,7 @@ import java.util.Calendar;
 
 public class ActivityFillDataTabs extends AppCompatActivity implements View.OnClickListener, IMoodFragmentInteractionListener, IActionsFragmentInteractionListener {
 
+    //ToDo NEW сделать более "комфортный" дизайн для горизонтального landscape
 
     private static final int EDIT_MOOD_REQUEST_CODE = 1;
     private static final int EDIT_ACTION_REQUEST_CODE = 2;
@@ -51,16 +52,8 @@ public class ActivityFillDataTabs extends AppCompatActivity implements View.OnCl
 
     FragmentFillDataMood moodFragment;
     FragmentFillDataActions actionFragment;
-    private TextView selectedDateFillData;
-    private ImageButton deleteAllButtonFillData;
 
-    //ToDo REFACT убрать вот такие ни к чему не привязанные переменнные (они должны быть частью каких-то объектов или использоваться локально)
-    private long selectedDayStartDate;
-    private long selectedDayEndDate;
     private int selectedMoodId;
-    private int selectedHourOfDayFillData;
-    private int selectedMinuteFillData;
-
     private java.util.Calendar dateAndTime;
 
     @Override
@@ -76,14 +69,11 @@ public class ActivityFillDataTabs extends AppCompatActivity implements View.OnCl
         selectedDay = new SelectedDay(selectedDateInMillis);
         dateAndTime = selectedDay.getCurrentDateAndTime();
 
-        selectedDayStartDate = selectedDay.getDayStartTimestamp();
-        selectedDayEndDate = selectedDay.getDayEndTimestamp();
-
         setupHeader();
 
         // Find the view pager that will allow the user to swipe between fragments
         ViewPager viewPager = (ViewPager) findViewById(R.id.ActivtyFilldata_viewPager);
-        SimpleFragmentPagerAdapter adapter = new SimpleFragmentPagerAdapter(getSupportFragmentManager(), selectedDayStartDate, selectedDayEndDate);
+        SimpleFragmentPagerAdapter adapter = new SimpleFragmentPagerAdapter(getSupportFragmentManager(), selectedDay.getDayStartTimestamp(), selectedDay.getDayEndTimestamp());
 
         // Set the adapter onto the view pager
         viewPager.setAdapter(adapter);
@@ -131,7 +121,7 @@ public class ActivityFillDataTabs extends AppCompatActivity implements View.OnCl
                                 new DialogInterface.OnClickListener() {
                                     public void onClick(DialogInterface dialog, int id) {
                                         Log.d("User has confirmed data deleting");
-                                        DBOperations.deleteAllDayData(context, selectedDayStartDate, selectedDayEndDate);
+                                        DBOperations.deleteAllDayData(context, selectedDay.getDayStartTimestamp(), selectedDay.getDayEndTimestamp());
 
                                         Toast.makeText(getBaseContext(), "All data for the day is deleted", Toast.LENGTH_SHORT).show();
                                         moodFragment.updateList();
@@ -197,8 +187,6 @@ public class ActivityFillDataTabs extends AppCompatActivity implements View.OnCl
         public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
             dateAndTime.set(java.util.Calendar.HOUR_OF_DAY, hourOfDay);
             dateAndTime.set(java.util.Calendar.MINUTE, minute);
-            selectedHourOfDayFillData = hourOfDay;
-            selectedMinuteFillData = minute;
 
             Log.d("User has set time: " + SmallFunctions.formatTime(dateAndTime.getTimeInMillis()));
 
@@ -221,11 +209,11 @@ public class ActivityFillDataTabs extends AppCompatActivity implements View.OnCl
 
     private void setupHeader() {
 
-        deleteAllButtonFillData = (ImageButton) findViewById(R.id.ActivtyFilldata_deleteAllButton);
+        ImageButton deleteAllButtonFillData = (ImageButton) findViewById(R.id.ActivtyFilldata_deleteAllButton);
         deleteAllButtonFillData.setOnClickListener(this);
 
         String selectedDateStringFillData= SmallFunctions.formatDate(dateAndTime.getTimeInMillis());
-        selectedDateFillData = (TextView) findViewById(R.id.ActivtyFilldata_dateText);
+        TextView selectedDateFillData = (TextView) findViewById(R.id.ActivtyFilldata_dateText);
         selectedDateFillData.setText(selectedDateStringFillData);
     }
 

@@ -44,7 +44,7 @@ public class ActivityAddAction extends AppCompatActivity implements View.OnClick
 
     private static final int iconsType= Icons.IconTypes.actionIconsType.getId();
 
-    private static final long dayDurationInMillis = Long.valueOf(86400000);
+    private static final long dayDurationInMillis = 86400000L;
 
     private Icons icons;
     private ActionEvent actionEvent;

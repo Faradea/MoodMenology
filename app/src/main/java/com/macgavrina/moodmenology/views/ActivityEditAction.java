@@ -25,20 +25,13 @@ public class ActivityEditAction extends AppCompatActivity implements View.OnClic
 
     private static final String ROWID_KEY = "rowId";
 
-    private static final long dayDurationInMillis = Long.valueOf(86400000);
+    private static final long dayDurationInMillis = 86400000L;
 
     private ActionEvent actionEvent;
-    private Icons icons;
 
-    private int rowId;
-
-    private ImageView actionImageView;
     private TextView startTimeTextView;
     private TextView endTimeTextView;
-    private Button deleteButton;
     private Button saveButton;
-    private ImageButton editStartTimeButton;
-    private ImageButton editEndTimeButton;
 
     private java.util.Calendar dateAndTimeStart = java.util.Calendar.getInstance();
     private java.util.Calendar dateAndTimeEnd = java.util.Calendar.getInstance();
@@ -50,23 +43,22 @@ public class ActivityEditAction extends AppCompatActivity implements View.OnClic
         setContentView(R.layout.activity_edit_action);
 
         Intent intent = getIntent();
-        rowId = intent.getIntExtra(ROWID_KEY, 0);
+        int rowId = intent.getIntExtra(ROWID_KEY, 0);
+        actionEvent = new ActionEvent(this, rowId);
 
-        actionImageView = (ImageView) findViewById(R.id.ActivityEditAction_actionImage);
+        ImageView actionImageView = (ImageView) findViewById(R.id.ActivityEditAction_actionImage);
         startTimeTextView = (TextView) findViewById(R.id.ActivityEditAction_startTimeText);
         endTimeTextView = (TextView) findViewById(R.id.ActivityEditAction_endTimeText);
 
-        editStartTimeButton = (ImageButton) findViewById(R.id.ActivityEditAction_editStartTimeImageButton);
+        ImageButton editStartTimeButton = (ImageButton) findViewById(R.id.ActivityEditAction_editStartTimeImageButton);
         editStartTimeButton.setOnClickListener(this);
 
-        editEndTimeButton = (ImageButton) findViewById(R.id.ActivityEditAction_editEndTimeImageButton);
+        ImageButton editEndTimeButton = (ImageButton) findViewById(R.id.ActivityEditAction_editEndTimeImageButton);
         editEndTimeButton.setOnClickListener(this);
 
         saveButton = (Button) findViewById(R.id.ActivityEditAction_saveButton);
         saveButton.setOnClickListener(this);
         saveButton.setEnabled(false);
-
-        actionEvent = ActionEvent.getActionData(this, rowId);
 
         dateAndTimeStart.setTimeInMillis(actionEvent.getStartDateInUnixFormat());
         dateAndTimeEnd.setTimeInMillis(actionEvent.getEndDateInUnixFormat());
@@ -74,10 +66,10 @@ public class ActivityEditAction extends AppCompatActivity implements View.OnClic
         setupStartTimeTextView();
         setupEndTimeTextView();
 
-        icons = new Icons();
+        Icons icons = new Icons();
         actionImageView.setImageResource(icons.getActionIconsId(actionEvent.getGroupId(), actionEvent.getEventId()));
 
-        deleteButton = (Button) findViewById(R.id.ActivityEditAction_deleteButton);
+        Button deleteButton = (Button) findViewById(R.id.ActivityEditAction_deleteButton);
         deleteButton.setOnClickListener(this);
 
         Log.d("Activity building is finished, rowId=" + rowId);

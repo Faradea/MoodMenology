@@ -2,6 +2,7 @@ package com.macgavrina.moodmenology.views;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.content.res.Configuration;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.RequiresApi;
@@ -35,9 +36,6 @@ import java.util.Map;
 
 public class FragmentFillDataMood extends Fragment {
 
-    private GridView gridViewMoodFragment;
-
-    private SimpleAdapter sAdapterList;
     public ArrayList<Map<String, Object>> data;
 
     private static final String ATTRIBUTE_NAME_START_DATE = "startDate";
@@ -54,11 +52,12 @@ public class FragmentFillDataMood extends Fragment {
     private long startDateValue;
     private long endDateValue;
 
-    String[] from;
-    int[] to;
+    private static int displayMode;
+    private static int numColumns;
 
     private static int[] positionRowIdMapping;
 
+    private GridView gridViewMoodFragment;
     private static GridView lvSimple;
     private static FragmentActivity myContext;
 
@@ -83,13 +82,15 @@ public class FragmentFillDataMood extends Fragment {
         // Inflate the layout for this fragment
         View v = inflater.inflate(R.layout.fragment_filldata_mood, container, false);
 
+        displayMode = v.getResources().getConfiguration().orientation;
+
         //lvSimple - list of saved mood rows (top of the screen)
         lvSimple = (GridView) v.findViewById(R.id.FragmentFilldataMood_listView);
         gridViewMoodFragment = (GridView) v.findViewById(R.id.FragmentFilldataMood_gridView);
 
         getBundleDataFromActivity();
 
-        sAdapterList = initializeList();
+        initializeList();
 
         setupGridView();
 
@@ -167,7 +168,7 @@ public class FragmentFillDataMood extends Fragment {
 
 
     //Update listView
-    private SimpleAdapter initializeList() {
+    private void initializeList() {
 
         Log.d("Initialize list for startDate = " + SmallFunctions.formatDate(startDateValue)+
         ", startTime = " + SmallFunctions.formatTime(startDateValue) +
@@ -179,8 +180,8 @@ public class FragmentFillDataMood extends Fragment {
         positionRowIdMapping = DBOperations.getPositionRowIdMapping(myContext, startDateValue, endDateValue, Event.EventTypes.moodEventTypeId.getId());
 
         // Create adapter
-        from = new String[] {ATTRIBUTE_NAME_START_DATE, ATTRIBUTE_NAME_LL};
-        to = new int[]{R.id.ItemMoodEvent_timeText, R.id.ItemMoodEvent_layout};
+        String[] from = new String[] {ATTRIBUTE_NAME_START_DATE, ATTRIBUTE_NAME_LL};
+        int[] to = new int[]{R.id.ItemMoodEvent_timeText, R.id.ItemMoodEvent_layout};
         SimpleAdapter sAdapterList = new SimpleAdapter(myContext, data, R.layout.item_mood_event,
                 from, to);
 
@@ -200,7 +201,6 @@ public class FragmentFillDataMood extends Fragment {
                                         }
         );
 
-        return sAdapterList;
     }
 
     //ToDO REFACT переписать через sAdapterList.notifyDataSetChanged (и для action тоже) -
@@ -227,7 +227,13 @@ public class FragmentFillDataMood extends Fragment {
 
     // Adjust view for ListView
     private static void adjustGridListView() {
-        lvSimple.setNumColumns(2);
+
+        if (displayMode == Configuration.ORIENTATION_PORTRAIT) {
+            numColumns = 2;
+        } else {
+            numColumns = 3;
+        }
+        lvSimple.setNumColumns(numColumns);
         lvSimple.setVerticalSpacing(5);
         lvSimple.setHorizontalSpacing(5);
         lvSimple.setStretchMode(GridView.STRETCH_COLUMN_WIDTH);
@@ -236,7 +242,13 @@ public class FragmentFillDataMood extends Fragment {
 
     //Adjust view for GridView
     private void adjustGridView() {
-        int numColumns = (int) Math.ceil(Math.sqrt(icons.getMoodIconsLenght()));
+
+        if (displayMode == Configuration.ORIENTATION_PORTRAIT) {
+            numColumns = (int) Math.ceil(Math.sqrt(icons.getMoodIconsLenght()));
+        } else {
+            numColumns = 6;
+        }
+
         gridViewMoodFragment.setNumColumns(numColumns);
         gridViewMoodFragment.setVerticalSpacing(5);
         gridViewMoodFragment.setHorizontalSpacing(5);
@@ -269,7 +281,7 @@ public class FragmentFillDataMood extends Fragment {
         @Override
         public boolean setViewValue(View view, Object data,
                                     String textRepresentation) {
-            int i = 0;
+            int i;
             Colors colors = new Colors(view);
             switch (view.getId()) {
                 case R.id.ItemUniversalGrid_layout:
