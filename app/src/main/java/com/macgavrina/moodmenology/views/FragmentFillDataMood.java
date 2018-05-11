@@ -150,7 +150,7 @@ public class FragmentFillDataMood extends Fragment {
                 Log.d("User has selected gridItem with moodId = " + selectedMoodId);
                 // Send event to Activity
                 moodFragmentListener.setTimeEvent(selectedMoodId);
-                updateList();
+                //updateList(startDateValue, endDateValue);
 
             }
         });
@@ -206,9 +206,11 @@ public class FragmentFillDataMood extends Fragment {
     //ToDO REFACT переписать через sAdapterList.notifyDataSetChanged (и для action тоже) -
     // НО: с переходом на cursor adapter нужно будет обновить только курсор, без notifyDataSetChanged
     
-    public void updateList() {
+    public void updateList(long startDateValue, long endDateValue) {
 
-        getBundleDataFromActivity();
+        //getBundleDataFromActivity();
+        this.startDateValue = startDateValue;
+        this.endDateValue = endDateValue;
         initializeList();
 
 /*        Log.d("Update list for startDate = " + SmallFunctions.formatDate(selectedDayStartDate)+

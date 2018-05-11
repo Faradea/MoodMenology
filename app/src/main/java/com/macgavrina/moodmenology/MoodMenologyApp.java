@@ -14,6 +14,19 @@ import org.acra.annotation.ReportsCrashes;
 
 public class MoodMenologyApp extends Application {
 
+    //ToDo NEW сделать иконку для приложения
+    //ToDo BUG timePickerDialog можно вызвать 2 раза
+
+    //ToDo REFACT пройтись по всем предупреждениям студии
+    //ToDo REFACT перенести все отступы и т.д. в dimens.xml
+    //ToDo REFACT можно ли вынести final переменные из классов в ресурсы?
+
+    //ToDO NEW обернуть небезопасный код в try-catch (например, подключение к БД)
+    //ToDo NEW возможность указать физическое состояние (сонный, болезнь, холодно)
+    //ToDo NEW комментарии к настроению и action
+    //ToDo NEW сценарии для однотипных действий типа еды и сна
+    //ToDo NEW подумать нужна ли здесь лямбда-архитектура
+
     @Override
     protected void attachBaseContext(Context base) {
         super.attachBaseContext(base);

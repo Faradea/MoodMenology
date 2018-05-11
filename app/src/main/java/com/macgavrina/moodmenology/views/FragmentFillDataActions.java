@@ -31,6 +31,8 @@ import java.util.Map;
 
 public class FragmentFillDataActions extends Fragment {
 
+    //ToDo NEW сделать startDate и endDate как в lifelog
+
     private static final String ATTRIBUTE_NAME_GRID_IMAGE = "image";
     private static final String ATTRIBUTE_NAME_LL_GRID = "ll_grid";
     private static final String ATTRIBUTE_NAME_START_DATE = "startDate";
@@ -191,9 +193,11 @@ public class FragmentFillDataActions extends Fragment {
 
     }
 
-    public void updateList() {
+    public void updateList(long startDateValue, long endDateValue) {
 
         getBundleDataFromActivity();
+        this.startDateValue = startDateValue;
+        this.endDateValue = endDateValue;
         initializeList();
 
     }

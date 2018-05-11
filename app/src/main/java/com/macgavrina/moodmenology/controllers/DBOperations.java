@@ -200,7 +200,6 @@ public abstract class DBOperations {
                                                     final long selectedDayEndDate,
                                                     final int eventType) {
 
-        //ToDo REFACT при переходе на SimpleCursorAdapter проверить что будет возвращаться в id - возможно, там будет rowId и тогда вот такой метод не понадобится
         DBHelper dbHelper = new DBHelper((FragmentActivity) context);
         SQLiteDatabase db = dbHelper.getReadableDatabase();
 
@@ -345,5 +344,33 @@ public abstract class DBOperations {
 
         return emailTextStringBuffer.toString();
 
+    }
+
+    public static Cursor getEventListForTheDayCursor(final Context context,
+                                                     final long selectedDayStartDate,
+                                                     final long selectedDayEndDate,
+                                                     final int eventType) {
+
+        DBHelper dbHelper = new DBHelper((FragmentActivity) context);
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+
+        Icons icons = new Icons();
+
+        // Select all mood rows for the day; get Cursor
+        final String selection = "((" + DBHelper.START_DATETIME_COLUMN_NAME + " >= ? and " +
+                DBHelper.START_DATETIME_COLUMN_NAME + " < ?) or (" +
+                DBHelper.END_DATETIME_COLUMN_NAME + " >= ? and " + DBHelper.END_DATETIME_COLUMN_NAME + " < ?)) and " +
+                DBHelper.EVENT_TYPE_COLUMN_NAME + " == ?";
+
+        final String[] selectionArgs = new String[]{String.valueOf(selectedDayStartDate),
+                String.valueOf(selectedDayEndDate),
+                String.valueOf(selectedDayStartDate),
+                String.valueOf(selectedDayEndDate),
+                String.valueOf(eventType)};
+
+        Cursor c = db.query(DBHelper.TABLE_NAME, null, selection, selectionArgs, null, null, DBHelper.START_DATETIME_COLUMN_NAME);
+
+        //dbHelper.close();
+        return c;
     }
 }

@@ -19,14 +19,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".views.ActivityFillDataTabs"
-            android:launchMode="singleTask">
-            <intent-filter>
-                <action android:name="com.macgavrina.moodmenology.fill.data" />
-
-                <category android:name="android.intent.category.DEFAULT" />
-            </intent-filter>
-        </activity>
         <activity android:name=".views.ActivitySettings"
             android:launchMode="singleTask">
             <intent-filter>
@@ -59,6 +51,14 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
+
+        <service android:name=".Services.ServicePrepareAllData">
+            <intent-filter>
+                <action android:name="com.macgavrina.moodmenology.prepare.all"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+            </intent-filter>
+        </service>
+
     </application>
 
 </manifest>
