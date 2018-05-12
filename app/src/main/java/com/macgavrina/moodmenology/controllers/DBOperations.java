@@ -125,7 +125,7 @@ public abstract class DBOperations {
                                                                        final long selectedDayEndDate,
                                                                        final int eventType) {
 
-        DBHelper dbHelper = new DBHelper((FragmentActivity) context);
+        DBHelper dbHelper = new DBHelper(context);
         SQLiteDatabase db = dbHelper.getWritableDatabase();
 
         Icons icons = new Icons();
@@ -200,7 +200,7 @@ public abstract class DBOperations {
                                                     final long selectedDayEndDate,
                                                     final int eventType) {
 
-        DBHelper dbHelper = new DBHelper((FragmentActivity) context);
+        DBHelper dbHelper = new DBHelper(context);
         SQLiteDatabase db = dbHelper.getReadableDatabase();
 
         final String selection = "((" + DBHelper.START_DATETIME_COLUMN_NAME + " >= ? and " +

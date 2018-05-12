@@ -1,6 +1,7 @@
 package com.macgavrina.moodmenology.views;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -50,14 +51,17 @@ public class FragmentFillDataActions extends Fragment {
     private static int displayMode;
     private static int numColumns;
 
-    private GridView gridViewActionFragment;
+    private Context myContext;
 
-    private FragmentActivity myContext;
-    private GridView lvSimple;
+    static private GridView gridViewActionFragment;
+    static private GridView lvSimple;
+
     private int[] positionRowIdMapping;
     private IActionsFragmentInteractionListener actionsFragmentListener;
 
     private Icons icons;
+
+    private View v;
 
     public FragmentFillDataActions() {
         // Required empty public constructor
@@ -73,13 +77,14 @@ public class FragmentFillDataActions extends Fragment {
             myContext = (FragmentActivity) activity;
 
         }
+
         // Inflate the layout for this fragment
-        View v = inflater.inflate(R.layout.fragment_filldata_actions, container, false);
+        v = inflater.inflate(R.layout.fragment_filldata_actions, container, false);
 
         displayMode = v.getResources().getConfiguration().orientation;
 
-        gridViewActionFragment = (GridView) v.findViewById(R.id.FragmentFilldataActions_gridView);
         lvSimple = (GridView) v.findViewById(R.id.FragmentFilldataActions_listView);
+        gridViewActionFragment = (GridView) v.findViewById(R.id.FragmentFilldataActions_gridView);
 
         getBundleDataFromActivity();
 
@@ -106,6 +111,8 @@ public class FragmentFillDataActions extends Fragment {
 
     }
 
+
+
     private void getBundleDataFromActivity() {
         // Get data from activity
         Bundle bundle = this.getArguments();
@@ -120,6 +127,12 @@ public class FragmentFillDataActions extends Fragment {
     //Update list after editing via EditMood activity
     public void onResume() {
         super.onResume();
+        Activity activity = getActivity();
+        if (activity != null) {
+            myContext = (FragmentActivity) activity;
+        }
+
+        lvSimple = (GridView) v.findViewById(R.id.FragmentFilldataActions_listView);
     }
 
     private void setupGridView() {
@@ -192,11 +205,12 @@ public class FragmentFillDataActions extends Fragment {
 
     }
 
-    public void updateList(long startDateValue, long endDateValue) {
+    public void updateList(Context context, long startDateValue, long endDateValue) {
 
         getBundleDataFromActivity();
         this.startDateValue = startDateValue;
         this.endDateValue = endDateValue;
+        myContext = context;
         initializeList();
 
     }

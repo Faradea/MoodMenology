@@ -3,7 +3,6 @@ package com.macgavrina.moodmenology.controllers;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.support.v4.app.FragmentActivity;
 
 import com.macgavrina.moodmenology.logging.Log;
 
@@ -27,13 +26,11 @@ public class DBHelper extends SQLiteOpenHelper {
 
     private static final int DB_VERSION=1;
 
-    public DBHelper(FragmentActivity context) {
-        super(context, DB_NAME, null, DB_VERSION);
-    }
-
     public DBHelper(Context context) {
         super(context, DB_NAME, null, DB_VERSION);
     }
+
+
 
     // Create DB
     @Override

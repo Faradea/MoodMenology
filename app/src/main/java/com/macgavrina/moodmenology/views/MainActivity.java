@@ -129,7 +129,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
                                         Toast.makeText(getBaseContext(), "All data for the day is deleted", Toast.LENGTH_SHORT).show();
                                         moodFragment.updateList(selectedDay.getDayStartTimestamp(), selectedDay.getDayEndTimestamp());
-                                        actionFragment.updateList(selectedDay.getDayStartTimestamp(), selectedDay.getDayEndTimestamp());
+                                        actionFragment.updateList(getBaseContext(), selectedDay.getDayStartTimestamp(), selectedDay.getDayEndTimestamp());
                                     }
                                 })
                         .setNegativeButton("Cancel",
@@ -229,7 +229,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             setupHeader();
 
             moodFragment.updateList(selectedDay.getDayStartTimestamp(), selectedDay.getDayEndTimestamp());
-            actionFragment.updateList(selectedDay.getDayStartTimestamp(), selectedDay.getDayEndTimestamp());
+            actionFragment.updateList(getBaseContext(), selectedDay.getDayStartTimestamp(), selectedDay.getDayEndTimestamp());
         }
 
         public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
@@ -283,12 +283,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 break;
             case (EDIT_ACTION_REQUEST_CODE):
                 if (resultCode == RESULT_OK) {
-                    actionFragment.updateList(selectedDay.getDayStartTimestamp(), selectedDay.getDayEndTimestamp());
+                    actionFragment.updateList(getBaseContext(), selectedDay.getDayStartTimestamp(), selectedDay.getDayEndTimestamp());
                 }
                 break;
             case (ADD_ACTION_REQUEST_CODE):
                 if (resultCode == RESULT_OK) {
-                    actionFragment.updateList(selectedDay.getDayStartTimestamp(), selectedDay.getDayEndTimestamp());
+                    actionFragment.updateList(getBaseContext(), selectedDay.getDayStartTimestamp(), selectedDay.getDayEndTimestamp());
                 }
                 break;
             default:
