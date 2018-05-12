@@ -16,10 +16,10 @@ import com.macgavrina.moodmenology.logging.Log;
 
 public class ActivitySettings extends AppCompatActivity implements View.OnClickListener{
 
-    private static final String PENDING_INTENT = "pendingIntent";
+    private static final String PENDING_INTENT_KEY_NAME = "pendingIntent";
     public static final int STATUS_FINISHED = 1;
+    private static final String TEXT_FOR_EMAIL_KEY_NAME = "textForEmail";
     private Button prepareAllDataButton;
-    private Button sendAllDataButton;
     private ProgressBar progressBar;
 
     @Override
@@ -32,10 +32,6 @@ public class ActivitySettings extends AppCompatActivity implements View.OnClickL
 
         prepareAllDataButton = (Button) findViewById(R.id.ActivitySettings_prepareAllDataButton);
         prepareAllDataButton.setOnClickListener(this);
-
-        sendAllDataButton = (Button) findViewById(R.id.ActivitySettings_sendAllDataButton);
-        sendAllDataButton.setOnClickListener(this);
-        sendAllDataButton.setEnabled(false);
 
         progressBar = (ProgressBar) findViewById(R.id.ActivitySettings_progressBar);
         progressBar.setVisibility(View.INVISIBLE);
@@ -62,8 +58,9 @@ public class ActivitySettings extends AppCompatActivity implements View.OnClickL
 
                 Intent intent = new Intent (this, ServicePrepareAllData.class);
                 PendingIntent pendingIntent = createPendingResult(1, intent, 0);
-                intent.putExtra(PENDING_INTENT, pendingIntent);
+                intent.putExtra(PENDING_INTENT_KEY_NAME, pendingIntent);
                 startService(intent);
+                prepareAllDataButton.setText("Preparing data...");
                 prepareAllDataButton.setEnabled(false);
                 progressBar.setVisibility(View.VISIBLE);
 
@@ -74,9 +71,25 @@ public class ActivitySettings extends AppCompatActivity implements View.OnClickL
 
     protected void onActivityResult (int requestCode, int resultCode, Intent data) {
         Log.d("Service is finished");
+
+        String textForEmail = data.getStringExtra(TEXT_FOR_EMAIL_KEY_NAME);
+
+        Intent intent = new Intent(android.content.Intent.ACTION_SEND);
+        intent.setType("plain/text");
+
+        intent.putExtra(android.content.Intent.EXTRA_EMAIL,
+                "ivgavrina@gmail.com");
+
+        intent.putExtra(android.content.Intent.EXTRA_SUBJECT,
+                "Data from MoodMenology");
+
+        intent.putExtra(android.content.Intent.EXTRA_TEXT,
+                textForEmail);
+
+        startActivity(intent);
+
+        prepareAllDataButton.setText("Send all data");
         prepareAllDataButton.setEnabled(true);
-        sendAllDataButton.setEnabled(true);
         progressBar.setVisibility(View.INVISIBLE);
-        Toast.makeText(this,"Data is prepared", Toast.LENGTH_SHORT).show();
     }
 }

@@ -52,11 +52,10 @@ public class FragmentFillDataActions extends Fragment {
 
     private GridView gridViewActionFragment;
 
-    //ToDo REFACT сделать non-static
-    private static FragmentActivity myContext;
-    private static GridView lvSimple;
-    private static int[] positionRowIdMapping;
-    private static IActionsFragmentInteractionListener actionsFragmentListener;
+    private FragmentActivity myContext;
+    private GridView lvSimple;
+    private int[] positionRowIdMapping;
+    private IActionsFragmentInteractionListener actionsFragmentListener;
 
     private Icons icons;
 
@@ -203,7 +202,7 @@ public class FragmentFillDataActions extends Fragment {
     }
 
     // Adjust view for ListView
-    private static void adjustGridListView() {
+    private void adjustGridListView() {
 
         if (displayMode == Configuration.ORIENTATION_PORTRAIT) {
             numColumns = 1;

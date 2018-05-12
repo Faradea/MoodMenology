@@ -23,7 +23,7 @@
         android:layout_marginLeft="8dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
-        android:text="Prepare all data"
+        android:text="Send all data"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/ActivitySettings_deleteAllDataButton" />
 
@@ -37,16 +37,5 @@
         android:layout_marginTop="8dp"
         app:layout_constraintStart_toEndOf="@+id/ActivitySettings_prepareAllDataButton"
         app:layout_constraintTop_toTopOf="@+id/ActivitySettings_prepareAllDataButton" />
-
-    <Button
-        android:id="@+id/ActivitySettings_sendAllDataButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="8dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
-        android:text="Send all data"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/ActivitySettings_prepareAllDataButton" />
 
 </android.support.constraint.ConstraintLayout>

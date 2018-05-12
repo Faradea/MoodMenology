@@ -303,7 +303,7 @@ public abstract class DBOperations {
 
     public static String getAllDataForEmail (final Context context) {
 
-        DBHelper dbHelper = new DBHelper((FragmentActivity) context);
+        DBHelper dbHelper = new DBHelper(context);
         SQLiteDatabase db = dbHelper.getReadableDatabase();
 
         StringBuffer emailTextStringBuffer = new StringBuffer().

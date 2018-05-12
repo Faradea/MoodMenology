@@ -5,6 +5,7 @@ import android.app.PendingIntent;
 import android.content.Intent;
 import android.support.annotation.Nullable;
 
+import com.macgavrina.moodmenology.controllers.DBOperations;
 import com.macgavrina.moodmenology.logging.Log;
 import com.macgavrina.moodmenology.views.ActivitySettings;
 
@@ -13,6 +14,7 @@ import java.util.concurrent.TimeUnit;
 public class ServicePrepareAllData extends IntentService {
 
     private static final String PENDING_INTENT = "pendingIntent";
+    private static final String TEXT_FOR_EMAIL_KEY_NAME = "textForEmail";
 
     /**
      * Creates an IntentService.  Invoked by your subclass's constructor.
@@ -33,18 +35,17 @@ public class ServicePrepareAllData extends IntentService {
 
         PendingIntent pendingIntent = intent.getParcelableExtra(PENDING_INTENT);
 
-        //ToDo NEW заменить здесь sleep на формирование текста и убрать после этого кнопку из меню
-
         try {
-            TimeUnit.SECONDS.sleep(5);
+            TimeUnit.SECONDS.sleep(2);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-        //Context context = getApplicationContext();
-        //String textForEmail = DBOperations.getAllDataForEmail(context);
+
+        String textForEmail = DBOperations.getAllDataForEmail(this);
+        intent.putExtra(TEXT_FOR_EMAIL_KEY_NAME, textForEmail);
 
         try {
-            pendingIntent.send(ActivitySettings.STATUS_FINISHED);
+            pendingIntent.send(ServicePrepareAllData.this, ActivitySettings.STATUS_FINISHED, intent);
         } catch (PendingIntent.CanceledException e) {
             e.printStackTrace();
         }
