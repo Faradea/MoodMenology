@@ -6,10 +6,6 @@ import com.macgavrina.moodmenology.controllers.DBOperations;
 
 import java.util.Map;
 
-/**
- * Created by Irina on 09.02.2018.
- */
-
 public class MoodEvent extends Event {
 
     private final static String ATTRIBUTE_NAME_START_DATE = "startDate";

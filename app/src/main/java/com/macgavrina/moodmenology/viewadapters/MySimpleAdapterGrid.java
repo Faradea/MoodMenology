@@ -10,10 +10,6 @@ import com.macgavrina.moodmenology.model.Icons;
 import java.util.List;
 import java.util.Map;
 
-/**
- * Created by Irina on 29.12.2017.
- */
-
 public class MySimpleAdapterGrid extends SimpleAdapter {
 
     private static final int MOOD_TYPE_ID = 0;

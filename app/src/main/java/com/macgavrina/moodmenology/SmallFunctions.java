@@ -2,11 +2,8 @@ package com.macgavrina.moodmenology;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 import java.util.concurrent.TimeUnit;
-
-/**
- * Created by Irina on 09.02.2018.
- */
 
 public abstract class SmallFunctions {
 
@@ -15,7 +12,7 @@ public abstract class SmallFunctions {
     public static String formatTime(final long aLong) {
 
         Date date = new Date(aLong);
-        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
+        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm", Locale.ENGLISH);
 
         return sdf.format(date);
     }
@@ -23,7 +20,7 @@ public abstract class SmallFunctions {
     public static String formatTimeWithCompare (final long aLong, final long startDate, final long endDate) {
 
         Date date = new Date(aLong);
-        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
+        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm", Locale.ENGLISH);
         String formattedDate = sdf.format(date);
 
         if (aLong < startDate || aLong >= endDate) {
@@ -37,7 +34,7 @@ public abstract class SmallFunctions {
     public static String formatDate(final long aLong) {
 
         Date date = new Date(aLong);
-        SimpleDateFormat sdf = new SimpleDateFormat("EE, dd MMM");
+        SimpleDateFormat sdf = new SimpleDateFormat("EE, dd MMM", Locale.ENGLISH);
 
         return sdf.format(date);
     }
@@ -47,7 +44,7 @@ public abstract class SmallFunctions {
         long diffHours = TimeUnit.HOURS.convert(aLong, TimeUnit.MILLISECONDS);
 
         Date date = new Date(aLong);
-        SimpleDateFormat sdfMinute = new SimpleDateFormat("mm");
+        SimpleDateFormat sdfMinute = new SimpleDateFormat("mm", Locale.ENGLISH);
         String formattedDate;
 
         if (aLong >= hour_in_millis){

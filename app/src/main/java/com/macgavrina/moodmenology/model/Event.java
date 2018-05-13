@@ -4,10 +4,6 @@ import android.content.Context;
 
 import com.macgavrina.moodmenology.controllers.DBOperations;
 
-/**
- * Created by Irina on 09.02.2018.
- */
-
 public abstract class Event {
 
     protected int rowId;

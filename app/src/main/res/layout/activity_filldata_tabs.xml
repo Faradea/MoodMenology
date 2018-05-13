@@ -35,27 +35,45 @@
             app:layout_constraintTop_toTopOf="parent">
 
             <TextView
+                android:id="@+id/ActivityFillData_previousDayText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="8dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginRight="8dp"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="@string/PreviousDayText"
+                android:textColor="@android:color/background_light"
+                android:textSize="30sp" />
+
+            <TextView
                 android:id="@+id/ActivtyFilldata_dateText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="8dp"
-                android:layout_marginStart="8dp"
                 android:layout_marginTop="8dp"
+                android:layout_marginRight="8dp"
                 android:layout_weight="1"
+                android:gravity="center"
                 android:text="00-00-0000"
                 android:textColor="@android:color/background_light"
                 android:textSize="30sp"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
-            <ImageButton
-                android:id="@+id/ActivtyFilldata_deleteAllButton"
+            <TextView
+                android:id="@+id/ActivityFillData_nextDayText"
                 android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_weight="0.43"
-                android:background="@android:color/transparent"
-                app:srcCompat="@android:drawable/ic_menu_delete"
-                android:contentDescription="TODO" />
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="8dp"
+                android:layout_marginRight="8dp"
+                android:layout_marginTop="8dp"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="@string/NextDayText"
+                android:textColor="@android:color/background_light"
+                android:textSize="30sp" />
 
         </LinearLayout>
 

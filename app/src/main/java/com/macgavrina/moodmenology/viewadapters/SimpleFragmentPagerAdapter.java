@@ -8,10 +8,6 @@ import android.support.v4.app.FragmentPagerAdapter;
 import com.macgavrina.moodmenology.views.FragmentFillDataActions;
 import com.macgavrina.moodmenology.views.FragmentFillDataMood;
 
-/**
- * Created by Irina on 28.12.2017.
- */
-
 public class SimpleFragmentPagerAdapter extends FragmentPagerAdapter {
 
     final private String START_DATE_KEY = "startDate";

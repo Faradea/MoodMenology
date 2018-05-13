@@ -6,11 +6,6 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 import com.macgavrina.moodmenology.logging.Log;
 
-
-/**
- * Created by Irina on 09.02.2018.
- */
-
 public class DBHelper extends SQLiteOpenHelper {
 
 

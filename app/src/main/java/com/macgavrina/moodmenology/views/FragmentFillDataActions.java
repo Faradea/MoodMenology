@@ -53,6 +53,7 @@ public class FragmentFillDataActions extends Fragment {
 
     private Context myContext;
 
+    //ToDo REFACT сделать non-static (и полный ретест - приложение падает)
     static private GridView gridViewActionFragment;
     static private GridView lvSimple;
 

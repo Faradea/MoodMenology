@@ -6,18 +6,13 @@ import android.content.Context;
 import org.acra.ACRA;
 import org.acra.annotation.ReportsCrashes;
 
-/**
- * Created by Irina on 10.04.2018.
- */
-
 @ReportsCrashes(formUri = "https://collector.tracepot.com/6a3d7225")
 
 public class MoodMenologyApp extends Application {
 
-    //ToDo NEW сделать иконку для приложения
     //ToDo BUG timePickerDialog можно вызвать 2 раза
 
-    //ToDo REFACT пройтись по всем предупреждениям студии
+    //ToDo REFACT пройтись по всем предупреждениям студии в xml (и потом проверить что при коммите нет ошибок)
     //ToDo REFACT перенести все отступы и т.д. в dimens.xml
     //ToDo REFACT можно ли вынести final переменные из классов в ресурсы?
 

@@ -14,10 +14,6 @@ import com.macgavrina.moodmenology.R;
 import com.macgavrina.moodmenology.logging.Log;
 import com.macgavrina.moodmenology.model.Icons;
 
-/**
- * Created by Irina on 14.02.2018.
- */
-
 public class FragmentActionEvent extends Fragment implements View.OnClickListener{
 
     private static final String ACTION_GROUP_ID_KEY="actionGroupId";

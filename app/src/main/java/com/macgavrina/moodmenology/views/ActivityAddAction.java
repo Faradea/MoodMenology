@@ -25,11 +25,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-
-/**
- * Created by Irina on 05.02.2018.
- */
-
 public class ActivityAddAction extends AppCompatActivity implements View.OnClickListener, IAddActionFragmentListener {
 
     private static final String ATTRIBUTE_NAME_GRID_IMAGE = "image";
@@ -239,13 +234,13 @@ public class ActivityAddAction extends AppCompatActivity implements View.OnClick
 
     @Override
     public void editStartDate() {
-        Log.d("Activity has recieved editStartDate event from Fragment");
+        Log.d("Activity has received editStartDate event from Fragment");
         setStartTime();
     }
 
     @Override
     public void editEndDate() {
-        Log.d("Activity has recieved editEndDate event from Fragment");
+        Log.d("Activity has received editEndDate event from Fragment");
         setEndTime();
     }
 

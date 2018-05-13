@@ -17,10 +17,6 @@ import com.macgavrina.moodmenology.logging.Log;
 import com.macgavrina.moodmenology.model.ActionEvent;
 import com.macgavrina.moodmenology.model.Icons;
 
-/**
- * Created by Irina on 24.02.2018.
- */
-
 public class ActivityEditAction extends AppCompatActivity implements View.OnClickListener {
 
     private static final String ROWID_KEY = "rowId";
@@ -76,13 +72,15 @@ public class ActivityEditAction extends AppCompatActivity implements View.OnClic
     }
 
     private void setupEndTimeTextView() {
-        endTimeTextView.setText("To: " + SmallFunctions.formatDate(actionEvent.getEndDateInUnixFormat()) + ", "
-                + SmallFunctions.formatTime(actionEvent.getEndDateInUnixFormat()));
+        String endTimeText = "To: " + SmallFunctions.formatDate(actionEvent.getEndDateInUnixFormat()) + ", "
+                + SmallFunctions.formatTime(actionEvent.getEndDateInUnixFormat());
+        endTimeTextView.setText(endTimeText);
     }
 
     private void setupStartTimeTextView() {
-        startTimeTextView.setText("From: " + SmallFunctions.formatDate(actionEvent.getStartDateInUnixFormat()) + ", "
-                + SmallFunctions.formatTime(actionEvent.getStartDateInUnixFormat()));
+        String startTimeText = "From: " + SmallFunctions.formatDate(actionEvent.getStartDateInUnixFormat()) + ", "
+                + SmallFunctions.formatTime(actionEvent.getStartDateInUnixFormat());
+        startTimeTextView.setText(startTimeText);
     }
 
     @Override

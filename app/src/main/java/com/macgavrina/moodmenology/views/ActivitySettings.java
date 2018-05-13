@@ -60,7 +60,7 @@ public class ActivitySettings extends AppCompatActivity implements View.OnClickL
                 PendingIntent pendingIntent = createPendingResult(1, intent, 0);
                 intent.putExtra(PENDING_INTENT_KEY_NAME, pendingIntent);
                 startService(intent);
-                prepareAllDataButton.setText("Preparing data...");
+                prepareAllDataButton.setText(R.string.sendAllDataButtonInProgress);
                 prepareAllDataButton.setEnabled(false);
                 progressBar.setVisibility(View.VISIBLE);
 
@@ -88,7 +88,7 @@ public class ActivitySettings extends AppCompatActivity implements View.OnClickL
 
         startActivity(intent);
 
-        prepareAllDataButton.setText("Send all data");
+        prepareAllDataButton.setText(R.string.SendAllData);
         prepareAllDataButton.setEnabled(true);
         progressBar.setVisibility(View.INVISIBLE);
     }

@@ -28,12 +28,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-
-
-/**
- * Created by Irina on 28.12.2017.
- */
-
 public class FragmentFillDataMood extends Fragment {
 
     public ArrayList<Map<String, Object>> data;
@@ -58,6 +52,7 @@ public class FragmentFillDataMood extends Fragment {
     private static int[] positionRowIdMapping;
 
     private GridView gridViewMoodFragment;
+    //ToDO REFACT сделать non-static (и ретест - приложение при этом падает)
     private static GridView lvSimple;
     private static FragmentActivity myContext;
 
@@ -74,7 +69,7 @@ public class FragmentFillDataMood extends Fragment {
                              final Bundle savedInstanceState) {
 
         Activity activity = getActivity();
-        if (activity instanceof FragmentActivity) {
+        if (activity != null) {
             myContext = (FragmentActivity) activity;
 
         }
@@ -98,8 +93,10 @@ public class FragmentFillDataMood extends Fragment {
             moodFragmentListener = (IMoodFragmentInteractionListener) activity;
             Log.d("moodFragmentListener interface is ok");
         } catch (ClassCastException e) {
-            throw new ClassCastException(activity.toString()
-                    + " shall implement moodFragmentListener interface");
+            if (activity != null) {
+                throw new ClassCastException(activity.toString()
+                        + " shall implement moodFragmentListener interface");
+            }
         }
 
         Log.d( "Fragment building is finished, startDate = "

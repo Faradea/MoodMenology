@@ -4,10 +4,6 @@ import android.view.View;
 
 import com.macgavrina.moodmenology.R;
 
-/**
- * Created by Irina on 05.03.2018.
- */
-
 public class Colors {
 
     private int[] moodColorsForList;

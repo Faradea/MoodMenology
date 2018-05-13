@@ -15,10 +15,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * Created by Irina on 09.02.2018.
- */
-
 public abstract class DBOperations {
 
     private static final String ATTRIBUTE_NAME_START_DATE = "startDate";
@@ -39,7 +35,6 @@ public abstract class DBOperations {
         SQLiteDatabase db = dbHelper.getWritableDatabase();
 
         // Create object for data
-        //ToDo REFACT почитать про ContentValues и понять лучше ли он чем Map (после обучения по ContentProvider)
         ContentValues cv = new ContentValues();
         cv.put(DBHelper.EVENT_ID_COLUMN_NAME, selectedMoodIdForActivity);
         cv.put(DBHelper.START_DATETIME_COLUMN_NAME, startTimeInMillis);

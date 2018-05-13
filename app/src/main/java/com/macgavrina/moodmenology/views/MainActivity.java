@@ -2,25 +2,20 @@ package com.macgavrina.moodmenology.views;
 
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.DatePicker;
-import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.TimePicker;
-import android.widget.Toast;
 
 import com.macgavrina.moodmenology.R;
 import com.macgavrina.moodmenology.SmallFunctions;
-import com.macgavrina.moodmenology.controllers.DBOperations;
 import com.macgavrina.moodmenology.logging.Log;
 import com.macgavrina.moodmenology.model.MoodEvent;
 import com.macgavrina.moodmenology.model.SelectedDay;
@@ -29,19 +24,14 @@ import com.macgavrina.moodmenology.viewadapters.SimpleFragmentPagerAdapter;
 
 import java.util.Calendar;
 
-
-/**
- * Created by Irina on 28.12.2017.
- */
-
 public class MainActivity extends AppCompatActivity implements View.OnClickListener, IMoodFragmentInteractionListener, IActionsFragmentInteractionListener {
 
-    //ToDo NEW сделать стрелочки вчера-завтра в заголовке у выбора даты
-    //ToDo NEW удалить кнопку "удалить все за день"
     //ToDo NEW сделать удаление эвента через свайпы
     //ToDo NEW сделать редактирование эвента через свайпы
     //ToDo NEW сделать выбор настроения и экшена через плюсики, а не через grid (как в симс)
     //ToDo NEW сделать более "комфортный" дизайн для горизонтального landscape
+
+    private static final long dayDurationInMillis = 86400000L;
 
     private static final int EDIT_MOOD_REQUEST_CODE = 1;
     private static final int EDIT_ACTION_REQUEST_CODE = 2;
@@ -112,7 +102,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         switch (v.getId()) {
             // Delete all data button (trash icon beside the date) with alert dialog
-            case R.id.ActivtyFilldata_deleteAllButton:
+/*            case R.id.ActivtyFilldata_deleteAllButton:
 
                 Log.d("User has pressed DeleteAllDataForTheDay button");
 
@@ -142,7 +132,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 AlertDialog alert = builder.create();
                 alert.show();
                 Log.d("AlertDialog is displayed");
-                break;
+                break;*/
 
             case R.id.ActivtyFilldata_dateText:
                 Log.d("User presses on the date in the header");
@@ -156,6 +146,25 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 Log.d("DatePickerDialog is displayed, initial date = " + SmallFunctions.formatDate(dateAndTime.getTimeInMillis()));
 
                 break;
+
+            case R.id.ActivityFillData_nextDayText:
+                Log.d("User presses next day in the header");
+                dateAndTime.setTimeInMillis(dateAndTime.getTimeInMillis() + dayDurationInMillis);
+                selectedDay = new SelectedDay(dateAndTime.getTimeInMillis());
+                setupHeader();
+                moodFragment.updateList(selectedDay.getDayStartTimestamp(), selectedDay.getDayEndTimestamp());
+                actionFragment.updateList(getBaseContext(), selectedDay.getDayStartTimestamp(), selectedDay.getDayEndTimestamp());
+                break;
+
+            case R.id.ActivityFillData_previousDayText:
+                Log.d("User presses previous day in the header");
+                dateAndTime.setTimeInMillis(dateAndTime.getTimeInMillis() - dayDurationInMillis);
+                selectedDay = new SelectedDay(dateAndTime.getTimeInMillis());
+                setupHeader();
+                moodFragment.updateList(selectedDay.getDayStartTimestamp(), selectedDay.getDayEndTimestamp());
+                actionFragment.updateList(getBaseContext(), selectedDay.getDayStartTimestamp(), selectedDay.getDayEndTimestamp());
+                break;
+
             default:
                 break;
         }
@@ -257,8 +266,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private void setupHeader() {
 
-        ImageButton deleteAllButtonFillData = (ImageButton) findViewById(R.id.ActivtyFilldata_deleteAllButton);
-        deleteAllButtonFillData.setOnClickListener(this);
+        TextView nextDay = (TextView) findViewById(R.id.ActivityFillData_nextDayText);
+        nextDay.setOnClickListener(this);
+
+        TextView previousDay = (TextView) findViewById(R.id.ActivityFillData_previousDayText);
+        previousDay.setOnClickListener(this);
+
+/*        ImageButton deleteAllButtonFillData = (ImageButton) findViewById(R.id.ActivtyFilldata_deleteAllButton);
+        deleteAllButtonFillData.setOnClickListener(this);*/
 
         String selectedDateStringFillData= SmallFunctions.formatDate(dateAndTime.getTimeInMillis());
         TextView selectedDateFillData = (TextView) findViewById(R.id.ActivtyFilldata_dateText);

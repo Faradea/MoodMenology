@@ -6,7 +6,11 @@
     <string name="SaveButtonName">Save</string>
     <string name="DeleteButtonName">Delete</string>
     <string name="DeleteAllButtonName">Delete all data</string>
+    <string name="PreviousDayText">&lt;</string>
+    <string name="NextDayText">&gt;</string>
     <string name="FromColumnText">From:</string>
     <string name="ToColumnText">To:</string>
     <string name="crash_toast_text">App is crashed, sending report</string>
+    <string name="sendAllDataButtonInProgress">Preparing data...</string>
+    <string name="SendAllData">Send all data</string>
 </resources>

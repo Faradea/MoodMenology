@@ -12,12 +12,10 @@ public class MainMenu extends AppCompatActivity {
 
     private int menuItemId;
     private Intent intent;
-    private Context context;
 
     public MainMenu(final int itemId, Context context) {
 
         this.menuItemId = itemId;
-        this.context = context;
 
     }
 

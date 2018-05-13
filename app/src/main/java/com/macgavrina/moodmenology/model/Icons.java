@@ -2,10 +2,6 @@ package com.macgavrina.moodmenology.model;
 
 import com.macgavrina.moodmenology.R;
 
-/**
- * Created by Irina on 05.03.2018.
- */
-
 public class Icons {
 
         private int[][] actionIconsIds;

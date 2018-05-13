@@ -2,10 +2,6 @@ package com.macgavrina.moodmenology.model;
 
 import java.util.Calendar;
 
-/**
- * Created by Irina on 09.02.2018.
- */
-
 public class SelectedDay {
 
     private static final long dayDurationInMillis = 86400000L;

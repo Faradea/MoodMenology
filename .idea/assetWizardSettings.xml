@@ -34,9 +34,9 @@
                                     <map>
                                       <entry key="assetType" value="IMAGE" />
                                       <entry key="backgroundColor" value="ffaa2c" />
-                                      <entry key="iconShape" value="CIRCLE" />
-                                      <entry key="imageAsset" value="C:\Users\Irina\Desktop\Mood Menology\Without fon\icon.png" />
-                                      <entry key="outputName" value="mood_menology_launcher" />
+                                      <entry key="iconShape" value="NONE" />
+                                      <entry key="imageAsset" value="C:\Users\Irina\Desktop\Mood Menology\Дополнительные\icons8-шеврон-вправо-48.png" />
+                                      <entry key="outputName" value="next_day" />
                                     </map>
                                   </option>
                                 </PersistentState>
