@@ -30,6 +30,8 @@ import java.util.Map;
 
 public class FragmentFillDataMood extends Fragment {
 
+    //ToDo NEW сделать вызов TimePicker в onClick вместо editActivity (после того как будет сделано удаление через actionMode)
+
     public ArrayList<Map<String, Object>> data;
 
     private static final String ATTRIBUTE_NAME_START_DATE = "startDate";

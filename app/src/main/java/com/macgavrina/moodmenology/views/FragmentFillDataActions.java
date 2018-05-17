@@ -1,16 +1,25 @@
 package com.macgavrina.moodmenology.views;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.res.Configuration;
+import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.RequiresApi;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
+import android.view.ActionMode;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.GridView;
+import android.widget.ListView;
 import android.widget.SimpleAdapter;
 
 import com.macgavrina.moodmenology.R;
@@ -30,7 +39,9 @@ import java.util.Map;
  * Created by Irina on 28.12.2017.
  */
 
-public class FragmentFillDataActions extends Fragment {
+public class FragmentFillDataActions extends Fragment implements AbsListView.MultiChoiceModeListener
+        //implements View.OnTouchListener
+        {
 
     //ToDo NEW сделать startDate и endDate как в lifelog
 
@@ -56,10 +67,10 @@ public class FragmentFillDataActions extends Fragment {
     //ToDo REFACT сделать non-static (и полный ретест - приложение падает)
     static private GridView gridViewActionFragment;
     static private GridView lvSimple;
+    private static int[] positionRowIdMapping;
+    private static IActionsFragmentInteractionListener actionsFragmentListener;
 
-    private int[] positionRowIdMapping;
-    private IActionsFragmentInteractionListener actionsFragmentListener;
-
+    private Colors colors;
     private Icons icons;
 
     private View v;
@@ -89,8 +100,6 @@ public class FragmentFillDataActions extends Fragment {
 
         getBundleDataFromActivity();
 
-        initializeList();
-
         setupGridView();
 
         try {
@@ -103,6 +112,10 @@ public class FragmentFillDataActions extends Fragment {
             }
         }
 
+        initializeList();
+
+        colors = new Colors(v);
+
         Log.d( "Fragment building is finished, startDate = "
         + SmallFunctions.formatDate(startDateValue) + ", startTime = " + SmallFunctions.formatTime(startDateValue)
         + ", endDate = " + SmallFunctions.formatDate(endDateValue) +
@@ -111,8 +124,6 @@ public class FragmentFillDataActions extends Fragment {
         return v;
 
     }
-
-
 
     private void getBundleDataFromActivity() {
         // Get data from activity
@@ -179,6 +190,12 @@ public class FragmentFillDataActions extends Fragment {
     //Update listView
     private void initializeList() {
 
+        Log.d("Initialize list for startDate = " + SmallFunctions.formatDate(startDateValue)+
+                ", startTime = " + SmallFunctions.formatTime(startDateValue) +
+                ", endDate = " + SmallFunctions.formatDate(endDateValue) +
+                ", endTime = " + SmallFunctions.formatTime(endDateValue));
+
+
         ArrayList<Map<String, Object>> data = DBOperations.getEventListForTheDay(myContext, startDateValue,
                 endDateValue, Event.EventTypes.actionEventTypeId.getId());
 
@@ -204,6 +221,13 @@ public class FragmentFillDataActions extends Fragment {
                                         }
         );
 
+
+        lvSimple.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
+
+        lvSimple.setMultiChoiceModeListener(this);
+
+        //lvSimple.setOnTouchListener(this::onTouch);
+
     }
 
     public void updateList(Context context, long startDateValue, long endDateValue) {
@@ -212,6 +236,7 @@ public class FragmentFillDataActions extends Fragment {
         this.startDateValue = startDateValue;
         this.endDateValue = endDateValue;
         myContext = context;
+
         initializeList();
 
     }
@@ -245,6 +270,97 @@ public class FragmentFillDataActions extends Fragment {
         gridViewActionFragment.setStretchMode(GridView.STRETCH_COLUMN_WIDTH);
     }
 
+            @RequiresApi(api = Build.VERSION_CODES.JELLY_BEAN)
+            @SuppressLint("ResourceAsColor")
+            @Override
+            public void onItemCheckedStateChanged(ActionMode mode, int position, long id, boolean checked) {
+                if (checked) {
+                    lvSimple.getChildAt(position).setBackgroundColor(colors.getActionColor());
+                }
+                else {
+                    lvSimple.getChildAt(position).setBackgroundColor(Color.TRANSPARENT);
+                }
+                //listItem.setBackgroundColor(R.color.colorMood2);
+                Log.d("position = " + position + ", checked = "
+                        + checked);
+            }
+
+            @Override
+            public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+                mode.getMenuInflater().inflate(R.menu.action_mode_menu, menu);
+                return true;
+            }
+
+            @Override
+            public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
+                return false;
+            }
+
+            @Override
+            public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+                mode.finish();
+                return false;
+            }
+
+            @Override
+            public void onDestroyActionMode(ActionMode mode) {
+
+            }
+
+/*    float startX = 0;
+    float endX = 0;
+    float startY = 0;
+    float endY = 0;
+    boolean isMovement = false;
+
+    @Override
+    public boolean onTouch(final View v, final MotionEvent event) {
+            //gestureDetector.onTouchEvent(event);
+            int SWIPE_MIN_DISTANCE = 120;
+            int SWIPE_THRESHOLD_VELOCITY = 200;
+
+            switch (event.getAction()) {
+                case MotionEvent.ACTION_DOWN:
+                    startX = event.getX();
+                    startY = event.getY();
+                    endX = 0;
+                    endY = 0;
+                    Log.d("action_down");
+                    isMovement = false;
+                    break;
+                case MotionEvent.ACTION_MOVE:
+                    Log.d("Action_move");
+                    endX = event.getX();
+                    endY = event.getY();
+                    break;
+                case MotionEvent.ACTION_UP:
+                    Log.d("Action_up");
+                    int position = -1;
+                    position = lvSimple.pointToPosition((int) startX, (int) startY);
+                    if (!isMovement & position != -1) {
+                        Log.d("User has selected list item: position = " + position + ", rowId = " + positionRowIdMapping[position]);
+                        actionsFragmentListener.editActionRowEvent(positionRowIdMapping[position]);
+                        startX = 0;
+                        startY = 0;
+                    }
+                    break;
+            }
+
+            Log.d("startX = " + startX + ", endX = " + endX);
+        if (!isMovement & endX != 0 & startX != 0 & (Math.abs(startX - endX) > SWIPE_MIN_DISTANCE)) {
+            Log.d("swipe");
+            int position = -1;
+            position = lvSimple.pointToPosition((int) startX, (int) startY);
+            if (position != -1) {
+                Log.d("User swipes list item: position = " + position);// + ", rowId = " + positionRowIdMapping[position]);
+                actionsFragmentListener.deleteActionRowEvent(positionRowIdMapping[position]);
+            }
+            isMovement = true;
+        }
+
+            return true;
+    }*/
+
 
     //Colors for ListView
     public class LayoutGridColorViewBinder implements SimpleAdapter.ViewBinder {
@@ -252,8 +368,6 @@ public class FragmentFillDataActions extends Fragment {
         @Override
         public boolean setViewValue(final View view, final Object data,
                                     final String textRepresentation) {
-
-            Colors colors = new Colors(view);
 
             switch (view.getId()) {
                 case R.id.ItemUniversalGrid_layout:

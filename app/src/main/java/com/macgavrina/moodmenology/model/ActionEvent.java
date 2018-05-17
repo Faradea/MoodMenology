@@ -46,6 +46,12 @@ public class ActionEvent extends Event{
         this.rowId = rowId;
     }
 
+/*
+    public ActionEvent (final Context context, final int rowId, final Boolean loadData) {
+        this.rowId = rowId;
+    }
+*/
+
     public int getGroupId(){
         return actionGroupId;
     };

@@ -16,6 +16,7 @@ public class MoodMenologyApp extends Application {
     //ToDo REFACT перенести все отступы и т.д. в dimens.xml
     //ToDo REFACT можно ли вынести final переменные из классов в ресурсы?
 
+    //ToDo NEW сделать массовое удаление эвентов через actionMode
     //ToDO NEW обернуть небезопасный код в try-catch (например, подключение к БД)
     //ToDo NEW возможность указать физическое состояние (сонный, болезнь, холодно)
     //ToDo NEW комментарии к настроению и action

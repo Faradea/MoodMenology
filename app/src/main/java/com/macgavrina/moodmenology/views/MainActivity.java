@@ -26,8 +26,8 @@ import java.util.Calendar;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener, IMoodFragmentInteractionListener, IActionsFragmentInteractionListener {
 
-    //ToDo NEW сделать удаление эвента через свайпы
-    //ToDo NEW сделать редактирование эвента через свайпы
+    //ToDo NEW добавить возврат на сегодняшнюю дату (например, через кнопку home в actionBar)
+    //ToDo NEW сделать пролистывание дат свайпом по заголовку
     //ToDo NEW сделать выбор настроения и экшена через плюсики, а не через grid (как в симс)
     //ToDo NEW сделать более "комфортный" дизайн для горизонтального landscape
 
@@ -161,6 +161,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 dateAndTime.setTimeInMillis(dateAndTime.getTimeInMillis() - dayDurationInMillis);
                 selectedDay = new SelectedDay(dateAndTime.getTimeInMillis());
                 setupHeader();
+                //ToDo REFACT проверить зачем в action передается контекст а в mood - нет
                 moodFragment.updateList(selectedDay.getDayStartTimestamp(), selectedDay.getDayEndTimestamp());
                 actionFragment.updateList(getBaseContext(), selectedDay.getDayStartTimestamp(), selectedDay.getDayEndTimestamp());
                 break;
@@ -198,6 +199,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         intentEdit.putExtra(ROWID_KEY, rowId);
         startActivityForResult(intentEdit, EDIT_ACTION_REQUEST_CODE);
     }
+
+/*    @Override
+    public void deleteActionRowEvent(int rowId) {
+        Log.d("Activity received deleteActionRow event from FillDataAction fragment, rowId=" + rowId);
+        ActionEvent actionEvent = new ActionEvent(this, rowId, true);
+        Context myContext = this;
+        actionEvent.deleteEvent(myContext);
+        actionFragment.updateList(myContext, selectedDay.getDayStartTimestamp(), selectedDay.getDayEndTimestamp());
+    }*/
 
     // Process event from FillDataMood fragment (user selects row from ListView to edit it)
     @Override
