@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.support.annotation.RequiresApi;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
+import android.util.SparseBooleanArray;
 import android.view.ActionMode;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -195,7 +196,6 @@ public class FragmentFillDataActions extends Fragment implements AbsListView.Mul
                 ", endDate = " + SmallFunctions.formatDate(endDateValue) +
                 ", endTime = " + SmallFunctions.formatTime(endDateValue));
 
-
         ArrayList<Map<String, Object>> data = DBOperations.getEventListForTheDay(myContext, startDateValue,
                 endDateValue, Event.EventTypes.actionEventTypeId.getId());
 
@@ -275,7 +275,9 @@ public class FragmentFillDataActions extends Fragment implements AbsListView.Mul
             @Override
             public void onItemCheckedStateChanged(ActionMode mode, int position, long id, boolean checked) {
                 if (checked) {
-                    lvSimple.getChildAt(position).setBackgroundColor(colors.getActionColor());
+                    lvSimple.getChildAt(position).setBackgroundResource(R.drawable.border);
+                            //.setBackgroundColor(Color.TRANSPARENT);
+                            //colors.getActionColor());
                 }
                 else {
                     lvSimple.getChildAt(position).setBackgroundColor(Color.TRANSPARENT);
@@ -287,6 +289,7 @@ public class FragmentFillDataActions extends Fragment implements AbsListView.Mul
 
             @Override
             public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+                clearBorders = true;
                 mode.getMenuInflater().inflate(R.menu.action_mode_menu, menu);
                 return true;
             }
@@ -296,16 +299,42 @@ public class FragmentFillDataActions extends Fragment implements AbsListView.Mul
                 return false;
             }
 
+            private boolean clearBorders = true;
+
             @Override
             public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+                switch (item.getItemId()) {
+                    case R.id.action_mode_menu_delete:
+                        Log.d("Delete button in actionMode is pressed");
+                        clearBorders = false;
+                        SparseBooleanArray selectedPositionIds = lvSimple.getCheckedItemPositions();
+                        for (int i = 0; i < selectedPositionIds.size(); i++) {
+                            Log.d("i = " + i + ", keyAt = " + selectedPositionIds.keyAt(i) + ", value = " + selectedPositionIds.valueAt(i));
+                            if (selectedPositionIds.valueAt(i) == true) {
+                                Log.d("Delete action with rowId = " + positionRowIdMapping[selectedPositionIds.keyAt(i)]);
+                                actionsFragmentListener.deleteActionRowEvent(positionRowIdMapping[selectedPositionIds.keyAt(i)]);
+                            }
+                        }
+                        //Log.d(String.valueOf(selectedPositionIds.valueAt(0)));
+                        initializeList();
+                        break;
+                }
                 mode.finish();
                 return false;
             }
 
             @Override
             public void onDestroyActionMode(ActionMode mode) {
+                    Log.d("destroy, number of rows = " + positionRowIdMapping.length);
 
-            }
+                    if (clearBorders) {
+                        for (int i = 0; i < positionRowIdMapping.length; i++) {
+                            Log.d("set transparent background for itemId = " + i);
+                            lvSimple.getChildAt(i).setBackgroundResource(0);
+                        }
+                    }
+            };
+
 
 /*    float startX = 0;
     float endX = 0;

@@ -6,5 +6,5 @@ interface IActionsFragmentInteractionListener {
 
         void editActionRowEvent(int rowId);
 
-        //void deleteActionRowEvent(int rowId);
+        void deleteActionRowEvent(int rowId);
 }

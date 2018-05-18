@@ -2,6 +2,7 @@ package com.macgavrina.moodmenology.views;
 
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
@@ -17,6 +18,7 @@ import android.widget.TimePicker;
 import com.macgavrina.moodmenology.R;
 import com.macgavrina.moodmenology.SmallFunctions;
 import com.macgavrina.moodmenology.logging.Log;
+import com.macgavrina.moodmenology.model.ActionEvent;
 import com.macgavrina.moodmenology.model.MoodEvent;
 import com.macgavrina.moodmenology.model.SelectedDay;
 import com.macgavrina.moodmenology.viewadapters.MainMenu;
@@ -200,14 +202,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         startActivityForResult(intentEdit, EDIT_ACTION_REQUEST_CODE);
     }
 
-/*    @Override
+    @Override
     public void deleteActionRowEvent(int rowId) {
         Log.d("Activity received deleteActionRow event from FillDataAction fragment, rowId=" + rowId);
         ActionEvent actionEvent = new ActionEvent(this, rowId, true);
         Context myContext = this;
         actionEvent.deleteEvent(myContext);
-        actionFragment.updateList(myContext, selectedDay.getDayStartTimestamp(), selectedDay.getDayEndTimestamp());
-    }*/
+        //actionFragment.updateList(myContext, selectedDay.getDayStartTimestamp(), selectedDay.getDayEndTimestamp());
+    }
 
     // Process event from FillDataMood fragment (user selects row from ListView to edit it)
     @Override
