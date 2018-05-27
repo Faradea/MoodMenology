@@ -11,6 +11,15 @@ public abstract class Event {
     int eventId;
     long startDateInUnixFormat;
 
+    public Event () {
+    }
+
+    public Event (final int rowId, final Boolean skipLoadData) {
+        if (skipLoadData) {
+            this.rowId = rowId;
+        }
+    }
+
     public int getEventId() {
         return this.eventId;
     }

@@ -11,6 +11,10 @@ public class MoodEvent extends Event {
     private final static String ATTRIBUTE_NAME_START_DATE = "startDate";
     private final static String ATTRIBUTE_NAME_EVENT_ID = "eventId";
 
+    public MoodEvent (final int rowId, final boolean skipLoadData) {
+        super(rowId, skipLoadData);
+    }
+
     public MoodEvent(final long timeInMillis, final int selectedMoodId) {
         super();
         this.eventType = EventTypes.moodEventTypeId.getId();

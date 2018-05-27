@@ -3,16 +3,23 @@ package com.macgavrina.moodmenology.views;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.res.Configuration;
+import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.RequiresApi;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
+import android.util.SparseBooleanArray;
+import android.view.ActionMode;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.GridView;
+import android.widget.ListView;
 import android.widget.SimpleAdapter;
 
 import com.macgavrina.moodmenology.R;
@@ -28,9 +35,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-public class FragmentFillDataMood extends Fragment {
+public class FragmentFillDataMood extends Fragment implements AbsListView.MultiChoiceModeListener {
 
-    //ToDo NEW сделать вызов TimePicker в onClick вместо editActivity (после того как будет сделано удаление через actionMode)
+    //ToDo BUG некорректное выделение первого элемента при вызове actionMode
 
     public ArrayList<Map<String, Object>> data;
 
@@ -57,6 +64,9 @@ public class FragmentFillDataMood extends Fragment {
     //ToDO REFACT сделать non-static (и ретест - приложение при этом падает)
     private static GridView lvSimple;
     private static FragmentActivity myContext;
+
+    private static ActionMode actionMode;
+    private Boolean clearBorders = true;
 
     private static IMoodFragmentInteractionListener moodFragmentListener;
 
@@ -200,6 +210,10 @@ public class FragmentFillDataMood extends Fragment {
                                         }
         );
 
+        lvSimple.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
+
+        lvSimple.setMultiChoiceModeListener(this);
+
     }
 
     //ToDO REFACT переписать через sAdapterList.notifyDataSetChanged (и для action тоже) -
@@ -254,6 +268,73 @@ public class FragmentFillDataMood extends Fragment {
         gridViewMoodFragment.setVerticalSpacing(5);
         gridViewMoodFragment.setHorizontalSpacing(5);
         gridViewMoodFragment.setStretchMode(GridView.STRETCH_COLUMN_WIDTH);
+    }
+
+    @Override
+    public void onItemCheckedStateChanged(ActionMode mode, int position, long id, boolean checked) {
+        if (checked) {
+            Log.d("set border for listItem on position = " + position);
+            lvSimple.getChildAt(position).setBackgroundColor(Color.TRANSPARENT);
+            //lvSimple.getChildAt(position).setBackgroundResource(R.drawable.border);
+            //.setBackgroundColor(Color.TRANSPARENT);
+            //colors.getActionColor());
+        }
+        else {
+            lvSimple.getChildAt(position).setBackgroundResource(0);
+        }
+        //listItem.setBackgroundColor(R.colo9r.colorMood2);
+        Log.d("position = " + position + ", checked = "
+                + checked);
+    }
+
+    @Override
+    public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+        actionMode = mode;
+        clearBorders = true;
+        mode.getMenuInflater().inflate(R.menu.action_mode_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
+        return false;
+    }
+
+    @Override
+    public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_mode_menu_delete:
+                Log.d("Delete button in actionMode is pressed");
+                clearBorders = false;
+                SparseBooleanArray selectedPositionIds = lvSimple.getCheckedItemPositions();
+                for (int i = 0; i < selectedPositionIds.size(); i++) {
+                    Log.d("i = " + i + ", keyAt = " + selectedPositionIds.keyAt(i) + ", value = " + selectedPositionIds.valueAt(i));
+                    if (selectedPositionIds.valueAt(i) == true) {
+                        Log.d("Delete action with rowId = " + positionRowIdMapping[selectedPositionIds.keyAt(i)]);
+                        moodFragmentListener.deleteMoodRowEvent(positionRowIdMapping[selectedPositionIds.keyAt(i)]);
+                    }
+                }
+                //Log.d(String.valueOf(selectedPositionIds.valueAt(0)));
+                initializeList();
+                break;
+        }
+        mode.finish();
+        return false;
+    }
+
+    @Override
+    public void onDestroyActionMode(ActionMode mode) {
+        Log.d("destroy, number of rows = " + positionRowIdMapping.length);
+
+        if (clearBorders & this.getActivity() != null) {
+            for (int i = 0; i < positionRowIdMapping.length; i++) {
+                Log.d("set transparent background for itemId = " + i);
+                lvSimple.getChildAt(i).setBackgroundResource(0);
+                //lvSimpleChildren.get(i).setBackgroundResource(i);
+                //lvSimpleChildren.get(i).setBackgroundResource(0);
+            }
+        }
+
     }
 
     // Colors for GridView

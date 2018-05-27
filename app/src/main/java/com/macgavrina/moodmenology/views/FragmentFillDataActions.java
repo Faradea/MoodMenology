@@ -4,9 +4,9 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
 import android.content.res.Configuration;
-import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
@@ -40,11 +40,14 @@ import java.util.Map;
  * Created by Irina on 28.12.2017.
  */
 
-public class FragmentFillDataActions extends Fragment implements AbsListView.MultiChoiceModeListener
+public class FragmentFillDataActions extends Fragment implements AbsListView.MultiChoiceModeListener, IFillDataActivityListener
         //implements View.OnTouchListener
         {
 
+            private int testInt;
+
     //ToDo NEW сделать startDate и endDate как в lifelog
+    public ArrayList<Map<String, Object>> data;
 
     private static final String ATTRIBUTE_NAME_GRID_IMAGE = "image";
     private static final String ATTRIBUTE_NAME_LL_GRID = "ll_grid";
@@ -63,11 +66,13 @@ public class FragmentFillDataActions extends Fragment implements AbsListView.Mul
     private static int displayMode;
     private static int numColumns;
 
-    private Context myContext;
+    private static FragmentActivity myContext;
 
     //ToDo REFACT сделать non-static (и полный ретест - приложение падает)
-    static private GridView gridViewActionFragment;
-    static private GridView lvSimple;
+    private static GridView gridViewActionFragment;
+    private static GridView lvSimple;
+    private static ActionMode actionMode;
+    private static ArrayList<View> lvSimpleChildren;
     private static int[] positionRowIdMapping;
     private static IActionsFragmentInteractionListener actionsFragmentListener;
 
@@ -75,33 +80,20 @@ public class FragmentFillDataActions extends Fragment implements AbsListView.Mul
     private Icons icons;
 
     private View v;
+    private Activity activity;
 
     public FragmentFillDataActions() {
         // Required empty public constructor
     }
 
-
     @Override
-    public View onCreateView(final LayoutInflater inflater, final ViewGroup container,
-                             final Bundle savedInstanceState) {
+    public void onAttach(Context context) {
+        super.onAttach(context);
 
-        Activity activity = getActivity();
+        activity = getActivity();
         if (activity != null) {
             myContext = (FragmentActivity) activity;
-
         }
-
-        // Inflate the layout for this fragment
-        v = inflater.inflate(R.layout.fragment_filldata_actions, container, false);
-
-        displayMode = v.getResources().getConfiguration().orientation;
-
-        lvSimple = (GridView) v.findViewById(R.id.FragmentFilldataActions_listView);
-        gridViewActionFragment = (GridView) v.findViewById(R.id.FragmentFilldataActions_gridView);
-
-        getBundleDataFromActivity();
-
-        setupGridView();
 
         try {
             actionsFragmentListener = (IActionsFragmentInteractionListener) activity;
@@ -113,9 +105,53 @@ public class FragmentFillDataActions extends Fragment implements AbsListView.Mul
             }
         }
 
+        testInt = 42;
+    }
+
+            @Override
+            public void onCreate(@Nullable Bundle savedInstanceState) {
+                super.onCreate(savedInstanceState);
+
+                testInt = 42;
+            }
+
+            @Override
+            public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+                super.onActivityCreated(savedInstanceState);
+                testInt = 42;
+            }
+
+            @Override
+            public void onStart() {
+                super.onStart();
+                testInt = 42;
+            }
+
+            @Override
+    public View onCreateView(final LayoutInflater inflater, final ViewGroup container,
+                             final Bundle savedInstanceState) {
+
+                testInt = 42;
+                Log.d("onCreateView, testInt = " + testInt);
+
+        // Inflate the layout for this fragment
+        v = inflater.inflate(R.layout.fragment_filldata_actions, container, false);
+
+        displayMode = v.getResources().getConfiguration().orientation;
+
+        lvSimple = (GridView) v.findViewById(R.id.FragmentFilldataActions_listView);
+
+        gridViewActionFragment = (GridView) v.findViewById(R.id.FragmentFilldataActions_gridView);
+
+        getBundleDataFromActivity();
+
+        setupGridView();
+
         initializeList();
 
         colors = new Colors(v);
+
+        Log.d("onCreateView, lvSimple = " + lvSimple);
 
         Log.d( "Fragment building is finished, startDate = "
         + SmallFunctions.formatDate(startDateValue) + ", startTime = " + SmallFunctions.formatTime(startDateValue)
@@ -132,6 +168,7 @@ public class FragmentFillDataActions extends Fragment implements AbsListView.Mul
         if (bundle != null) {
             startDateValue = bundle.getLong(STARTDATE_KEY, 0);
             endDateValue = bundle.getLong(ENDDATE_KEY, 0);
+            Log.d("dayStart = " + SmallFunctions.formatDate(startDateValue));
         } else {
             Log.d("Bundle is null");
         }
@@ -144,8 +181,6 @@ public class FragmentFillDataActions extends Fragment implements AbsListView.Mul
         if (activity != null) {
             myContext = (FragmentActivity) activity;
         }
-
-        lvSimple = (GridView) v.findViewById(R.id.FragmentFilldataActions_listView);
     }
 
     private void setupGridView() {
@@ -182,6 +217,9 @@ public class FragmentFillDataActions extends Fragment implements AbsListView.Mul
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Log.d("User has selected grid item with actionsGroupId = " + position);
+                if (actionMode != null) {
+                    actionMode.finish();
+                }
                 // Send event to Activity
                 actionsFragmentListener.selectActionsGroupEvent(position);
             }
@@ -195,8 +233,9 @@ public class FragmentFillDataActions extends Fragment implements AbsListView.Mul
                 ", startTime = " + SmallFunctions.formatTime(startDateValue) +
                 ", endDate = " + SmallFunctions.formatDate(endDateValue) +
                 ", endTime = " + SmallFunctions.formatTime(endDateValue));
+        Log.d("lvSimple" + lvSimple);
 
-        ArrayList<Map<String, Object>> data = DBOperations.getEventListForTheDay(myContext, startDateValue,
+        data = DBOperations.getEventListForTheDay(myContext, startDateValue,
                 endDateValue, Event.EventTypes.actionEventTypeId.getId());
 
         positionRowIdMapping = DBOperations.getPositionRowIdMapping(myContext, startDateValue,
@@ -215,6 +254,9 @@ public class FragmentFillDataActions extends Fragment implements AbsListView.Mul
         lvSimple.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                                             @Override
                                             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                                                if (actionMode != null) {
+                                                    actionMode.finish();
+                                                }
                                                 Log.d("User has selected list item: position = " + position + ", id = " + id + ", rowId = " + positionRowIdMapping[position]);
                                                 actionsFragmentListener.editActionRowEvent(positionRowIdMapping[position]);
                                             }
@@ -230,15 +272,21 @@ public class FragmentFillDataActions extends Fragment implements AbsListView.Mul
 
     }
 
-    public void updateList(Context context, long startDateValue, long endDateValue) {
+    public void updateList(long startDateValue, long endDateValue) {
 
-        getBundleDataFromActivity();
+        //lvSimple = (GridView) v.findViewById(R.id.FragmentFilldataActions_listView);
+
+        Log.d("lvSimple" + lvSimple);
+
         this.startDateValue = startDateValue;
         this.endDateValue = endDateValue;
-        myContext = context;
 
         initializeList();
 
+    }
+
+    public void updateList2(long startDateValue, long endDateValue) {
+        Log.d("testInt = " + testInt);
     }
 
     // Adjust view for ListView
@@ -280,7 +328,7 @@ public class FragmentFillDataActions extends Fragment implements AbsListView.Mul
                             //colors.getActionColor());
                 }
                 else {
-                    lvSimple.getChildAt(position).setBackgroundColor(Color.TRANSPARENT);
+                    lvSimple.getChildAt(position).setBackgroundResource(0);
                 }
                 //listItem.setBackgroundColor(R.color.colorMood2);
                 Log.d("position = " + position + ", checked = "
@@ -289,6 +337,7 @@ public class FragmentFillDataActions extends Fragment implements AbsListView.Mul
 
             @Override
             public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+                actionMode = mode;
                 clearBorders = true;
                 mode.getMenuInflater().inflate(R.menu.action_mode_menu, menu);
                 return true;
@@ -327,10 +376,12 @@ public class FragmentFillDataActions extends Fragment implements AbsListView.Mul
             public void onDestroyActionMode(ActionMode mode) {
                     Log.d("destroy, number of rows = " + positionRowIdMapping.length);
 
-                    if (clearBorders) {
+                    if (clearBorders & this.getActivity() != null) {
                         for (int i = 0; i < positionRowIdMapping.length; i++) {
                             Log.d("set transparent background for itemId = " + i);
                             lvSimple.getChildAt(i).setBackgroundResource(0);
+                            //lvSimpleChildren.get(i).setBackgroundResource(i);
+                            //lvSimpleChildren.get(i).setBackgroundResource(0);
                         }
                     }
             };

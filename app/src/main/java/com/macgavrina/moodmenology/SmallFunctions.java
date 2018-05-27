@@ -48,6 +48,7 @@ public abstract class SmallFunctions {
         String formattedDate;
 
         if (aLong >= hour_in_millis){
+
         formattedDate = String.valueOf(diffHours) + "h " + sdfMinute.format(date) + "min";}
         else {
             formattedDate = sdfMinute.format(date) + "min";

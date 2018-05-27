@@ -72,13 +72,15 @@ public class ActivityEditAction extends AppCompatActivity implements View.OnClic
     }
 
     private void setupEndTimeTextView() {
-        String endTimeText = "To: " + SmallFunctions.formatDate(actionEvent.getEndDateInUnixFormat()) + ", "
+        String endTimeText = getResources().getString(R.string.timeToText) + " " + SmallFunctions.formatDate(actionEvent.getEndDateInUnixFormat())
+                + getResources().getString(R.string.timeSeparater) + " "
                 + SmallFunctions.formatTime(actionEvent.getEndDateInUnixFormat());
         endTimeTextView.setText(endTimeText);
     }
 
     private void setupStartTimeTextView() {
-        String startTimeText = "From: " + SmallFunctions.formatDate(actionEvent.getStartDateInUnixFormat()) + ", "
+        String startTimeText = getResources().getString(R.string.timeFromText) + " " + SmallFunctions.formatDate(actionEvent.getStartDateInUnixFormat())
+                + getResources().getString(R.string.timeSeparater) + " "
                 + SmallFunctions.formatTime(actionEvent.getStartDateInUnixFormat());
         startTimeTextView.setText(startTimeText);
     }

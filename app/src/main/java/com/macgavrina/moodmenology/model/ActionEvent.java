@@ -17,6 +17,10 @@ public class ActionEvent extends Event{
     private int actionGroupId;
     private long endDateInUnixFormat;
 
+    public ActionEvent (final int rowId, final boolean skipLoadData) {
+        super(rowId, skipLoadData);
+    }
+
     public ActionEvent(final long timeInMillis, final int selectedActionId, final int actionsGroupId) {
         super();
         this.eventType = EventTypes.actionEventTypeId.getId();
@@ -43,10 +47,6 @@ public class ActionEvent extends Event{
         this.endDateInUnixFormat = (long) eventData.get(ATTRIBUTE_NAME_END_DATE);
         this.eventId = (int) eventData.get(ATTRIBUTE_NAME_EVENT_ID);
         this.actionGroupId = (int) eventData.get(ATTRIBUTE_NAME_GROUP_ID);
-        this.rowId = rowId;
-    }
-
-    public ActionEvent (final Context context, final int rowId, final Boolean loadData) {
         this.rowId = rowId;
     }
 

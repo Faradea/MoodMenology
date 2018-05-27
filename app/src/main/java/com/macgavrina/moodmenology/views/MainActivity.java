@@ -49,11 +49,18 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private MainActivity context;
     private SelectedDay selectedDay;
 
+    private MoodEvent moodEventForEdit;
+
     FragmentFillDataMood moodFragment;
     FragmentFillDataActions actionFragment;
 
     private int selectedMoodId;
     private java.util.Calendar dateAndTime;
+
+    ViewPager viewPager;
+    SimpleFragmentPagerAdapter adapter;
+    TabLayout tabLayout;
+    private IFillDataActivityListener activityListener;
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
@@ -67,19 +74,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         setupHeader();
 
-        // Find the view pager that will allow the user to swipe between fragments
-        ViewPager viewPager = (ViewPager) findViewById(R.id.ActivtyFilldata_viewPager);
-        SimpleFragmentPagerAdapter adapter = new SimpleFragmentPagerAdapter(getSupportFragmentManager(), selectedDay.getDayStartTimestamp(), selectedDay.getDayEndTimestamp());
-
-        // Set the adapter onto the view pager
-        viewPager.setAdapter(adapter);
-
-        // Give the TabLayout the ViewPager
-        TabLayout tabLayout = (TabLayout) findViewById(R.id.ActivtyFilldata_slidingTabs);
-        tabLayout.setupWithViewPager(viewPager);
-
-        moodFragment = (FragmentFillDataMood) adapter.getItem(MOOD_FRAGMENT_ID);
-        actionFragment = (FragmentFillDataActions) adapter.getItem(ACTION_FRAGMENT_ID);
+        replaceFragments(selectedDay);
 
         Log.d("Activity building is finished, selected Date = " + SmallFunctions.formatDate(selectedDay.getDayStartTimestamp()));
     }
@@ -108,7 +103,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
                 Log.d("User has pressed DeleteAllDataForTheDay button");
 
-                //ToDO REFACT Вынести тексты в string.xml
                 AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
                 builder.setTitle("Delete all data")
                         .setMessage("Delete all data for this day?")
@@ -150,22 +144,25 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 break;
 
             case R.id.ActivityFillData_nextDayText:
-                Log.d("User presses next day in the header");
+                Log.d("User presses next day in the header, nextDay = " + SmallFunctions.formatDate(selectedDay.getDayStartTimestamp()));
                 dateAndTime.setTimeInMillis(dateAndTime.getTimeInMillis() + dayDurationInMillis);
                 selectedDay = new SelectedDay(dateAndTime.getTimeInMillis());
                 setupHeader();
+
+                //activityListener.updateList2(selectedDay.getDayStartTimestamp(), selectedDay.getDayEndTimestamp());
+                actionFragment.updateList(selectedDay.getDayStartTimestamp(), selectedDay.getDayEndTimestamp());
                 moodFragment.updateList(selectedDay.getDayStartTimestamp(), selectedDay.getDayEndTimestamp());
-                actionFragment.updateList(getBaseContext(), selectedDay.getDayStartTimestamp(), selectedDay.getDayEndTimestamp());
                 break;
 
             case R.id.ActivityFillData_previousDayText:
                 Log.d("User presses previous day in the header");
+                Log.d("actionFragment = " + actionFragment);
                 dateAndTime.setTimeInMillis(dateAndTime.getTimeInMillis() - dayDurationInMillis);
                 selectedDay = new SelectedDay(dateAndTime.getTimeInMillis());
                 setupHeader();
-                //ToDo REFACT проверить зачем в action передается контекст а в mood - нет
+
                 moodFragment.updateList(selectedDay.getDayStartTimestamp(), selectedDay.getDayEndTimestamp());
-                actionFragment.updateList(getBaseContext(), selectedDay.getDayStartTimestamp(), selectedDay.getDayEndTimestamp());
+                actionFragment.updateList(selectedDay.getDayStartTimestamp(), selectedDay.getDayEndTimestamp());
                 break;
 
             default:
@@ -205,19 +202,31 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void deleteActionRowEvent(int rowId) {
         Log.d("Activity received deleteActionRow event from FillDataAction fragment, rowId=" + rowId);
-        ActionEvent actionEvent = new ActionEvent(this, rowId, true);
+        ActionEvent actionEvent = new ActionEvent(rowId, true);
         Context myContext = this;
         actionEvent.deleteEvent(myContext);
-        //actionFragment.updateList(myContext, selectedDay.getDayStartTimestamp(), selectedDay.getDayEndTimestamp());
+        actionFragment.updateList(selectedDay.getDayStartTimestamp(), selectedDay.getDayEndTimestamp());
     }
 
     // Process event from FillDataMood fragment (user selects row from ListView to edit it)
     @Override
     public void editMoodRowEvent(final int rowId) {
-        Log.d("Activity received editMoodRow event from FillDataMood fragment, rowId="+rowId);
+/*        Log.d("Activity received editMoodRow event from FillDataMood fragment, rowId="+rowId);
         Intent intentEdit = new Intent("com.macgavrina.moodmenology.edit.mood");
         intentEdit.putExtra(ROWID_KEY, rowId);
-        startActivityForResult(intentEdit, EDIT_MOOD_REQUEST_CODE);
+        startActivityForResult(intentEdit, EDIT_MOOD_REQUEST_CODE);*/
+
+        Log.d("Activity received editMoodRowEvent from FillDataMood fragment, rowId = " + rowId);
+        View v = null;
+        editTime(v, rowId);
+    }
+
+    public void deleteMoodRowEvent (final int rowId) {
+        Log.d("Activity received deleteMoodRowEvent from FillDataMood fragment, rowId = " + rowId);
+        MoodEvent moodEvent = new MoodEvent(rowId, true);
+        Context myContext = this;
+        moodEvent.deleteEvent(myContext);
+        actionFragment.updateList(selectedDay.getDayStartTimestamp(), selectedDay.getDayEndTimestamp());
     }
 
     // OnTimeSetListener (user selects time)
@@ -230,6 +239,22 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
             MoodEvent moodEvent = new MoodEvent(dateAndTime.getTimeInMillis(), selectedMoodId);
             moodEvent.saveToDB(context);
+
+            moodFragment.updateList(selectedDay.getDayStartTimestamp(), selectedDay.getDayEndTimestamp());
+
+        }
+    };
+
+    // OnTimeSetListener (user selects time)
+    TimePickerDialog.OnTimeSetListener tEdit = new TimePickerDialog.OnTimeSetListener() {
+        public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
+            dateAndTime.set(java.util.Calendar.HOUR_OF_DAY, hourOfDay);
+            dateAndTime.set(java.util.Calendar.MINUTE, minute);
+
+            Log.d("User has set time: " + SmallFunctions.formatTime(dateAndTime.getTimeInMillis()));
+
+            moodEventForEdit.setStartTime(dateAndTime.getTimeInMillis());
+            moodEventForEdit.updateStartTime(context);
 
             moodFragment.updateList(selectedDay.getDayStartTimestamp(), selectedDay.getDayEndTimestamp());
 
@@ -250,7 +275,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             setupHeader();
 
             moodFragment.updateList(selectedDay.getDayStartTimestamp(), selectedDay.getDayEndTimestamp());
-            actionFragment.updateList(getBaseContext(), selectedDay.getDayStartTimestamp(), selectedDay.getDayEndTimestamp());
+            actionFragment.updateList(selectedDay.getDayStartTimestamp(), selectedDay.getDayEndTimestamp());
         }
 
         public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
@@ -270,6 +295,17 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     // Setup time
     private void setTime(final View v) {
         new TimePickerDialog(MainActivity.this, t,
+                dateAndTime.get(java.util.Calendar.HOUR_OF_DAY),
+                dateAndTime.get(java.util.Calendar.MINUTE), true)
+                .show();
+        Log.d("TimePickerDialog is displayed, initial time = " + SmallFunctions.formatTime(dateAndTime.getTimeInMillis()));
+    }
+
+    // Setup time
+    private void editTime(final View v, final int rowId) {
+        moodEventForEdit = new MoodEvent(this, rowId);
+        dateAndTime.setTimeInMillis(moodEventForEdit.getStartDateInUnixFormat());
+        new TimePickerDialog(MainActivity.this, tEdit,
                 dateAndTime.get(java.util.Calendar.HOUR_OF_DAY),
                 dateAndTime.get(java.util.Calendar.MINUTE), true)
                 .show();
@@ -310,12 +346,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 break;
             case (EDIT_ACTION_REQUEST_CODE):
                 if (resultCode == RESULT_OK) {
-                    actionFragment.updateList(getBaseContext(), selectedDay.getDayStartTimestamp(), selectedDay.getDayEndTimestamp());
+                    actionFragment.updateList(selectedDay.getDayStartTimestamp(), selectedDay.getDayEndTimestamp());
                 }
                 break;
             case (ADD_ACTION_REQUEST_CODE):
                 if (resultCode == RESULT_OK) {
-                    actionFragment.updateList(getBaseContext(), selectedDay.getDayStartTimestamp(), selectedDay.getDayEndTimestamp());
+                    actionFragment.updateList(selectedDay.getDayStartTimestamp(), selectedDay.getDayEndTimestamp());
                 }
                 break;
             default:
@@ -336,6 +372,32 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         return super.onOptionsItemSelected(item);
 
+    }
+
+    private void replaceFragments(SelectedDay selectedDay) {
+        // Find the view pager that will allow the user to swipe between fragments
+
+        Log.d("SelectedDay = " + SmallFunctions.formatDate(selectedDay.getDayStartTimestamp()));
+        viewPager = (ViewPager) findViewById(R.id.ActivtyFilldata_viewPager);
+        adapter = new SimpleFragmentPagerAdapter(getSupportFragmentManager(), selectedDay.getDayStartTimestamp(), selectedDay.getDayEndTimestamp());
+
+        // Set the adapter onto the view pager
+        viewPager.setAdapter(adapter);
+
+        // Give the TabLayout the ViewPager
+        tabLayout = (TabLayout) findViewById(R.id.ActivtyFilldata_slidingTabs);
+        tabLayout.setupWithViewPager(viewPager);
+
+        moodFragment = (FragmentFillDataMood) adapter.getItem(MOOD_FRAGMENT_ID);
+        actionFragment = (FragmentFillDataActions) adapter.getItem(ACTION_FRAGMENT_ID);
+        Log.d("actionFragment = " + actionFragment);
+
+        if (actionFragment instanceof FragmentFillDataActions) {
+            activityListener = (IFillDataActivityListener) actionFragment;
+        } else {
+            throw new RuntimeException(actionFragment.toString()
+                    + " must implement onActivityDataListener");
+        }
     }
 
 }

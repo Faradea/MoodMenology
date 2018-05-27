@@ -54,6 +54,8 @@ public class ActivityAddAction extends AppCompatActivity implements View.OnClick
     private java.util.Calendar dateAndTimeStart = java.util.Calendar.getInstance();
     private java.util.Calendar dateAndTimeEnd = java.util.Calendar.getInstance();
 
+    FragmentActionEvent actionEventFragment;
+
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
@@ -85,7 +87,7 @@ public class ActivityAddAction extends AppCompatActivity implements View.OnClick
                 .beginTransaction();
 
         // добавляем фрагмент
-        FragmentActionEvent actionEventFragment = new FragmentActionEvent();
+        actionEventFragment = new FragmentActionEvent();
         fragmentTransaction.replace(R.id.AddActionActivity_actionEventContainer, actionEventFragment);
 
         Bundle fragmentBundle = new Bundle();
@@ -219,6 +221,7 @@ public class ActivityAddAction extends AppCompatActivity implements View.OnClick
         switch (v.getId()){
             case (R.id.AddActionActivity_saveButton):
 
+                actionEventFragment.logTestInt();
                 actionEvent.saveToDB(this);
 
                 setResult(RESULT_OK, new Intent());

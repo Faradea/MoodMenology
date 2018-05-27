@@ -3,7 +3,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android">
     <item
         android:id="@+id/action_mode_menu_delete"
-        android:title="Delete"
+        android:title="@string/DeleteButtonName"
         app:showAsAction="always">
     </item>
 </menu>

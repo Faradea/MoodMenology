@@ -15,6 +15,7 @@ public class MoodMenologyApp extends Application {
     //ToDo REFACT пройтись по всем предупреждениям студии в xml (и потом проверить что при коммите нет ошибок)
     //ToDo REFACT перенести все отступы и т.д. в dimens.xml
     //ToDo REFACT можно ли вынести final переменные из классов в ресурсы?
+    //ToDo REFACT использовать CursorLoader для работы с БД (но сначала разобраться с какими view умеет работать CursorAdapter)
 
     //ToDo NEW сделать массовое удаление эвентов через actionMode
     //ToDO NEW обернуть небезопасный код в try-catch (например, подключение к БД)

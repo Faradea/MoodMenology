@@ -6,4 +6,5 @@ interface IMoodFragmentInteractionListener {
 
         void editMoodRowEvent(int rowId);
 
-    }
+        void deleteMoodRowEvent(int rowId);
+}

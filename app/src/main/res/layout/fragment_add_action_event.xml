@@ -32,7 +32,7 @@
             android:layout_marginEnd="8dp"
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
-            android:text="1h 30min"
+            android:text="@string/actionDurationDefaultText"
             android:textSize="30sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
@@ -81,7 +81,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="00:00"
+                    android:text="@string/actionStartTimeDefaultText"
                     android:textSize="30sp" />
 
                 <TextView
@@ -89,7 +89,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="23:59"
+                    android:text="@string/actionEndTimeDefaultText"
                     android:textSize="30sp" />
 
             </LinearLayout>
