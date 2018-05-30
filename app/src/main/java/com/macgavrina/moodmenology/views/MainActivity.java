@@ -205,7 +205,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         ActionEvent actionEvent = new ActionEvent(rowId, true);
         Context myContext = this;
         actionEvent.deleteEvent(myContext);
-        actionFragment.updateList(selectedDay.getDayStartTimestamp(), selectedDay.getDayEndTimestamp());
     }
 
     // Process event from FillDataMood fragment (user selects row from ListView to edit it)
@@ -226,7 +225,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         MoodEvent moodEvent = new MoodEvent(rowId, true);
         Context myContext = this;
         moodEvent.deleteEvent(myContext);
-        actionFragment.updateList(selectedDay.getDayStartTimestamp(), selectedDay.getDayEndTimestamp());
     }
 
     // OnTimeSetListener (user selects time)

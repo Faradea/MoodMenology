@@ -46,7 +46,10 @@ public class FragmentFillDataActions extends Fragment implements AbsListView.Mul
 
             private int testInt;
 
-    //ToDo NEW сделать startDate и endDate как в lifelog
+
+            //ToDo * BUG при нажатии кнопки назад в actionMode не снимается выделение с элементов
+            //ToDo NEW сделать startDate и endDate как в lifelog
+
     public ArrayList<Map<String, Object>> data;
 
     private static final String ATTRIBUTE_NAME_GRID_IMAGE = "image";
@@ -68,7 +71,7 @@ public class FragmentFillDataActions extends Fragment implements AbsListView.Mul
 
     private static FragmentActivity myContext;
 
-    //ToDo REFACT сделать non-static (и полный ретест - приложение падает)
+    //ToDo * REFACT сделать non-static (и полный ретест - приложение падает)
     private static GridView gridViewActionFragment;
     private static GridView lvSimple;
     private static ActionMode actionMode;
@@ -359,7 +362,7 @@ public class FragmentFillDataActions extends Fragment implements AbsListView.Mul
                         SparseBooleanArray selectedPositionIds = lvSimple.getCheckedItemPositions();
                         for (int i = 0; i < selectedPositionIds.size(); i++) {
                             Log.d("i = " + i + ", keyAt = " + selectedPositionIds.keyAt(i) + ", value = " + selectedPositionIds.valueAt(i));
-                            if (selectedPositionIds.valueAt(i) == true) {
+                            if (selectedPositionIds.valueAt(i)) {
                                 Log.d("Delete action with rowId = " + positionRowIdMapping[selectedPositionIds.keyAt(i)]);
                                 actionsFragmentListener.deleteActionRowEvent(positionRowIdMapping[selectedPositionIds.keyAt(i)]);
                             }
@@ -376,14 +379,14 @@ public class FragmentFillDataActions extends Fragment implements AbsListView.Mul
             public void onDestroyActionMode(ActionMode mode) {
                     Log.d("destroy, number of rows = " + positionRowIdMapping.length);
 
-                    if (clearBorders & this.getActivity() != null) {
+/*                    if (clearBorders & this.getActivity() != null) {
                         for (int i = 0; i < positionRowIdMapping.length; i++) {
                             Log.d("set transparent background for itemId = " + i);
                             lvSimple.getChildAt(i).setBackgroundResource(0);
                             //lvSimpleChildren.get(i).setBackgroundResource(i);
                             //lvSimpleChildren.get(i).setBackgroundResource(0);
                         }
-                    }
+                    }*/
             };
 
 

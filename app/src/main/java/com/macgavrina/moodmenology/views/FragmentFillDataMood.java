@@ -3,7 +3,6 @@ package com.macgavrina.moodmenology.views;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.res.Configuration;
-import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.RequiresApi;
@@ -29,6 +28,7 @@ import com.macgavrina.moodmenology.logging.Log;
 import com.macgavrina.moodmenology.model.Colors;
 import com.macgavrina.moodmenology.model.Event;
 import com.macgavrina.moodmenology.model.Icons;
+import com.macgavrina.moodmenology.model.MoodEvent;
 import com.macgavrina.moodmenology.viewadapters.MySimpleAdapterGrid;
 
 import java.util.ArrayList;
@@ -37,7 +37,7 @@ import java.util.Map;
 
 public class FragmentFillDataMood extends Fragment implements AbsListView.MultiChoiceModeListener {
 
-    //ToDo BUG некорректное выделение первого элемента при вызове actionMode
+    //ToDo * BUG некорректное выделение первого элемента при вызове actionMode
 
     public ArrayList<Map<String, Object>> data;
 
@@ -61,7 +61,7 @@ public class FragmentFillDataMood extends Fragment implements AbsListView.MultiC
     private static int[] positionRowIdMapping;
 
     private GridView gridViewMoodFragment;
-    //ToDO REFACT сделать non-static (и ретест - приложение при этом падает)
+    //ToDO * REFACT сделать non-static (и ретест - приложение при этом падает)
     private static GridView lvSimple;
     private static FragmentActivity myContext;
 
@@ -272,15 +272,20 @@ public class FragmentFillDataMood extends Fragment implements AbsListView.MultiC
 
     @Override
     public void onItemCheckedStateChanged(ActionMode mode, int position, long id, boolean checked) {
+
         if (checked) {
             Log.d("set border for listItem on position = " + position);
-            lvSimple.getChildAt(position).setBackgroundColor(Color.TRANSPARENT);
+
+            lvSimple.getChildAt(position).setBackgroundResource(R.drawable.border);
             //lvSimple.getChildAt(position).setBackgroundResource(R.drawable.border);
             //.setBackgroundColor(Color.TRANSPARENT);
             //colors.getActionColor());
         }
         else {
-            lvSimple.getChildAt(position).setBackgroundResource(0);
+            Colors colors = new Colors(lvSimple);
+            MoodEvent moodEvent = new MoodEvent(myContext, positionRowIdMapping[position]);
+
+            lvSimple.getChildAt(position).setBackgroundColor(colors.getMoodColorForListId(moodEvent.getEventId()));
         }
         //listItem.setBackgroundColor(R.colo9r.colorMood2);
         Log.d("position = " + position + ", checked = "
@@ -326,14 +331,14 @@ public class FragmentFillDataMood extends Fragment implements AbsListView.MultiC
     public void onDestroyActionMode(ActionMode mode) {
         Log.d("destroy, number of rows = " + positionRowIdMapping.length);
 
-        if (clearBorders & this.getActivity() != null) {
+/*        if (clearBorders & this.getActivity() != null) {
             for (int i = 0; i < positionRowIdMapping.length; i++) {
                 Log.d("set transparent background for itemId = " + i);
                 lvSimple.getChildAt(i).setBackgroundResource(0);
                 //lvSimpleChildren.get(i).setBackgroundResource(i);
                 //lvSimpleChildren.get(i).setBackgroundResource(0);
             }
-        }
+        }*/
 
     }
 
