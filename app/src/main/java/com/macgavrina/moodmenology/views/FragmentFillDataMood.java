@@ -1,11 +1,8 @@
 package com.macgavrina.moodmenology.views;
 
-import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.res.Configuration;
-import android.os.Build;
 import android.os.Bundle;
-import android.support.annotation.RequiresApi;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.util.SparseBooleanArray;
@@ -24,6 +21,7 @@ import android.widget.SimpleAdapter;
 import com.macgavrina.moodmenology.R;
 import com.macgavrina.moodmenology.SmallFunctions;
 import com.macgavrina.moodmenology.controllers.DBOperations;
+import com.macgavrina.moodmenology.interfaces.IMoodFragmentInteractionListener;
 import com.macgavrina.moodmenology.logging.Log;
 import com.macgavrina.moodmenology.model.Colors;
 import com.macgavrina.moodmenology.model.Event;
@@ -36,8 +34,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class FragmentFillDataMood extends Fragment implements AbsListView.MultiChoiceModeListener {
-
-    //ToDo * BUG некорректное выделение первого элемента при вызове actionMode
 
     public ArrayList<Map<String, Object>> data;
 
@@ -65,12 +61,14 @@ public class FragmentFillDataMood extends Fragment implements AbsListView.MultiC
     private static GridView lvSimple;
     private static FragmentActivity myContext;
 
-    private static ActionMode actionMode;
+    private ActionMode actionMode;
     private Boolean clearBorders = true;
 
     private static IMoodFragmentInteractionListener moodFragmentListener;
 
     private Icons icons;
+
+    private Colors colors;
 
     public FragmentFillDataMood() {
 
@@ -110,6 +108,8 @@ public class FragmentFillDataMood extends Fragment implements AbsListView.MultiC
                         + " shall implement moodFragmentListener interface");
             }
         }
+
+        colors = new Colors(v);
 
         Log.d( "Fragment building is finished, startDate = "
                 + SmallFunctions.formatDate(startDateValue) + ", startTime = " + SmallFunctions.formatTime(startDateValue)
@@ -157,6 +157,9 @@ public class FragmentFillDataMood extends Fragment implements AbsListView.MultiC
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 selectedMoodId=position;
                 Log.d("User has selected gridItem with moodId = " + selectedMoodId);
+                if (actionMode != null) {
+                    actionMode.finish();
+                }
                 // Send event to Activity
                 moodFragmentListener.setTimeEvent(selectedMoodId);
                 //updateList(startDateValue, endDateValue);
@@ -271,7 +274,7 @@ public class FragmentFillDataMood extends Fragment implements AbsListView.MultiC
     }
 
     @Override
-    public void onItemCheckedStateChanged(ActionMode mode, int position, long id, boolean checked) {
+    public void onItemCheckedStateChanged(ActionMode actionMode, int position, long id, boolean checked) {
 
         if (checked) {
             Log.d("set border for listItem on position = " + position);
@@ -294,7 +297,7 @@ public class FragmentFillDataMood extends Fragment implements AbsListView.MultiC
 
     @Override
     public boolean onCreateActionMode(ActionMode mode, Menu menu) {
-        actionMode = mode;
+        this.actionMode = mode;
         clearBorders = true;
         mode.getMenuInflater().inflate(R.menu.action_mode_menu, menu);
         return true;
@@ -329,6 +332,7 @@ public class FragmentFillDataMood extends Fragment implements AbsListView.MultiC
 
     @Override
     public void onDestroyActionMode(ActionMode mode) {
+        this.actionMode = null;
         Log.d("destroy, number of rows = " + positionRowIdMapping.length);
 
 /*        if (clearBorders & this.getActivity() != null) {
@@ -342,34 +346,35 @@ public class FragmentFillDataMood extends Fragment implements AbsListView.MultiC
 
     }
 
-    // Colors for GridView
+    // Colors for ListView
     private class LayoutColorViewBinder implements SimpleAdapter.ViewBinder {
 
-        @SuppressLint("ResourceAsColor")
-        @RequiresApi(api = Build.VERSION_CODES.M)
         @Override
         public boolean setViewValue(View view, Object data,
                                     String textRepresentation) {
-            int i = 0;
-            Colors colors = new Colors(view);
-            switch (view.getId()) {
-                case R.id.ItemMoodEvent_layout:
-                    i = (int) data;
-                    view.setBackgroundColor(colors.getMoodColorForListId(i));
-                    return true;
-            }
-            return false;
+            if (actionMode == null) {
+                int i;
+                switch (view.getId()) {
+                    case R.id.ItemMoodEvent_layout:
+                        i = (int) data;
+                        //ToDo REFACT разобраться с colors: почему недостаточно инциализации в onCreateView (и в actions тоже)
+                        colors = new Colors(view);
+                        view.setBackgroundColor(colors.getMoodColorForListId(i));
+                        return true;
+                }
+                return false;
+            } else
+                return true;
         }
     }
 
-    //Colors for ListView
+    //Colors for GridView
     private class LayoutGridColorViewBinder implements SimpleAdapter.ViewBinder {
 
         @Override
         public boolean setViewValue(View view, Object data,
                                     String textRepresentation) {
             int i;
-            Colors colors = new Colors(view);
             switch (view.getId()) {
                 case R.id.ItemUniversalGrid_layout:
                     i = (int) data;

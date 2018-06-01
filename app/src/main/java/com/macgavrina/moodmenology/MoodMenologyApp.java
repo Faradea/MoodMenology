@@ -17,6 +17,7 @@ public class MoodMenologyApp extends Application {
     //ToDo REFACT перенести все отступы и т.д. в dimens.xml
     //ToDo REFACT можно ли вынести final переменные из классов в ресурсы?
     //ToDo REFACT использовать CursorLoader для работы с БД (но сначала разобраться с какими view умеет работать CursorAdapter)
+    //ToDo REFACT заменить ViewPager на RecyclerView
 
     //ToDo NEW возможность указать физическое состояние (сонный, болезнь, холодно)
     //ToDo NEW комментарии к настроению и action

@@ -1,4 +1,4 @@
-package com.macgavrina.moodmenology.viewadapters;
+package com.macgavrina.moodmenology.menu;
 
 import android.content.Context;
 import android.content.Intent;

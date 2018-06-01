@@ -17,11 +17,14 @@ import android.widget.TimePicker;
 
 import com.macgavrina.moodmenology.R;
 import com.macgavrina.moodmenology.SmallFunctions;
+import com.macgavrina.moodmenology.interfaces.IActionsFragmentInteractionListener;
+import com.macgavrina.moodmenology.interfaces.IFillDataActivityListener;
+import com.macgavrina.moodmenology.interfaces.IMoodFragmentInteractionListener;
 import com.macgavrina.moodmenology.logging.Log;
 import com.macgavrina.moodmenology.model.ActionEvent;
 import com.macgavrina.moodmenology.model.MoodEvent;
 import com.macgavrina.moodmenology.model.SelectedDay;
-import com.macgavrina.moodmenology.viewadapters.MainMenu;
+import com.macgavrina.moodmenology.menu.MainMenu;
 import com.macgavrina.moodmenology.viewadapters.SimpleFragmentPagerAdapter;
 
 import java.util.Calendar;

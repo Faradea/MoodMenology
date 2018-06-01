@@ -1,6 +1,6 @@
-package com.macgavrina.moodmenology.views;
+package com.macgavrina.moodmenology.interfaces;
 
-interface IActionsFragmentInteractionListener {
+public interface IActionsFragmentInteractionListener {
 
         void selectActionsGroupEvent(int selectedActionsGroupId);
 

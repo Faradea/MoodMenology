@@ -21,6 +21,7 @@ public abstract class DBOperations {
     private static final String ATTRIBUTE_NAME_END_DATE = "endDate";
     private static final String ATTRIBUTE_NAME_EVENT_ID = "eventId";
     private static final String ATTRIBUTE_NAME_GROUP_ID = "groupId";
+    private static final String ATTRIBUTE_NAME_IMAGE = "image";
     private static final String ATTRIBUTE_NAME_LL = "ll";
     private static final String ATTRIBUTE_NAME_DURATION = "duration";
 
@@ -165,7 +166,8 @@ public abstract class DBOperations {
 
                 if (eventType == Event.EventTypes.actionEventTypeId.getId()){
 
-                    m.put(ATTRIBUTE_NAME_LL, icons.getActionIconsId(c.getInt(groupColIndex), c.getInt(moodColIndex)));
+                    m.put(ATTRIBUTE_NAME_IMAGE, icons.getActionIconsId(c.getInt(groupColIndex), c.getInt(moodColIndex)));
+                    m.put(ATTRIBUTE_NAME_LL, 0);
 
                 }
 

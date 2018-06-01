@@ -9,6 +9,7 @@ public class Colors {
     private int[] moodColorsForList;
     private int[] moodColorsForGrid;
     private int actionColor;
+    private int actionListColor;
 
     public Colors(final View view) {
 
@@ -30,6 +31,8 @@ public class Colors {
         };
 
         actionColor = view.getResources().getColor(R.color.colorAction);
+
+        actionListColor = view.getResources().getColor(R.color.colorActionListItem);
     }
 
     public int getMoodColorForListId(final int colorSequenceNumber) {
@@ -48,5 +51,9 @@ public class Colors {
 
         return actionColor;
 
+    }
+
+    public int getActionListColor() {
+        return actionListColor;
     }
 }

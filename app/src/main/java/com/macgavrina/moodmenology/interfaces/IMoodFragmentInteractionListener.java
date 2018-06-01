@@ -1,6 +1,6 @@
-package com.macgavrina.moodmenology.views;
+package com.macgavrina.moodmenology.interfaces;
 
-interface IMoodFragmentInteractionListener {
+public interface IMoodFragmentInteractionListener {
 
         void setTimeEvent(int selectedMoodId);
 

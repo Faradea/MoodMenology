@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <color name="colorActionListItem">#ffffff</color>
     <color name="colorPrimary">#fcab38</color>
     <color name="colorPrimaryDark">#693303</color>
     <color name="colorAccent">#f1650e</color>

@@ -26,6 +26,8 @@ import android.widget.SimpleAdapter;
 import com.macgavrina.moodmenology.R;
 import com.macgavrina.moodmenology.SmallFunctions;
 import com.macgavrina.moodmenology.controllers.DBOperations;
+import com.macgavrina.moodmenology.interfaces.IActionsFragmentInteractionListener;
+import com.macgavrina.moodmenology.interfaces.IFillDataActivityListener;
 import com.macgavrina.moodmenology.logging.Log;
 import com.macgavrina.moodmenology.model.Colors;
 import com.macgavrina.moodmenology.model.Event;
@@ -46,8 +48,6 @@ public class FragmentFillDataActions extends Fragment implements AbsListView.Mul
 
             private int testInt;
 
-
-            //ToDo * BUG при нажатии кнопки назад в actionMode не снимается выделение с элементов
             //ToDo NEW сделать startDate и endDate как в lifelog
 
     public ArrayList<Map<String, Object>> data;
@@ -57,6 +57,7 @@ public class FragmentFillDataActions extends Fragment implements AbsListView.Mul
     private static final String ATTRIBUTE_NAME_START_DATE = "startDate";
     private static final String ATTRIBUTE_NAME_END_DATE = "endDate";
     private static final String ATTRIBUTE_NAME_DURATION = "duration";
+    private static final String ATTRIBUTE_NAME_IMAGE = "image";
     private static final String ATTRIBUTE_NAME_LL = "ll";
 
     private static final String STARTDATE_KEY = "startDate";
@@ -74,7 +75,7 @@ public class FragmentFillDataActions extends Fragment implements AbsListView.Mul
     //ToDo * REFACT сделать non-static (и полный ретест - приложение падает)
     private static GridView gridViewActionFragment;
     private static GridView lvSimple;
-    private static ActionMode actionMode;
+    private ActionMode actionMode;
     private static ArrayList<View> lvSimpleChildren;
     private static int[] positionRowIdMapping;
     private static IActionsFragmentInteractionListener actionsFragmentListener;
@@ -140,6 +141,8 @@ public class FragmentFillDataActions extends Fragment implements AbsListView.Mul
         // Inflate the layout for this fragment
         v = inflater.inflate(R.layout.fragment_filldata_actions, container, false);
 
+        colors = new Colors(v);
+
         displayMode = v.getResources().getConfiguration().orientation;
 
         lvSimple = (GridView) v.findViewById(R.id.FragmentFilldataActions_listView);
@@ -151,8 +154,6 @@ public class FragmentFillDataActions extends Fragment implements AbsListView.Mul
         setupGridView();
 
         initializeList();
-
-        colors = new Colors(v);
 
         Log.d("onCreateView, lvSimple = " + lvSimple);
 
@@ -245,11 +246,13 @@ public class FragmentFillDataActions extends Fragment implements AbsListView.Mul
                 endDateValue, Event.EventTypes.actionEventTypeId.getId());
 
         // Create adapter
-        String[] from = {ATTRIBUTE_NAME_START_DATE, ATTRIBUTE_NAME_END_DATE, ATTRIBUTE_NAME_DURATION, ATTRIBUTE_NAME_LL};
-        int[] to = {R.id.ItemActionEvent_startTimeText, R.id.ItemActionEvent_endTimeText, R.id.ItemActionEvent_durationText, R.id.ItemActionEvent_iconImage};
+        String[] from = {ATTRIBUTE_NAME_START_DATE, ATTRIBUTE_NAME_END_DATE, ATTRIBUTE_NAME_DURATION, ATTRIBUTE_NAME_IMAGE, ATTRIBUTE_NAME_LL};
+        int[] to = {R.id.ItemActionEvent_startTimeText, R.id.ItemActionEvent_endTimeText, R.id.ItemActionEvent_durationText, R.id.ItemActionEvent_iconImage, R.id.ItemActionEvent_layout};
 
         SimpleAdapter sAdapterList = new SimpleAdapter(myContext, data, R.layout.item_action_event,
                 from, to);
+
+        sAdapterList.setViewBinder(new LayoutColorViewBinder());
 
         lvSimple.setAdapter(sAdapterList);
         adjustGridListView();
@@ -326,6 +329,7 @@ public class FragmentFillDataActions extends Fragment implements AbsListView.Mul
             @Override
             public void onItemCheckedStateChanged(ActionMode mode, int position, long id, boolean checked) {
                 if (checked) {
+                    Log.d("Set border for item = " + position);
                     lvSimple.getChildAt(position).setBackgroundResource(R.drawable.border);
                             //.setBackgroundColor(Color.TRANSPARENT);
                             //colors.getActionColor());
@@ -377,7 +381,8 @@ public class FragmentFillDataActions extends Fragment implements AbsListView.Mul
 
             @Override
             public void onDestroyActionMode(ActionMode mode) {
-                    Log.d("destroy, number of rows = " + positionRowIdMapping.length);
+                actionMode = null;
+                Log.d("destroy, number of rows = " + positionRowIdMapping.length);
 
 /*                    if (clearBorders & this.getActivity() != null) {
                         for (int i = 0; i < positionRowIdMapping.length; i++) {
@@ -461,4 +466,23 @@ public class FragmentFillDataActions extends Fragment implements AbsListView.Mul
         }
     }
 
-}
+            private class LayoutColorViewBinder implements SimpleAdapter.ViewBinder {
+
+                @Override
+                public boolean setViewValue(View view, Object data,
+                                            String textRepresentation) {
+                    if (actionMode == null) {
+                        switch (view.getId()) {
+                            case R.id.ItemActionEvent_layout:
+                                Log.d("Set background color for action listItem = " + data);
+                                colors = new Colors(view);
+                                view.setBackgroundColor(colors.getActionListColor());
+                                return true;
+                        }
+                        return false;
+                    } else
+                        return true;
+                }
+
+            }
+        }
