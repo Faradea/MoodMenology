@@ -51,20 +51,19 @@ public class FragmentFillDataMood extends Fragment implements AbsListView.MultiC
     private long startDateValue;
     private long endDateValue;
 
-    private static int displayMode;
-    private static int numColumns;
+    private int displayMode;
+    private int numColumns;
 
-    private static int[] positionRowIdMapping;
+    private int[] positionRowIdMapping;
 
     private GridView gridViewMoodFragment;
-    //ToDO * REFACT сделать non-static (и ретест - приложение при этом падает)
-    private static GridView lvSimple;
-    private static FragmentActivity myContext;
+    private GridView lvSimple;
+    private FragmentActivity myContext;
 
     private ActionMode actionMode;
     private Boolean clearBorders = true;
 
-    private static IMoodFragmentInteractionListener moodFragmentListener;
+    private IMoodFragmentInteractionListener moodFragmentListener;
 
     private Icons icons;
 
@@ -244,7 +243,7 @@ public class FragmentFillDataMood extends Fragment implements AbsListView.MultiC
     }
 
     // Adjust view for ListView
-    private static void adjustGridListView() {
+    private void adjustGridListView() {
 
         if (displayMode == Configuration.ORIENTATION_PORTRAIT) {
             numColumns = 2;

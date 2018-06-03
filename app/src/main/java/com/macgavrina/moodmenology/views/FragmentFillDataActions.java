@@ -6,7 +6,6 @@ import android.content.Context;
 import android.content.res.Configuration;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
@@ -27,7 +26,6 @@ import com.macgavrina.moodmenology.R;
 import com.macgavrina.moodmenology.SmallFunctions;
 import com.macgavrina.moodmenology.controllers.DBOperations;
 import com.macgavrina.moodmenology.interfaces.IActionsFragmentInteractionListener;
-import com.macgavrina.moodmenology.interfaces.IFillDataActivityListener;
 import com.macgavrina.moodmenology.logging.Log;
 import com.macgavrina.moodmenology.model.Colors;
 import com.macgavrina.moodmenology.model.Event;
@@ -42,11 +40,9 @@ import java.util.Map;
  * Created by Irina on 28.12.2017.
  */
 
-public class FragmentFillDataActions extends Fragment implements AbsListView.MultiChoiceModeListener, IFillDataActivityListener
+public class FragmentFillDataActions extends Fragment implements AbsListView.MultiChoiceModeListener
         //implements View.OnTouchListener
         {
-
-            private int testInt;
 
             //ToDo NEW сделать startDate и endDate как в lifelog
 
@@ -67,18 +63,17 @@ public class FragmentFillDataActions extends Fragment implements AbsListView.Mul
 
     private long startDateValue;
     private long endDateValue;
-    private static int displayMode;
-    private static int numColumns;
 
-    private static FragmentActivity myContext;
+    private int displayMode;
+    private int numColumns;
 
-    //ToDo * REFACT сделать non-static (и полный ретест - приложение падает)
-    private static GridView gridViewActionFragment;
-    private static GridView lvSimple;
+    private FragmentActivity myContext;
+
+    private GridView gridViewActionFragment;
+    private GridView lvSimple;
     private ActionMode actionMode;
-    private static ArrayList<View> lvSimpleChildren;
-    private static int[] positionRowIdMapping;
-    private static IActionsFragmentInteractionListener actionsFragmentListener;
+    private int[] positionRowIdMapping;
+    private IActionsFragmentInteractionListener actionsFragmentListener;
 
     private Colors colors;
     private Icons icons;
@@ -108,35 +103,12 @@ public class FragmentFillDataActions extends Fragment implements AbsListView.Mul
                         + " shall implement actionsFragmentListener interface");
             }
         }
-
-        testInt = 42;
     }
 
-            @Override
-            public void onCreate(@Nullable Bundle savedInstanceState) {
-                super.onCreate(savedInstanceState);
-
-                testInt = 42;
-            }
-
-            @Override
-            public void onActivityCreated(@Nullable Bundle savedInstanceState) {
-                super.onActivityCreated(savedInstanceState);
-                testInt = 42;
-            }
-
-            @Override
-            public void onStart() {
-                super.onStart();
-                testInt = 42;
-            }
 
             @Override
     public View onCreateView(final LayoutInflater inflater, final ViewGroup container,
                              final Bundle savedInstanceState) {
-
-                testInt = 42;
-                Log.d("onCreateView, testInt = " + testInt);
 
         // Inflate the layout for this fragment
         v = inflater.inflate(R.layout.fragment_filldata_actions, container, false);
@@ -289,10 +261,6 @@ public class FragmentFillDataActions extends Fragment implements AbsListView.Mul
 
         initializeList();
 
-    }
-
-    public void updateList2(long startDateValue, long endDateValue) {
-        Log.d("testInt = " + testInt);
     }
 
     // Adjust view for ListView

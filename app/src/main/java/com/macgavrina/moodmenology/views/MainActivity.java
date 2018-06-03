@@ -18,22 +18,20 @@ import android.widget.TimePicker;
 import com.macgavrina.moodmenology.R;
 import com.macgavrina.moodmenology.SmallFunctions;
 import com.macgavrina.moodmenology.interfaces.IActionsFragmentInteractionListener;
-import com.macgavrina.moodmenology.interfaces.IFillDataActivityListener;
 import com.macgavrina.moodmenology.interfaces.IMoodFragmentInteractionListener;
 import com.macgavrina.moodmenology.logging.Log;
+import com.macgavrina.moodmenology.menu.MainMenu;
 import com.macgavrina.moodmenology.model.ActionEvent;
 import com.macgavrina.moodmenology.model.MoodEvent;
 import com.macgavrina.moodmenology.model.SelectedDay;
-import com.macgavrina.moodmenology.menu.MainMenu;
 import com.macgavrina.moodmenology.viewadapters.SimpleFragmentPagerAdapter;
 
 import java.util.Calendar;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener, IMoodFragmentInteractionListener, IActionsFragmentInteractionListener {
 
+    //ToDo BUG пачка багов с поворотами экрана
     //ToDo NEW добавить возврат на сегодняшнюю дату (например, через кнопку home в actionBar)
-    //ToDo NEW сделать пролистывание дат свайпом по заголовку
-    //ToDo NEW сделать выбор настроения и экшена через плюсики, а не через grid (как в симс)
     //ToDo NEW сделать более "комфортный" дизайн для горизонтального landscape
 
     private static final long dayDurationInMillis = 86400000L;
@@ -63,7 +61,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     ViewPager viewPager;
     SimpleFragmentPagerAdapter adapter;
     TabLayout tabLayout;
-    private IFillDataActivityListener activityListener;
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
@@ -152,18 +149,20 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 selectedDay = new SelectedDay(dateAndTime.getTimeInMillis());
                 setupHeader();
 
-                //activityListener.updateList2(selectedDay.getDayStartTimestamp(), selectedDay.getDayEndTimestamp());
+                actionFragment = adapter.getCurrentActionFragment();
+                moodFragment = adapter.getCurrentMoodFragment();
                 actionFragment.updateList(selectedDay.getDayStartTimestamp(), selectedDay.getDayEndTimestamp());
                 moodFragment.updateList(selectedDay.getDayStartTimestamp(), selectedDay.getDayEndTimestamp());
                 break;
 
             case R.id.ActivityFillData_previousDayText:
                 Log.d("User presses previous day in the header");
-                Log.d("actionFragment = " + actionFragment);
                 dateAndTime.setTimeInMillis(dateAndTime.getTimeInMillis() - dayDurationInMillis);
                 selectedDay = new SelectedDay(dateAndTime.getTimeInMillis());
                 setupHeader();
 
+                actionFragment = adapter.getCurrentActionFragment();
+                moodFragment = adapter.getCurrentMoodFragment();
                 moodFragment.updateList(selectedDay.getDayStartTimestamp(), selectedDay.getDayEndTimestamp());
                 actionFragment.updateList(selectedDay.getDayStartTimestamp(), selectedDay.getDayEndTimestamp());
                 break;
@@ -187,7 +186,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void selectActionsGroupEvent(final int selectedActionsGroupId) {
         Log.d("Activity received selectActionsFroup event from FillDataAction fragment, groupId =" + selectedActionsGroupId);
-
         Intent intentActions = new Intent("com.macgavrina.moodmenology.add.action");
         intentActions.putExtra(ACTION_GROUPID_KEY, selectedActionsGroupId);
         intentActions.putExtra(DATE_IN_MILLIS_KEY, dateAndTime.getTimeInMillis());
@@ -241,6 +239,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             MoodEvent moodEvent = new MoodEvent(dateAndTime.getTimeInMillis(), selectedMoodId);
             moodEvent.saveToDB(context);
 
+            moodFragment = adapter.getCurrentMoodFragment();
             moodFragment.updateList(selectedDay.getDayStartTimestamp(), selectedDay.getDayEndTimestamp());
 
         }
@@ -257,6 +256,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             moodEventForEdit.setStartTime(dateAndTime.getTimeInMillis());
             moodEventForEdit.updateStartTime(context);
 
+            moodFragment = adapter.getCurrentMoodFragment();
             moodFragment.updateList(selectedDay.getDayStartTimestamp(), selectedDay.getDayEndTimestamp());
 
         }
@@ -275,6 +275,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             selectedDay = new SelectedDay(dateAndTime.getTimeInMillis());
             setupHeader();
 
+            actionFragment = adapter.getCurrentActionFragment();
+            moodFragment = adapter.getCurrentMoodFragment();
             moodFragment.updateList(selectedDay.getDayStartTimestamp(), selectedDay.getDayEndTimestamp());
             actionFragment.updateList(selectedDay.getDayStartTimestamp(), selectedDay.getDayEndTimestamp());
         }
@@ -288,6 +290,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             MoodEvent moodEvent = new MoodEvent(dateAndTime.getTimeInMillis(), selectedMoodId);
             moodEvent.saveToDB(context);
 
+            moodFragment = adapter.getCurrentMoodFragment();
             moodFragment.updateList(selectedDay.getDayStartTimestamp(), selectedDay.getDayEndTimestamp());
 
         }
@@ -342,16 +345,19 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         switch (requestCode) {
             case (EDIT_MOOD_REQUEST_CODE):
                 if (resultCode == RESULT_OK) {
+                    moodFragment = adapter.getCurrentMoodFragment();
                     moodFragment.updateList(selectedDay.getDayStartTimestamp(), selectedDay.getDayEndTimestamp());
                 }
                 break;
             case (EDIT_ACTION_REQUEST_CODE):
                 if (resultCode == RESULT_OK) {
+                    actionFragment = adapter.getCurrentActionFragment();
                     actionFragment.updateList(selectedDay.getDayStartTimestamp(), selectedDay.getDayEndTimestamp());
                 }
                 break;
             case (ADD_ACTION_REQUEST_CODE):
                 if (resultCode == RESULT_OK) {
+                    actionFragment = adapter.getCurrentActionFragment();
                     actionFragment.updateList(selectedDay.getDayStartTimestamp(), selectedDay.getDayEndTimestamp());
                 }
                 break;
@@ -391,14 +397,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         moodFragment = (FragmentFillDataMood) adapter.getItem(MOOD_FRAGMENT_ID);
         actionFragment = (FragmentFillDataActions) adapter.getItem(ACTION_FRAGMENT_ID);
-        Log.d("actionFragment = " + actionFragment);
-
-        if (actionFragment instanceof FragmentFillDataActions) {
-            activityListener = (IFillDataActivityListener) actionFragment;
-        } else {
-            throw new RuntimeException(actionFragment.toString()
-                    + " must implement onActivityDataListener");
-        }
     }
 
 }

@@ -10,6 +10,9 @@ import com.macgavrina.moodmenology.views.FragmentFillDataMood;
 
 public class SimpleFragmentPagerAdapter extends FragmentPagerAdapter {
 
+    private FragmentFillDataActions actionCurrentFragment;
+    private FragmentFillDataMood moodCurrentFragment;
+
     final private String START_DATE_KEY = "startDate";
     final private String END_DATE_KEY = "endDate";
 
@@ -29,6 +32,14 @@ public class SimpleFragmentPagerAdapter extends FragmentPagerAdapter {
         endDateValue = selectedDayEndDate;
     }
 
+    public FragmentFillDataActions getCurrentActionFragment() {
+        return actionCurrentFragment;
+    }
+
+    public FragmentFillDataMood getCurrentMoodFragment() {
+        return moodCurrentFragment;
+    }
+
     // This determines the fragment for each tab
     @Override
     public Fragment getItem(final int position) {
@@ -41,18 +52,21 @@ public class SimpleFragmentPagerAdapter extends FragmentPagerAdapter {
                 bundle.putLong(START_DATE_KEY, startDateValue);
                 bundle.putLong(END_DATE_KEY, endDateValue);
                 fillDataMoodFragment.setArguments(bundle);
+                moodCurrentFragment = fillDataMoodFragment;
                 return fillDataMoodFragment;
             case ACTION_FRAGMENT_ID:
                 FragmentFillDataActions fillDataActionsFragment = new FragmentFillDataActions();
                 bundle.putLong(START_DATE_KEY, startDateValue);
                 bundle.putLong(END_DATE_KEY, endDateValue);
                 fillDataActionsFragment.setArguments(bundle);
+                actionCurrentFragment = fillDataActionsFragment;
                 return fillDataActionsFragment;
             default:
                 fillDataActionsFragment = new FragmentFillDataActions();
                 bundle.putLong(START_DATE_KEY, startDateValue);
                 bundle.putLong(END_DATE_KEY, endDateValue);
                 fillDataActionsFragment.setArguments(bundle);
+                actionCurrentFragment = fillDataActionsFragment;
                 return fillDataActionsFragment;
         }
     }
