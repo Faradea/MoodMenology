@@ -1,10 +1,8 @@
 package com.macgavrina.moodmenology.views;
 
-import android.app.Activity;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentActivity;
 import android.util.SparseBooleanArray;
 import android.view.ActionMode;
 import android.view.LayoutInflater;
@@ -35,8 +33,6 @@ import java.util.Map;
 
 public class FragmentFillDataMood extends Fragment implements AbsListView.MultiChoiceModeListener {
 
-    public ArrayList<Map<String, Object>> data;
-
     private static final String ATTRIBUTE_NAME_START_DATE = "startDate";
     private static final String ATTRIBUTE_NAME_LL = "ll";
     private static final String ATTRIBUTE_NAME_LL_GRID = "ll_grid";
@@ -58,30 +54,20 @@ public class FragmentFillDataMood extends Fragment implements AbsListView.MultiC
 
     private GridView gridViewMoodFragment;
     private GridView lvSimple;
-    private FragmentActivity myContext;
 
     private ActionMode actionMode;
-    private Boolean clearBorders = true;
 
     private IMoodFragmentInteractionListener moodFragmentListener;
 
     private Icons icons;
-
     private Colors colors;
 
     public FragmentFillDataMood() {
-
     }
 
     @Override
     public View onCreateView(final LayoutInflater inflater, final ViewGroup container,
                              final Bundle savedInstanceState) {
-
-        Activity activity = getActivity();
-        if (activity != null) {
-            myContext = (FragmentActivity) activity;
-
-        }
 
         // Inflate the layout for this fragment
         View v = inflater.inflate(R.layout.fragment_filldata_mood, container, false);
@@ -99,11 +85,11 @@ public class FragmentFillDataMood extends Fragment implements AbsListView.MultiC
         setupGridView();
 
         try {
-            moodFragmentListener = (IMoodFragmentInteractionListener) activity;
+            moodFragmentListener = (IMoodFragmentInteractionListener) getActivity();
             Log.d("moodFragmentListener interface is ok");
         } catch (ClassCastException e) {
-            if (activity != null) {
-                throw new ClassCastException(activity.toString()
+            if (getActivity() != null) {
+                throw new ClassCastException(getActivity().toString()
                         + " shall implement moodFragmentListener interface");
             }
         }
@@ -119,12 +105,6 @@ public class FragmentFillDataMood extends Fragment implements AbsListView.MultiC
 
     }
 
-
-    //Update list after editing via EditMood activity
-    public void onResume() {
-        super.onResume();
-    }
-
     private void setupGridView() {
         String[] from = {ATTRIBUTE_NAME_GRID_IMAGE, ATTRIBUTE_NAME_LL_GRID};
         int[] to = {R.id.ItemUniversalGrid_iconImage, R.id.ItemUniversalGrid_layout};
@@ -133,9 +113,9 @@ public class FragmentFillDataMood extends Fragment implements AbsListView.MultiC
 
         //For GridView - list of "available" moods
         ArrayList<Map<String, Object>> data = new ArrayList<Map<String, Object>>(
-                icons.getMoodIconsLenght());
+                icons.getMoodIconsLength());
         Map<String, Object> m;
-        for (int i = 0; i < icons.getMoodIconsLenght(); i++) {
+        for (int i = 0; i < icons.getMoodIconsLength(); i++) {
             m = new HashMap<String, Object>();
             m.put(ATTRIBUTE_NAME_GRID_IMAGE, i);
             m.put(ATTRIBUTE_NAME_LL_GRID, i);
@@ -143,7 +123,7 @@ public class FragmentFillDataMood extends Fragment implements AbsListView.MultiC
         }
 
         // sAdapterGrid - adapter for GridView
-        MySimpleAdapterGrid sAdapterGrid = new MySimpleAdapterGrid(myContext, data,
+        MySimpleAdapterGrid sAdapterGrid = new MySimpleAdapterGrid(getActivity(), data,
                 R.layout.item_universal_grid, from, to, iconsType);
 
         gridViewMoodFragment.setAdapter(sAdapterGrid);
@@ -159,10 +139,7 @@ public class FragmentFillDataMood extends Fragment implements AbsListView.MultiC
                 if (actionMode != null) {
                     actionMode.finish();
                 }
-                // Send event to Activity
                 moodFragmentListener.setTimeEvent(selectedMoodId);
-                //updateList(startDateValue, endDateValue);
-
             }
         });
     }
@@ -186,14 +163,14 @@ public class FragmentFillDataMood extends Fragment implements AbsListView.MultiC
         ", endDate = " + SmallFunctions.formatDate(endDateValue) +
         ", endTime = " + SmallFunctions.formatTime(endDateValue));
 
-        data = DBOperations.getEventListForTheDay(myContext, startDateValue, endDateValue, Event.EventTypes.moodEventTypeId.getId());
+        ArrayList<Map<String, Object>> data = DBOperations.getEventListForTheDay(getActivity(), startDateValue, endDateValue, Event.EventTypes.moodEventTypeId.getId());
 
-        positionRowIdMapping = DBOperations.getPositionRowIdMapping(myContext, startDateValue, endDateValue, Event.EventTypes.moodEventTypeId.getId());
+        positionRowIdMapping = DBOperations.getPositionRowIdMapping(getActivity(), startDateValue, endDateValue, Event.EventTypes.moodEventTypeId.getId());
 
         // Create adapter
         String[] from = new String[] {ATTRIBUTE_NAME_START_DATE, ATTRIBUTE_NAME_LL};
         int[] to = new int[]{R.id.ItemMoodEvent_timeText, R.id.ItemMoodEvent_layout};
-        SimpleAdapter sAdapterList = new SimpleAdapter(myContext, data, R.layout.item_mood_event,
+        SimpleAdapter sAdapterList = new SimpleAdapter(getActivity(), data, R.layout.item_mood_event,
                 from, to);
 
         sAdapterList.setViewBinder(new LayoutColorViewBinder());
@@ -218,16 +195,15 @@ public class FragmentFillDataMood extends Fragment implements AbsListView.MultiC
 
     }
 
-    //ToDO REFACT переписать через sAdapterList.notifyDataSetChanged (и для action тоже) -
-    // НО: с переходом на cursor adapter нужно будет обновить только курсор, без notifyDataSetChanged
+
     
     public void updateList(long startDateValue, long endDateValue) {
 
-        //getBundleDataFromActivity();
         this.startDateValue = startDateValue;
         this.endDateValue = endDateValue;
         initializeList();
 
+        //ToDO REFACT переписать через sAdapterList.notifyDataSetChanged (и для action тоже)
 /*        Log.d("Update list for startDate = " + SmallFunctions.formatDate(selectedDayStartDate)+
                 ", startTime = " + SmallFunctions.formatTime(selectedDayStartDate) +
                 ", endDate = " + SmallFunctions.formatDate(selectedDayEndDate) +
@@ -261,7 +237,7 @@ public class FragmentFillDataMood extends Fragment implements AbsListView.MultiC
     private void adjustGridView() {
 
         if (displayMode == Configuration.ORIENTATION_PORTRAIT) {
-            numColumns = (int) Math.ceil(Math.sqrt(icons.getMoodIconsLenght()));
+            numColumns = (int) Math.ceil(Math.sqrt(icons.getMoodIconsLength()));
         } else {
             numColumns = 6;
         }
@@ -275,30 +251,23 @@ public class FragmentFillDataMood extends Fragment implements AbsListView.MultiC
     @Override
     public void onItemCheckedStateChanged(ActionMode actionMode, int position, long id, boolean checked) {
 
-        if (checked) {
-            Log.d("set border for listItem on position = " + position);
+        Log.d("Item check state is changed, position = " + position + ", checked = "
+                + checked);
 
+        if (checked) {
             lvSimple.getChildAt(position).setBackgroundResource(R.drawable.border);
-            //lvSimple.getChildAt(position).setBackgroundResource(R.drawable.border);
-            //.setBackgroundColor(Color.TRANSPARENT);
-            //colors.getActionColor());
         }
         else {
             Colors colors = new Colors(lvSimple);
-            MoodEvent moodEvent = new MoodEvent(myContext, positionRowIdMapping[position]);
-
+            MoodEvent moodEvent = new MoodEvent(getActivity(), positionRowIdMapping[position], false);
             lvSimple.getChildAt(position).setBackgroundColor(colors.getMoodColorForListId(moodEvent.getEventId()));
         }
-        //listItem.setBackgroundColor(R.colo9r.colorMood2);
-        Log.d("position = " + position + ", checked = "
-                + checked);
     }
 
     @Override
     public boolean onCreateActionMode(ActionMode mode, Menu menu) {
         this.actionMode = mode;
-        clearBorders = true;
-        mode.getMenuInflater().inflate(R.menu.action_mode_menu, menu);
+        actionMode.getMenuInflater().inflate(R.menu.action_mode_menu, menu);
         return true;
     }
 
@@ -312,16 +281,14 @@ public class FragmentFillDataMood extends Fragment implements AbsListView.MultiC
         switch (item.getItemId()) {
             case R.id.action_mode_menu_delete:
                 Log.d("Delete button in actionMode is pressed");
-                clearBorders = false;
                 SparseBooleanArray selectedPositionIds = lvSimple.getCheckedItemPositions();
                 for (int i = 0; i < selectedPositionIds.size(); i++) {
                     Log.d("i = " + i + ", keyAt = " + selectedPositionIds.keyAt(i) + ", value = " + selectedPositionIds.valueAt(i));
-                    if (selectedPositionIds.valueAt(i) == true) {
+                    if (selectedPositionIds.valueAt(i)) {
                         Log.d("Delete action with rowId = " + positionRowIdMapping[selectedPositionIds.keyAt(i)]);
                         moodFragmentListener.deleteMoodRowEvent(positionRowIdMapping[selectedPositionIds.keyAt(i)]);
                     }
                 }
-                //Log.d(String.valueOf(selectedPositionIds.valueAt(0)));
                 initializeList();
                 break;
         }
@@ -332,17 +299,7 @@ public class FragmentFillDataMood extends Fragment implements AbsListView.MultiC
     @Override
     public void onDestroyActionMode(ActionMode mode) {
         this.actionMode = null;
-        Log.d("destroy, number of rows = " + positionRowIdMapping.length);
-
-/*        if (clearBorders & this.getActivity() != null) {
-            for (int i = 0; i < positionRowIdMapping.length; i++) {
-                Log.d("set transparent background for itemId = " + i);
-                lvSimple.getChildAt(i).setBackgroundResource(0);
-                //lvSimpleChildren.get(i).setBackgroundResource(i);
-                //lvSimpleChildren.get(i).setBackgroundResource(0);
-            }
-        }*/
-
+        Log.d("action mode is destroyed");
     }
 
     // Colors for ListView
@@ -356,8 +313,6 @@ public class FragmentFillDataMood extends Fragment implements AbsListView.MultiC
                 switch (view.getId()) {
                     case R.id.ItemMoodEvent_layout:
                         i = (int) data;
-                        //ToDo REFACT разобраться с colors: почему недостаточно инциализации в onCreateView (и в actions тоже)
-                        colors = new Colors(view);
                         view.setBackgroundColor(colors.getMoodColorForListId(i));
                         return true;
                 }

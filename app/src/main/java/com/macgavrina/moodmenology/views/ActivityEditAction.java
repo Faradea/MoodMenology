@@ -40,9 +40,8 @@ public class ActivityEditAction extends AppCompatActivity implements View.OnClic
 
         Intent intent = getIntent();
         int rowId = intent.getIntExtra(ROWID_KEY, 0);
-        actionEvent = new ActionEvent(this, rowId);
+        actionEvent = new ActionEvent(this, rowId, false);
 
-        ImageView actionImageView = (ImageView) findViewById(R.id.ActivityEditAction_actionImage);
         startTimeTextView = (TextView) findViewById(R.id.ActivityEditAction_startTimeText);
         endTimeTextView = (TextView) findViewById(R.id.ActivityEditAction_endTimeText);
 
@@ -51,6 +50,9 @@ public class ActivityEditAction extends AppCompatActivity implements View.OnClic
 
         ImageButton editEndTimeButton = (ImageButton) findViewById(R.id.ActivityEditAction_editEndTimeImageButton);
         editEndTimeButton.setOnClickListener(this);
+
+        Button deleteButton = (Button) findViewById(R.id.ActivityEditAction_deleteButton);
+        deleteButton.setOnClickListener(this);
 
         saveButton = (Button) findViewById(R.id.ActivityEditAction_saveButton);
         saveButton.setOnClickListener(this);
@@ -63,10 +65,8 @@ public class ActivityEditAction extends AppCompatActivity implements View.OnClic
         setupEndTimeTextView();
 
         Icons icons = new Icons();
+        ImageView actionImageView = (ImageView) findViewById(R.id.ActivityEditAction_actionImage);
         actionImageView.setImageResource(icons.getActionIconsId(actionEvent.getGroupId(), actionEvent.getEventId()));
-
-        Button deleteButton = (Button) findViewById(R.id.ActivityEditAction_deleteButton);
-        deleteButton.setOnClickListener(this);
 
         Log.d("Activity building is finished, rowId=" + rowId);
     }
@@ -114,7 +114,7 @@ public class ActivityEditAction extends AppCompatActivity implements View.OnClic
 
                 Log.d("User has pressed EditStartTime Button, start processing");
 
-                setStartTime(v);
+                setStartTime();
 
                 break;
 
@@ -122,7 +122,7 @@ public class ActivityEditAction extends AppCompatActivity implements View.OnClic
 
                 Log.d("User has pressed EditEndTime Button, start processing");
 
-                setEndTime(v);
+                setEndTime();
 
                 break;
 
@@ -131,7 +131,7 @@ public class ActivityEditAction extends AppCompatActivity implements View.OnClic
         }
     }
 
-    private void setStartTime(final View v) {
+    private void setStartTime() {
         dateAndTimeStart.setTimeInMillis(actionEvent.getStartDateInUnixFormat());
 
         new TimePickerDialog(this, tStart,
@@ -142,7 +142,7 @@ public class ActivityEditAction extends AppCompatActivity implements View.OnClic
         Log.d("TimePicker dialog for startTime is displayed, initial time is " + SmallFunctions.formatTime(dateAndTimeStart.getTimeInMillis()));
     }
 
-    // установка обработчика выбора времени
+    // for startTime
     TimePickerDialog.OnTimeSetListener tStart=new TimePickerDialog.OnTimeSetListener() {
         public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
             dateAndTimeStart.set(java.util.Calendar.HOUR_OF_DAY, hourOfDay);
@@ -151,8 +151,6 @@ public class ActivityEditAction extends AppCompatActivity implements View.OnClic
             actionEvent.setStartTime(dateAndTimeStart.getTimeInMillis());
             setupStartTimeTextView();
             setupEndTimeTextView();
-            //startTimeTextView.setText("From: "+SmallFunctions.formatTime(actionEvent.getStartDateInUnixFormat()));
-            //endTimeTextView.setText("To: " + SmallFunctions.formatTime(actionEvent.getEndDateInUnixFormat()));
 
             saveButton.setEnabled(true);
 
@@ -161,7 +159,7 @@ public class ActivityEditAction extends AppCompatActivity implements View.OnClic
         }
     };
 
-    private void setEndTime(final View v) {
+    private void setEndTime() {
         dateAndTimeEnd.setTimeInMillis(actionEvent.getEndDateInUnixFormat());
 
         new TimePickerDialog(this, tEnd,
@@ -173,20 +171,19 @@ public class ActivityEditAction extends AppCompatActivity implements View.OnClic
 
     }
 
-    // установка обработчика выбора времени
+    // for endTime
     TimePickerDialog.OnTimeSetListener tEnd=new TimePickerDialog.OnTimeSetListener() {
         public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
             dateAndTimeEnd.set(java.util.Calendar.HOUR_OF_DAY, hourOfDay);
             dateAndTimeEnd.set(java.util.Calendar.MINUTE, minute);
 
-            if (dateAndTimeEnd.getTimeInMillis()<dateAndTimeStart.getTimeInMillis()) {
-                dateAndTimeEnd.setTimeInMillis(dateAndTimeEnd.getTimeInMillis()+dayDurationInMillis);
+            if (dateAndTimeEnd.getTimeInMillis() < dateAndTimeStart.getTimeInMillis()) {
+                dateAndTimeEnd.setTimeInMillis(dateAndTimeEnd.getTimeInMillis() + dayDurationInMillis);
             }
 
             actionEvent.setEndTime(dateAndTimeEnd.getTimeInMillis());
 
             setupEndTimeTextView();
-            //endTimeTextView.setText("From: "+SmallFunctions.formatTime(actionEvent.getEndDateInUnixFormat()));
             saveButton.setEnabled(true);
 
             Log.d("End time is set by user, endDate = " + SmallFunctions.formatDate(dateAndTimeStart.getTimeInMillis()) +

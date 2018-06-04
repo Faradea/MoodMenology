@@ -1,25 +1,22 @@
 package com.macgavrina.moodmenology.menu;
 
-import android.content.Context;
 import android.content.Intent;
-import android.support.v4.app.FragmentActivity;
-import android.support.v7.app.AppCompatActivity;
 
 import com.macgavrina.moodmenology.R;
 import com.macgavrina.moodmenology.logging.Log;
 
-public class MainMenu extends AppCompatActivity {
+public class MainMenu{
 
     private int menuItemId;
     private Intent intent;
 
-    public MainMenu(final int itemId, Context context) {
+    public MainMenu(final int itemId) {
 
         this.menuItemId = itemId;
 
     }
 
-    public Intent processOnMenyItemSelected(FragmentActivity activity) {
+    public Intent processOnMenuItemSelected() {
 
         switch (menuItemId){
             case R.id.menu_settings:

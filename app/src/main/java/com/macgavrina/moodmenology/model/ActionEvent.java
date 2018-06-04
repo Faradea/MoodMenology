@@ -17,37 +17,31 @@ public class ActionEvent extends Event{
     private int actionGroupId;
     private long endDateInUnixFormat;
 
-    public ActionEvent (final int rowId, final boolean skipLoadData) {
-        super(rowId, skipLoadData);
+    public ActionEvent (final Context context, final int rowId, final boolean skipLoadData) {
+
+        if (skipLoadData) {
+            this.rowId = rowId;
+        }
+
+        else {
+
+            Map<String, Object> eventData = DBOperations.getEvent(context, rowId);
+
+            this.startDateInUnixFormat = (long) eventData.get(ATTRIBUTE_NAME_START_DATE);
+            this.endDateInUnixFormat = (long) eventData.get(ATTRIBUTE_NAME_END_DATE);
+            this.eventId = (int) eventData.get(ATTRIBUTE_NAME_EVENT_ID);
+            this.actionGroupId = (int) eventData.get(ATTRIBUTE_NAME_GROUP_ID);
+            this.rowId = rowId;
+        }
     }
 
-    public ActionEvent(final long timeInMillis, final int selectedActionId, final int actionsGroupId) {
-        super();
-        this.eventType = EventTypes.actionEventTypeId.getId();
-        this.startDateInUnixFormat = timeInMillis;
-        this.endDateInUnixFormat = timeInMillis + defaultDurationInMillis;
-        this.actionGroupId = actionsGroupId;
-        this.eventId = selectedActionId;
-    }
-
-    public ActionEvent(final long startTimeInMillis, final long endTimeInMillis, final int selectedActionId, final int actionsGroupId) {
+    public ActionEvent(final long startTimeInMillis, final int selectedActionId, final int actionsGroupId) {
         super();
         this.eventType = EventTypes.actionEventTypeId.getId();
         this.startDateInUnixFormat = startTimeInMillis;
-        this.endDateInUnixFormat = endTimeInMillis;
+        this.endDateInUnixFormat = startTimeInMillis + defaultDurationInMillis;
         this.actionGroupId = actionsGroupId;
         this.eventId = selectedActionId;
-    }
-
-    public ActionEvent (final Context context, final int rowId) {
-
-        Map<String,Object> eventData = DBOperations.getEvent(context, rowId);
-
-        this.startDateInUnixFormat = (long) eventData.get(ATTRIBUTE_NAME_START_DATE);
-        this.endDateInUnixFormat = (long) eventData.get(ATTRIBUTE_NAME_END_DATE);
-        this.eventId = (int) eventData.get(ATTRIBUTE_NAME_EVENT_ID);
-        this.actionGroupId = (int) eventData.get(ATTRIBUTE_NAME_GROUP_ID);
-        this.rowId = rowId;
     }
 
     public int getGroupId(){
@@ -62,14 +56,6 @@ public class ActionEvent extends Event{
         return this.endDateInUnixFormat - this.startDateInUnixFormat;
     }
 
-    public void saveToDB(final Context context) {
-        DBOperations.addRow(context, this.eventId, this.startDateInUnixFormat, this.eventType, this.actionGroupId, this.endDateInUnixFormat);
-    }
-
-    public void updateStartAndEndTime(Context context) {
-        DBOperations.updateStartAndEndTime(context, this.rowId, this.startDateInUnixFormat, this.endDateInUnixFormat);
-    }
-
     @Override
     public void setStartTime(final long startDateInUnixFormat) {
         this.startDateInUnixFormat = startDateInUnixFormat;
@@ -80,5 +66,13 @@ public class ActionEvent extends Event{
 
     public void setEndTime(final long endDate) {
         this.endDateInUnixFormat = endDate;
+    }
+
+    public void saveToDB(final Context context) {
+        DBOperations.addRow(context, this.eventId, this.startDateInUnixFormat, this.eventType, this.actionGroupId, this.endDateInUnixFormat);
+    }
+
+    public void updateStartAndEndTime(Context context) {
+        DBOperations.updateStartAndEndTime(context, this.rowId, this.startDateInUnixFormat, this.endDateInUnixFormat);
     }
 }

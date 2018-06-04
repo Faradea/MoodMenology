@@ -7,16 +7,6 @@
     tools:context="com.macgavrina.moodmenology.views.ActivitySettings">
 
     <Button
-        android:id="@+id/ActivitySettings_deleteAllDataButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="8dp"
-        android:layout_marginTop="8dp"
-        android:text="@string/DeleteAllButtonName"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <Button
         android:id="@+id/ActivitySettings_prepareAllDataButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -25,7 +15,7 @@
         android:layout_marginTop="8dp"
         android:text="@string/SendAllData"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/ActivitySettings_deleteAllDataButton" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <ProgressBar
         android:id="@+id/ActivitySettings_progressBar"

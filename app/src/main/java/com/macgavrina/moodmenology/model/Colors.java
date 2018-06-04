@@ -21,6 +21,7 @@ public class Colors {
                 view.getResources().getColor(R.color.colorMood5),
                 view.getResources().getColor(R.color.colorMood6)
         };
+
         moodColorsForGrid = new int[] {
                 view.getResources().getColor(R.color.colorMood1back),
                 view.getResources().getColor(R.color.colorMood2back),
@@ -47,13 +48,13 @@ public class Colors {
 
     }
 
-    public int getActionColor() {
+    public int getActionColorForGridId() {
 
         return actionColor;
 
     }
 
-    public int getActionListColor() {
+    public int getActionColorForListId() {
         return actionListColor;
     }
 }

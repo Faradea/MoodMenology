@@ -2,7 +2,6 @@ package com.macgavrina.moodmenology.views;
 
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
@@ -47,34 +46,26 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private static final int MOOD_FRAGMENT_ID = 0;
     private static final int ACTION_FRAGMENT_ID = 1;
 
-    private MainActivity context;
     private SelectedDay selectedDay;
-
     private MoodEvent moodEventForEdit;
-
-    FragmentFillDataMood moodFragment;
-    FragmentFillDataActions actionFragment;
-
     private int selectedMoodId;
     private java.util.Calendar dateAndTime;
 
-    ViewPager viewPager;
-    SimpleFragmentPagerAdapter adapter;
-    TabLayout tabLayout;
+    private FragmentFillDataMood moodFragment;
+    private FragmentFillDataActions actionFragment;
+    private SimpleFragmentPagerAdapter viewPagerAdapter;
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_filldata_tabs);
 
-        context = this;
-
         selectedDay = new SelectedDay(System.currentTimeMillis());
         dateAndTime = selectedDay.getCurrentDateAndTime();
 
         setupHeader();
 
-        replaceFragments(selectedDay);
+        inflateFragments();
 
         Log.d("Activity building is finished, selected Date = " + SmallFunctions.formatDate(selectedDay.getDayStartTimestamp()));
     }
@@ -149,8 +140,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 selectedDay = new SelectedDay(dateAndTime.getTimeInMillis());
                 setupHeader();
 
-                actionFragment = adapter.getCurrentActionFragment();
-                moodFragment = adapter.getCurrentMoodFragment();
+                actionFragment = viewPagerAdapter.getCurrentActionFragment();
+                moodFragment = viewPagerAdapter.getCurrentMoodFragment();
                 actionFragment.updateList(selectedDay.getDayStartTimestamp(), selectedDay.getDayEndTimestamp());
                 moodFragment.updateList(selectedDay.getDayStartTimestamp(), selectedDay.getDayEndTimestamp());
                 break;
@@ -161,8 +152,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 selectedDay = new SelectedDay(dateAndTime.getTimeInMillis());
                 setupHeader();
 
-                actionFragment = adapter.getCurrentActionFragment();
-                moodFragment = adapter.getCurrentMoodFragment();
+                actionFragment = viewPagerAdapter.getCurrentActionFragment();
+                moodFragment = viewPagerAdapter.getCurrentMoodFragment();
                 moodFragment.updateList(selectedDay.getDayStartTimestamp(), selectedDay.getDayEndTimestamp());
                 actionFragment.updateList(selectedDay.getDayStartTimestamp(), selectedDay.getDayEndTimestamp());
                 break;
@@ -175,10 +166,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     // Process event from FillDataMood fragment (user selects mood from GridView)
     @Override
     public void setTimeEvent(final int eventId) {
-        Log.d("Activity recieved setTimeEvent from FillDataMood fragment, selectedMoodId = " + selectedMoodId);
-        View v = null;
+        Log.d("Activity received setTimeEvent from FillDataMood fragment, selectedMoodId = " + selectedMoodId);
         selectedMoodId = eventId;
-        setTime(v);
+        setTime();
 
     }
 
@@ -203,29 +193,21 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void deleteActionRowEvent(int rowId) {
         Log.d("Activity received deleteActionRow event from FillDataAction fragment, rowId=" + rowId);
-        ActionEvent actionEvent = new ActionEvent(rowId, true);
-        Context myContext = this;
-        actionEvent.deleteEvent(myContext);
+        ActionEvent actionEvent = new ActionEvent(this, rowId, true);
+        actionEvent.deleteEvent(this);
     }
 
     // Process event from FillDataMood fragment (user selects row from ListView to edit it)
     @Override
     public void editMoodRowEvent(final int rowId) {
-/*        Log.d("Activity received editMoodRow event from FillDataMood fragment, rowId="+rowId);
-        Intent intentEdit = new Intent("com.macgavrina.moodmenology.edit.mood");
-        intentEdit.putExtra(ROWID_KEY, rowId);
-        startActivityForResult(intentEdit, EDIT_MOOD_REQUEST_CODE);*/
-
         Log.d("Activity received editMoodRowEvent from FillDataMood fragment, rowId = " + rowId);
-        View v = null;
-        editTime(v, rowId);
+        editTime(rowId);
     }
 
     public void deleteMoodRowEvent (final int rowId) {
         Log.d("Activity received deleteMoodRowEvent from FillDataMood fragment, rowId = " + rowId);
-        MoodEvent moodEvent = new MoodEvent(rowId, true);
-        Context myContext = this;
-        moodEvent.deleteEvent(myContext);
+        MoodEvent moodEvent = new MoodEvent(this, rowId, true);
+        moodEvent.deleteEvent(this);
     }
 
     // OnTimeSetListener (user selects time)
@@ -237,9 +219,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             Log.d("User has set time: " + SmallFunctions.formatTime(dateAndTime.getTimeInMillis()));
 
             MoodEvent moodEvent = new MoodEvent(dateAndTime.getTimeInMillis(), selectedMoodId);
-            moodEvent.saveToDB(context);
+            moodEvent.saveToDB(getBaseContext());
 
-            moodFragment = adapter.getCurrentMoodFragment();
+            moodFragment = viewPagerAdapter.getCurrentMoodFragment();
             moodFragment.updateList(selectedDay.getDayStartTimestamp(), selectedDay.getDayEndTimestamp());
 
         }
@@ -254,9 +236,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             Log.d("User has set time: " + SmallFunctions.formatTime(dateAndTime.getTimeInMillis()));
 
             moodEventForEdit.setStartTime(dateAndTime.getTimeInMillis());
-            moodEventForEdit.updateStartTime(context);
+            moodEventForEdit.updateStartTime(getBaseContext());
 
-            moodFragment = adapter.getCurrentMoodFragment();
+            moodFragment = viewPagerAdapter.getCurrentMoodFragment();
             moodFragment.updateList(selectedDay.getDayStartTimestamp(), selectedDay.getDayEndTimestamp());
 
         }
@@ -275,8 +257,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             selectedDay = new SelectedDay(dateAndTime.getTimeInMillis());
             setupHeader();
 
-            actionFragment = adapter.getCurrentActionFragment();
-            moodFragment = adapter.getCurrentMoodFragment();
+            actionFragment = viewPagerAdapter.getCurrentActionFragment();
+            moodFragment = viewPagerAdapter.getCurrentMoodFragment();
             moodFragment.updateList(selectedDay.getDayStartTimestamp(), selectedDay.getDayEndTimestamp());
             actionFragment.updateList(selectedDay.getDayStartTimestamp(), selectedDay.getDayEndTimestamp());
         }
@@ -288,16 +270,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             Log.d("User has set time: " + SmallFunctions.formatTime(dateAndTime.getTimeInMillis()));
 
             MoodEvent moodEvent = new MoodEvent(dateAndTime.getTimeInMillis(), selectedMoodId);
-            moodEvent.saveToDB(context);
+            moodEvent.saveToDB(getBaseContext());
 
-            moodFragment = adapter.getCurrentMoodFragment();
+            moodFragment = viewPagerAdapter.getCurrentMoodFragment();
             moodFragment.updateList(selectedDay.getDayStartTimestamp(), selectedDay.getDayEndTimestamp());
 
         }
     };
 
     // Setup time
-    private void setTime(final View v) {
+    private void setTime() {
         new TimePickerDialog(MainActivity.this, t,
                 dateAndTime.get(java.util.Calendar.HOUR_OF_DAY),
                 dateAndTime.get(java.util.Calendar.MINUTE), true)
@@ -306,8 +288,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     // Setup time
-    private void editTime(final View v, final int rowId) {
-        moodEventForEdit = new MoodEvent(this, rowId);
+    private void editTime(final int rowId) {
+        moodEventForEdit = new MoodEvent(this, rowId, false);
         dateAndTime.setTimeInMillis(moodEventForEdit.getStartDateInUnixFormat());
         new TimePickerDialog(MainActivity.this, tEdit,
                 dateAndTime.get(java.util.Calendar.HOUR_OF_DAY),
@@ -324,12 +306,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         TextView previousDay = (TextView) findViewById(R.id.ActivityFillData_previousDayText);
         previousDay.setOnClickListener(this);
 
-/*        ImageButton deleteAllButtonFillData = (ImageButton) findViewById(R.id.ActivtyFilldata_deleteAllButton);
-        deleteAllButtonFillData.setOnClickListener(this);*/
-
-        String selectedDateStringFillData= SmallFunctions.formatDate(dateAndTime.getTimeInMillis());
         TextView selectedDateFillData = (TextView) findViewById(R.id.ActivtyFilldata_dateText);
-        selectedDateFillData.setText(selectedDateStringFillData);
+        selectedDateFillData.setText(SmallFunctions.formatDate(dateAndTime.getTimeInMillis()));
         selectedDateFillData.setOnClickListener(this);
     }
 
@@ -345,19 +323,19 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         switch (requestCode) {
             case (EDIT_MOOD_REQUEST_CODE):
                 if (resultCode == RESULT_OK) {
-                    moodFragment = adapter.getCurrentMoodFragment();
+                    moodFragment = viewPagerAdapter.getCurrentMoodFragment();
                     moodFragment.updateList(selectedDay.getDayStartTimestamp(), selectedDay.getDayEndTimestamp());
                 }
                 break;
             case (EDIT_ACTION_REQUEST_CODE):
                 if (resultCode == RESULT_OK) {
-                    actionFragment = adapter.getCurrentActionFragment();
+                    actionFragment = viewPagerAdapter.getCurrentActionFragment();
                     actionFragment.updateList(selectedDay.getDayStartTimestamp(), selectedDay.getDayEndTimestamp());
                 }
                 break;
             case (ADD_ACTION_REQUEST_CODE):
                 if (resultCode == RESULT_OK) {
-                    actionFragment = adapter.getCurrentActionFragment();
+                    actionFragment = viewPagerAdapter.getCurrentActionFragment();
                     actionFragment.updateList(selectedDay.getDayStartTimestamp(), selectedDay.getDayEndTimestamp());
                 }
                 break;
@@ -369,9 +347,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     // обработка выбора пункта меню
     public boolean onOptionsItemSelected(MenuItem item) {
 
-        MainMenu mainMenuProcessor = new MainMenu(item.getItemId(), this);
+        MainMenu mainMenuProcessor = new MainMenu(item.getItemId());
 
-        Intent intent = mainMenuProcessor.processOnMenyItemSelected(this);
+        Intent intent = mainMenuProcessor.processOnMenuItemSelected();
 
         if (intent != null) {
             startActivity(intent);
@@ -381,22 +359,22 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     }
 
-    private void replaceFragments(SelectedDay selectedDay) {
+    private void inflateFragments() {
         // Find the view pager that will allow the user to swipe between fragments
 
         Log.d("SelectedDay = " + SmallFunctions.formatDate(selectedDay.getDayStartTimestamp()));
-        viewPager = (ViewPager) findViewById(R.id.ActivtyFilldata_viewPager);
-        adapter = new SimpleFragmentPagerAdapter(getSupportFragmentManager(), selectedDay.getDayStartTimestamp(), selectedDay.getDayEndTimestamp());
+        ViewPager viewPager = (ViewPager) findViewById(R.id.ActivtyFilldata_viewPager);
+        viewPagerAdapter = new SimpleFragmentPagerAdapter(getSupportFragmentManager(), selectedDay.getDayStartTimestamp(), selectedDay.getDayEndTimestamp());
 
         // Set the adapter onto the view pager
-        viewPager.setAdapter(adapter);
+        viewPager.setAdapter(viewPagerAdapter);
 
         // Give the TabLayout the ViewPager
-        tabLayout = (TabLayout) findViewById(R.id.ActivtyFilldata_slidingTabs);
+        TabLayout tabLayout = (TabLayout) findViewById(R.id.ActivtyFilldata_slidingTabs);
         tabLayout.setupWithViewPager(viewPager);
 
-        moodFragment = (FragmentFillDataMood) adapter.getItem(MOOD_FRAGMENT_ID);
-        actionFragment = (FragmentFillDataActions) adapter.getItem(ACTION_FRAGMENT_ID);
+        moodFragment = (FragmentFillDataMood) viewPagerAdapter.getItem(MOOD_FRAGMENT_ID);
+        actionFragment = (FragmentFillDataActions) viewPagerAdapter.getItem(ACTION_FRAGMENT_ID);
     }
 
 }

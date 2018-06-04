@@ -9,19 +9,19 @@ import com.macgavrina.moodmenology.logging.Log;
 public class DBHelper extends SQLiteOpenHelper {
 
 
-    public static final String DB_NAME = "myDB";
-    public static final String EVENT_ID_COLUMN_NAME = "eventId";
-    public static final String START_DATETIME_COLUMN_NAME = "startDateTime";
-    public static final String ID_COLUMN_NAME = "id";
-    public static final String TABLE_NAME = "Events";
-    public static final String EVENT_TYPE_COLUMN_NAME = "eventType";
-    public static final String END_DATETIME_COLUMN_NAME = "endDateTime";
-    public static final String EVENT_GROUP_ID_COLUMN_NAME = "eventGroupId";
-    public static final String ROWID_COLUMN_NAME = "rowId";
+    static final String DB_NAME = "myDB";
+    static final String EVENT_ID_COLUMN_NAME = "eventId";
+    static final String START_DATETIME_COLUMN_NAME = "startDateTime";
+    static final String ID_COLUMN_NAME = "id";
+    static final String TABLE_NAME = "Events";
+    static final String EVENT_TYPE_COLUMN_NAME = "eventType";
+    static final String END_DATETIME_COLUMN_NAME = "endDateTime";
+    static final String EVENT_GROUP_ID_COLUMN_NAME = "eventGroupId";
+    static final String ROWID_COLUMN_NAME = "rowId";
 
-    private static final int DB_VERSION=1;
+    static final int DB_VERSION=1;
 
-    public DBHelper(Context context) {
+    DBHelper(Context context) {
         super(context, DB_NAME, null, DB_VERSION);
     }
 

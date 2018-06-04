@@ -7,7 +7,6 @@ public class Icons {
         private int[][] actionIconsIds;
         private int[] moodIconIds;
         private int[] actionGroupIconIds;
-        private int[] moodForEditIconIds;
 
         public Icons(){
 
@@ -23,28 +22,21 @@ public class Icons {
             moodIconIds = new int[] {R.mipmap.mood1back, R.mipmap.mood2back, R.mipmap.mood3back, R.mipmap.mood4back, R.mipmap.mood5back, R.mipmap.mood6back};
 
             actionGroupIconIds = new int[] {R.mipmap.actionsgroup1, R.mipmap.actionsgroup2, R.mipmap.actionsgroup3, R.mipmap.actionsgroup4, R.mipmap.actionsgroup5, R.mipmap.actionsgroup6};
-
-            moodForEditIconIds = new int[] {R.mipmap.mood1, R.mipmap.mood2, R.mipmap.mood3, R.mipmap.mood4, R.mipmap.mood5, R.mipmap.mood6};
         }
 
         public int getMoodIconId(final int moodId){
             return moodIconIds[moodId];
         }
 
-        public int getMoodIconsLenght() {
+        public int getMoodIconsLength() {
         return moodIconIds.length;
     }
-
-        public int getMoodForEditIconId(final int moodId){
-        return moodForEditIconIds[moodId];
-    }
-
 
         public int getActionGroupIconId (final int actionGroupId){
             return actionGroupIconIds[actionGroupId];
         }
 
-        public int getActionGroupIconsLenght() {
+        public int getActionGroupIconsLength() {
             return actionGroupIconIds.length;
         }
 

@@ -1,6 +1,5 @@
 package com.macgavrina.moodmenology.views;
 
-import android.app.Activity;
 import android.app.Fragment;
 import android.content.Context;
 import android.os.Bundle;
@@ -32,9 +31,7 @@ public class FragmentActionEvent extends Fragment implements View.OnClickListene
     private String formattedEndTime;
     private String formattedDuration;
 
-    private int testInt;
-
-    private static IAddActionFragmentListener addActionFragmentListener;
+    private IAddActionFragmentListener addActionFragmentListener;
 
     @Override
     public void onAttach(Context context) {
@@ -44,9 +41,6 @@ public class FragmentActionEvent extends Fragment implements View.OnClickListene
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-
-
     }
 
     @Override
@@ -76,20 +70,16 @@ public class FragmentActionEvent extends Fragment implements View.OnClickListene
         ImageButton editEndTimeButton = (ImageButton) v.findViewById(R.id.FragmentAddActionEvent_editEndTimeImageButton);
         editEndTimeButton.setOnClickListener(this);
 
-        Activity activity = getActivity();
-
         try {
-            addActionFragmentListener = (IAddActionFragmentListener) activity;
+            addActionFragmentListener = (IAddActionFragmentListener) getActivity();
             Log.d("addActionFragmentListener interface is checked, ok");
         } catch (ClassCastException e) {
-            throw new ClassCastException(activity.toString()
+            throw new ClassCastException(getActivity().toString()
                     + " shall implement moodFragmentListener interface");
         }
 
         Log.d("Fragment building is finished, startTime = " + formattedStartTime +
             ", endTime = " + formattedEndTime);
-
-        testInt = 42;
 
         return v;
     }
@@ -97,6 +87,7 @@ public class FragmentActionEvent extends Fragment implements View.OnClickListene
     private void getDataFromActivity() {
         // Get data from activity
         Bundle bundle = this.getArguments();
+
         if (bundle != null) {
             actionGroupId = bundle.getInt(ACTION_GROUP_ID_KEY, 0);
             actionId = bundle.getInt(ACTION_ID_KEY, 0);
@@ -120,9 +111,5 @@ public class FragmentActionEvent extends Fragment implements View.OnClickListene
             default:
                 break;
         }
-    }
-
-    public void logTestInt(){
-        Log.d("event from activity, testInt = " + testInt);
     }
 }

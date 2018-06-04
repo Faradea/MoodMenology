@@ -38,7 +38,7 @@ public class ActivityAddAction extends AppCompatActivity implements View.OnClick
     private static final String FORMATTED_ENDTIME_KEY="formattedEndTime";
     private static final String FORMATTED_DURATION_KEY="formattedDuration";
 
-    private static final int iconsType= Icons.IconTypes.actionIconsType.getId();
+    private static final int iconsType = Icons.IconTypes.actionIconsType.getId();
 
     private static final long dayDurationInMillis = 86400000L;
 
@@ -46,8 +46,8 @@ public class ActivityAddAction extends AppCompatActivity implements View.OnClick
     private ActionEvent actionEvent;
 
     private int actionsGroupId;
-    private int selectedActionId;
     private long selectedDateInMillis;
+    private int selectedActionId;
 
     private Button saveButton;
     private GridView gridViewActionActivity;
@@ -55,7 +55,7 @@ public class ActivityAddAction extends AppCompatActivity implements View.OnClick
     private java.util.Calendar dateAndTimeStart = java.util.Calendar.getInstance();
     private java.util.Calendar dateAndTimeEnd = java.util.Calendar.getInstance();
 
-    FragmentActionEvent actionEventFragment;
+    private FragmentActionEvent actionEventFragment;
 
 
     @Override
@@ -104,12 +104,11 @@ public class ActivityAddAction extends AppCompatActivity implements View.OnClick
     }
 
     private void setupGridView() {
-        //For GridView - list of action groups
-        ArrayList<Map<String, Object>> data = new ArrayList<Map<String, Object>>(
+        ArrayList<Map<String, Object>> data = new ArrayList<>(
                 icons.getActionIconsLenght(actionsGroupId));
         Map<String, Object> m;
         for (int i = 0; i < icons.getActionIconsLenght(actionsGroupId); i++) {
-            m = new HashMap<String, Object>();
+            m = new HashMap<>();
             m.put(ATTRIBUTE_NAME_GRID_IMAGE, i);
             m.put(ATTRIBUTE_NAME_LL_GRID, i);
             data.add(m);
@@ -222,14 +221,12 @@ public class ActivityAddAction extends AppCompatActivity implements View.OnClick
         switch (v.getId()){
             case (R.id.AddActionActivity_saveButton):
 
-                actionEventFragment.logTestInt();
+                Log.d("User presses Save button");
+
                 actionEvent.saveToDB(this);
 
                 setResult(RESULT_OK, new Intent());
                 finish();
-
-                Log.d("User presses Save button");
-
                 break;
             default:
                 break;
@@ -258,7 +255,7 @@ public class ActivityAddAction extends AppCompatActivity implements View.OnClick
             Colors colors = new Colors(view);
             switch (view.getId()) {
                 case R.id.ItemUniversalGrid_layout:
-                    view.setBackgroundColor(colors.getActionColor());
+                    view.setBackgroundColor(colors.getActionColorForGridId());
                     return true;
             }
             return false;

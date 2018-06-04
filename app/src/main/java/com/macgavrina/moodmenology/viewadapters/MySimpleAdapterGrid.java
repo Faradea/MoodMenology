@@ -1,7 +1,6 @@
 package com.macgavrina.moodmenology.viewadapters;
 
 import android.content.Context;
-import android.support.v4.app.FragmentActivity;
 import android.widget.ImageView;
 import android.widget.SimpleAdapter;
 
@@ -20,7 +19,7 @@ public class MySimpleAdapterGrid extends SimpleAdapter {
     private int iconsType;
     private Icons icons;
 
-    public MySimpleAdapterGrid(final FragmentActivity context,
+    public MySimpleAdapterGrid(final Context context,
                                final List<? extends Map<String, ?>> data,
                                final int resource,
                                final String[] from,
@@ -30,7 +29,7 @@ public class MySimpleAdapterGrid extends SimpleAdapter {
 
         super(context, data, resource, from, to);
 
-        icons = new Icons();
+        this.icons = new Icons();
         this.actionGroupId = actionsGroupId;
         this.iconsType = iconsType;
     }
@@ -44,7 +43,7 @@ public class MySimpleAdapterGrid extends SimpleAdapter {
 
         super(context, data, resource, from, to);
 
-        icons = new Icons();
+        this.icons = new Icons();
         this.iconsType = iconsType;
     }
 

@@ -1,9 +1,8 @@
-package com.macgavrina.moodmenology.Services;
+package com.macgavrina.moodmenology.services;
 
 import android.app.IntentService;
 import android.app.PendingIntent;
 import android.content.Intent;
-import android.support.annotation.Nullable;
 
 import com.macgavrina.moodmenology.controllers.DBOperations;
 import com.macgavrina.moodmenology.logging.Log;
@@ -30,7 +29,7 @@ public class ServicePrepareAllData extends IntentService {
     }
 
     @Override
-    protected void onHandleIntent(@Nullable Intent intent) {
+    protected void onHandleIntent(Intent intent) {
         Log.d("handling intent");
 
         PendingIntent pendingIntent = intent.getParcelableExtra(PENDING_INTENT);

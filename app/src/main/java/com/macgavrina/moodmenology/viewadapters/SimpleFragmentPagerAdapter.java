@@ -10,34 +10,25 @@ import com.macgavrina.moodmenology.views.FragmentFillDataMood;
 
 public class SimpleFragmentPagerAdapter extends FragmentPagerAdapter {
 
+    private static final String START_DATE_KEY = "startDate";
+    private static final String END_DATE_KEY = "endDate";
+    private static final String MOOD_FRAGMENT_PAGE_TITLE = "Mood";
+    private static final String ACTION_FRAGMENT_PAGE_TITLE = "Actions";
+
+    private static final int NUMBER_OF_FRAGMENTS = 2;
+    private static final int MOOD_FRAGMENT_ID=0;
+    private static final int ACTION_FRAGMENT_ID=1;
+
     private FragmentFillDataActions actionCurrentFragment;
     private FragmentFillDataMood moodCurrentFragment;
-
-    final private String START_DATE_KEY = "startDate";
-    final private String END_DATE_KEY = "endDate";
-
-    final private String MOOD_FRAGMENT_PAGE_TITLE = "Mood";
-    final private String ACTION_FRAGMENT_PAGE_TITLE = "Actions";
-
-    final private int NUMBER_OF_FRAGMENTS = 2;
-    final private int MOOD_FRAGMENT_ID=0;
-    final private int ACTION_FRAGMENT_ID=1;
 
     private long startDateValue;
     private long endDateValue;
 
     public SimpleFragmentPagerAdapter(final FragmentManager fm, final long selectedDayStartDate, final long selectedDayEndDate) {
         super(fm);
-        startDateValue = selectedDayStartDate;
-        endDateValue = selectedDayEndDate;
-    }
-
-    public FragmentFillDataActions getCurrentActionFragment() {
-        return actionCurrentFragment;
-    }
-
-    public FragmentFillDataMood getCurrentMoodFragment() {
-        return moodCurrentFragment;
+        this.startDateValue = selectedDayStartDate;
+        this.endDateValue = selectedDayEndDate;
     }
 
     // This determines the fragment for each tab
@@ -62,12 +53,7 @@ public class SimpleFragmentPagerAdapter extends FragmentPagerAdapter {
                 actionCurrentFragment = fillDataActionsFragment;
                 return fillDataActionsFragment;
             default:
-                fillDataActionsFragment = new FragmentFillDataActions();
-                bundle.putLong(START_DATE_KEY, startDateValue);
-                bundle.putLong(END_DATE_KEY, endDateValue);
-                fillDataActionsFragment.setArguments(bundle);
-                actionCurrentFragment = fillDataActionsFragment;
-                return fillDataActionsFragment;
+                return null;
         }
     }
 
@@ -88,6 +74,14 @@ public class SimpleFragmentPagerAdapter extends FragmentPagerAdapter {
             default:
                 return null;
         }
+    }
+
+    public FragmentFillDataActions getCurrentActionFragment() {
+        return actionCurrentFragment;
+    }
+
+    public FragmentFillDataMood getCurrentMoodFragment() {
+        return moodCurrentFragment;
     }
 
 }
