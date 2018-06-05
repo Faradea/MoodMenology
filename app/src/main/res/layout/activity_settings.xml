@@ -15,7 +15,8 @@
         android:layout_marginTop="8dp"
         android:text="@string/SendAllData"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        android:background="@color/colorPrimary"/>
 
     <ProgressBar
         android:id="@+id/ActivitySettings_progressBar"

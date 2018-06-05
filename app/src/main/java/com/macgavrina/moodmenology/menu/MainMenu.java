@@ -7,21 +7,22 @@ import com.macgavrina.moodmenology.logging.Log;
 
 public class MainMenu{
 
-    private int menuItemId;
-    private Intent intent;
-
-    public MainMenu(final int itemId) {
-
-        this.menuItemId = itemId;
+    public MainMenu() {
 
     }
 
-    public Intent processOnMenuItemSelected() {
+    public Intent processOnMenuItemSelected(final int itemId) {
 
-        switch (menuItemId){
-            case R.id.menu_settings:
-                Log.d("User selects Settings menuItem, start processing");
-                intent = new Intent("com.macgavrina.moodmenology.settings");
+        Intent intent = null;
+
+        switch (itemId){
+            case R.id.menu_download:
+                Log.d("User selects Download Data menuItem, start processing");
+                intent = new Intent("com.macgavrina.moodmenology.downloaddata");
+                break;
+            case R.id.menu_about:
+                Log.d("User selects About menuItem, start processing");
+                intent = new Intent("com.macgavrina.moodmenology.about");
                 break;
             default:
                 break;

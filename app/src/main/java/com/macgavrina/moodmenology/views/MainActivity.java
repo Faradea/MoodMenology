@@ -347,13 +347,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     // обработка выбора пункта меню
     public boolean onOptionsItemSelected(MenuItem item) {
 
-        MainMenu mainMenuProcessor = new MainMenu(item.getItemId());
+        MainMenu mainMenuProcessor = new MainMenu();
 
-        Intent intent = mainMenuProcessor.processOnMenuItemSelected();
+        Intent intent = mainMenuProcessor.processOnMenuItemSelected(item.getItemId());
 
         if (intent != null) {
+            Log.d("User selects menu item, starting activity for intent = " + intent.toString());
             startActivity(intent);
-        }
+        } else
+            Log.d("User selects menu item, intent is null");
 
         return super.onOptionsItemSelected(item);
 

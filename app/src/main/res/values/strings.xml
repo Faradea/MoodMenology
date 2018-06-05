@@ -12,7 +12,7 @@
     <string name="ToColumnText">To:</string>
     <string name="crash_toast_text">App is crashed, sending report</string>
     <string name="sendAllDataButtonInProgress">Preparing data...</string>
-    <string name="SendAllData">Send all data</string>
+    <string name="SendAllData">Download and send</string>
     <string name="timeToText">To: </string>
     <string name="timeSeparater">,</string>
     <string name="timeFromText">From:</string>
@@ -28,4 +28,8 @@
     <string name="moodStartTimeDefaultText">00:00</string>
     <string name="mainMenuSettingsText">Settings</string>
     <string name="mainMenuAboutText">About</string>
+    <string name="app_version">Version 0.1</string>
+    <string name="app_version_date">05.06.2018</string>
+    <string name="icon_image_desc">icon_image_desc</string>
+    <string name="mainMenuDownloadText">Download data</string>
 </resources>
