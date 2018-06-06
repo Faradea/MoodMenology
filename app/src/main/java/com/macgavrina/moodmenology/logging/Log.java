@@ -4,7 +4,7 @@ import android.text.TextUtils;
 
 public class Log {
 
-    private static boolean mLoggingEnabled = true;
+    private static boolean mLoggingEnabled = false;
     private static final String LOG_TAG = "MoodMenology2";
 
     private Log() {

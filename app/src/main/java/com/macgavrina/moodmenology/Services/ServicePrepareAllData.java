@@ -8,8 +8,6 @@ import com.macgavrina.moodmenology.controllers.DBOperations;
 import com.macgavrina.moodmenology.logging.Log;
 import com.macgavrina.moodmenology.views.ActivitySettings;
 
-import java.util.concurrent.TimeUnit;
-
 public class ServicePrepareAllData extends IntentService {
 
     private static final String PENDING_INTENT = "pendingIntent";
@@ -34,11 +32,11 @@ public class ServicePrepareAllData extends IntentService {
 
         PendingIntent pendingIntent = intent.getParcelableExtra(PENDING_INTENT);
 
-        try {
+/*        try {
             TimeUnit.SECONDS.sleep(2);
         } catch (InterruptedException e) {
             e.printStackTrace();
-        }
+        }*/
 
         String textForEmail = DBOperations.getAllDataForEmail(this);
         intent.putExtra(TEXT_FOR_EMAIL_KEY_NAME, textForEmail);

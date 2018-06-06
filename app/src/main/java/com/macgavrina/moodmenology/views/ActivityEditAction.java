@@ -32,6 +32,8 @@ public class ActivityEditAction extends AppCompatActivity implements View.OnClic
     private java.util.Calendar dateAndTimeStart = java.util.Calendar.getInstance();
     private java.util.Calendar dateAndTimeEnd = java.util.Calendar.getInstance();
 
+    //ToDo BUG проблемы с отображением на маленьких экранах
+
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {

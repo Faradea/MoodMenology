@@ -57,6 +57,8 @@ public class ActivityAddAction extends AppCompatActivity implements View.OnClick
 
     private FragmentActionEvent actionEventFragment;
 
+    //ToDo BUG проблема с отображением на маленьких экранах (возможно, стоит использовтаь linearLayout)
+
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
