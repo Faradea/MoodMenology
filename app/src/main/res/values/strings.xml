@@ -28,8 +28,8 @@
     <string name="moodStartTimeDefaultText">00:00</string>
     <string name="mainMenuSettingsText">Settings</string>
     <string name="mainMenuAboutText">About</string>
-    <string name="app_version">Version 0.1</string>
-    <string name="app_version_date">05.06.2018</string>
+    <string name="app_version">Version 1.1 alpha</string>
+    <string name="app_version_date">09.06.2018</string>
     <string name="icon_image_desc">icon_image_desc</string>
     <string name="mainMenuDownloadText">Download data</string>
 </resources>
