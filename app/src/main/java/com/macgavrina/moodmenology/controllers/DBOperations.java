@@ -16,6 +16,8 @@ import java.util.Map;
 
 public abstract class DBOperations {
 
+    //ToDO REFACT Room для работы с БД: https://developer.android.com/training/data-storage/room/
+
     private static final String ATTRIBUTE_NAME_START_DATE = "startDate";
     private static final String ATTRIBUTE_NAME_END_DATE = "endDate";
     private static final String ATTRIBUTE_NAME_EVENT_ID = "eventId";

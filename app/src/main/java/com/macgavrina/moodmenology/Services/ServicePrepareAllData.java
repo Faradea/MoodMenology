@@ -10,6 +10,10 @@ import com.macgavrina.moodmenology.views.ActivitySettings;
 
 public class ServicePrepareAllData extends IntentService {
 
+    //ToDo REFACT проверить наличие прилоежний которые могут обработать интент (https://developer.android.com/training/basics/intents/sending)
+    //ToDo REFACT Сделать service недоступным для других приложений - https://developer.android.com/guide/components/services
+    //ToDo NEW Поиграться с обработкой эвента от IntentService - https://developer.android.com/training/run-background-service/report-status
+
     private static final String PENDING_INTENT = "pendingIntent";
     private static final String TEXT_FOR_EMAIL_KEY_NAME = "textForEmail";
 
