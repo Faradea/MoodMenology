@@ -314,7 +314,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     // создание меню
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.mainmenu, menu);
+        //getMenuInflater().inflate(R.menu.mainmenu, menu);
         return super.onCreateOptionsMenu(menu);
     }
 
